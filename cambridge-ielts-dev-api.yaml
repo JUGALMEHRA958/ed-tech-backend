@@ -52,7 +52,7 @@ spec:
       #- test.example.com
       #secretName: nginx-tls-secret
   rules:
-  - host: cambridge-ielts-dev-api.devpress.net
+  - host: cambridge-ielts-api-dev.devpress.net
     http:
       paths:
       - path: /
