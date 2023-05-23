@@ -1,0 +1,664 @@
+{
+    "paths": {
+        "/students/register": {
+            "post": {
+                "tags": [
+                    "students"
+                ],
+                "description": "Create new user in system",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "required": true,
+                        "in": "body",
+                        "description": "User that we want to create",
+                        "schema": {
+                            "$ref": "#/definitions/Register"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Registered successfully. Please verify your email."
+                    }
+                }
+            }
+        },
+        "/students/nmRegister": {
+            "post": {
+                "tags": [
+                    "nmStudents"
+                ],
+                "description": "Create new user in system",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "required": true,
+                        "in": "body",
+                        "description": "User that we want to create",
+                        "schema": {
+                            "$ref": "#/definitions/nmRegister"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Registered successfully."
+                    }
+                }
+            }
+        },
+        "/students/login": {
+            "post": {
+                "tags": [
+                    "students"
+                ],
+                "description": "Login",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Login",
+                        "schema": {
+                            "$ref": "#/definitions/Login"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Logged in successfully"
+                    }
+                }
+            }
+        },
+        "/students/forgotPassword": {
+            "post": {
+                "tags": [
+                    "students"
+                ],
+                "description": "Send forgot password mail",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "body",
+                        "description": "Send forgot password mail",
+                        "schema": {
+                            "$ref": "#/definitions/ForgotPassword"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Mail sent successfully"
+                    }
+                }
+            }
+        },
+        "/students/resetPassword": {
+            "post": {
+                "tags": [
+                    "students"
+                ],
+                "description": "Reset password",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "body",
+                        "description": "Reset password",
+                        "schema": {
+                            "$ref": "#/definitions/ResetPassword"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Password updated successfully"
+                    }
+                }
+            }
+        },
+        "/students/fileUpload": {
+            "post": {
+                "tags": [
+                    "students"
+                ],
+                "description": "Upload file",
+                "parameters": [
+                    {
+                        "name": "file",
+                        "required": true,
+                        "in": "formData",
+                        "type": "file",
+                        "description": "Upload file"
+                    },
+                    {
+                        "name": "Authorization",
+                        "required": true,
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "multipart/form-data"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "File uploaded",
+                        "schema": {
+                            "$ref": "#/definitions/Uploadfile"
+                        }
+                    }
+                }
+            }
+        },
+        "/students/changePassword": {
+            "post": {
+                "tags": [
+                    "students"
+                ],
+                "description": "Change password",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Change password",
+                        "schema": {
+                            "$ref": "#/definitions/ChangePassword"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "required": true,
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Password change successfully."
+                    }
+                }
+            }
+        },
+        "/students/updateUserProfile": {
+            "post": {
+                "tags": [
+                    "students"
+                ],
+                "description": "Update User Profile",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "required": true,
+                        "in": "body",
+                        "description": "Update User Profile",
+                        "schema": {
+                            "$ref": "#/definitions/UpdateProfile"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "required": true,
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User details update successfully.",
+                        "schema": {
+                            "$ref": "#/definitions/UpdateProfile"
+                        }
+                    }
+                }
+            }
+        },
+        "/students/profile": {
+            "get": {
+                "tags": [
+                    "students"
+                ],
+                "description": "Get User Profile",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "required": true,
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get User Profile."
+                    }
+                }
+            }
+        },
+        "/students/logout": {
+            "get": {
+                "tags": [
+                    "students"
+                ],
+                "description": "Logout user",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "required": true,
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Logged out successfully"
+                    }
+                }
+            }
+        },
+        "/students/verifyUser": {
+            "get": {
+                "tags": [
+                    "students"
+                ],
+                "description": "Verify user email",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "required": true,
+                        "in": "query",
+                        "description": "Verification token",
+                        "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "required": true,
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Verify user email."
+                    }
+                }
+            }
+        },
+        "/students/refreshAccessToken": {
+            "get": {
+                "tags": [
+                    "students"
+                ],
+                "description": "Refresh access token",
+                "parameters": [
+                    {
+                        "name": "refreshToken",
+                        "required": true,
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Refresh access token."
+                    }
+                }
+            }
+        },
+        "/students/socialAccess": {
+            "post": {
+                "tags": [
+                    "students"
+                ],
+                "description": "Create new user using social login",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "required": true,
+                        "in": "body",
+                        "description": "User that we want to create",
+                        "schema": {
+                            "$ref": "#/definitions/socialAccess"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "New user is created",
+                        "schema": {
+                            "$ref": "#/definitions/socialAccess"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "Register": {
+            "required": [
+                "emailId",
+                "studentId",
+                "firstname",
+                "lastname",
+                "password"
+            ],
+            "properties": {
+                "emailId": {
+                    "type": "string",
+                    "example": "neha.bhavsar@indianic.com",
+                    "uniqueItems": true
+                },
+                "password": {
+                    "type": "string",
+                    "example": "Test1234"
+                },
+                "mobile": {
+                    "type": "string",
+                    "example": "000000000"
+                },
+                "lastname": {
+                    "example": "Bhavsar",
+                    "type": "string"
+                },
+                "firstname": {
+                    "example": "Neha",
+                    "type": "string"
+                },
+                "studentId": {
+                    "example": "123456",
+                    "type": "string",
+                    "uniqueItems": true
+                },
+                "institute": {
+                    "type": "string",
+                    "example": "vidyasagar college"
+                },
+                "degree": {
+                    "type": "string",
+                    "example": "bsc"
+                },
+                "branch": {
+                    "type": "string",
+                    "example": "cse"
+                },
+                "semester": {
+                    "type": "string",
+                    "example": "5"
+                },
+                "district": {
+                    "type": "string",
+                    "example": "Nodia"
+                },
+                "score": {
+                    "type": "float",
+                    "example": 12.3
+                }
+            }
+        },
+        "nmRegister": {
+            "required": [
+                "emailId",
+                "studentId",
+                "firstname",
+                "lastname",
+                "password",
+                "token"
+            ],
+            "properties": {
+                "emailId": {
+                    "type": "string",
+                    "example": "neha.bhavsar@indianic.com",
+                    "uniqueItems": true
+                },
+                "password": {
+                    "type": "string",
+                    "example": "Test1234"
+                },
+                "mobile": {
+                    "type": "string",
+                    "example": "000000000"
+                },
+                "lastname": {
+                    "example": "Bhavsar",
+                    "type": "string"
+                },
+                "firstname": {
+                    "example": "Neha",
+                    "type": "string"
+                },
+                "studentId": {
+                    "example": "123456",
+                    "type": "string",
+                    "uniqueItems": true
+                },
+                "institute": {
+                    "type": "string",
+                    "example": "vidyasagar college"
+                },
+                "degree": {
+                    "type": "string",
+                    "example": "bsc"
+                },
+                "branch": {
+                    "type": "string",
+                    "example": "cse"
+                },
+                "semester": {
+                    "type": "string",
+                    "example": "5"
+                },
+                "district": {
+                    "type": "string",
+                    "example": "Nodia"
+                },
+                "score": {
+                    "type": "float",
+                    "example": 12.3
+                },
+                "token": {
+                    "type": "string",
+                    "example": "akslskamxkanxkanc"
+                }
+            }
+        },
+        "Login": {
+            "required": [
+                "emailId",
+                "password"
+            ],
+            "properties": {
+                "emailId": {
+                    "type": "string",
+                    "example": "neha.bhavsar@indianic.com",
+                    "uniqueItems": true
+                },
+                "password": {
+                    "type": "string",
+                    "example": "Test1234",
+                    "uniqueItems": true
+                },
+                "deviceToken": {
+                    "type": "string",
+                    "example": "mcnjkACBjkbacjbacjkscbJ"
+                },
+                "device": {
+                    "type": "string",
+                    "example": "android"
+                }
+            }
+        },
+        "ResetPassword": {
+            "required": [
+                "password",
+                "token"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string",
+                    "example": "Test123",
+                    "uniqueItems": true
+                },
+                "token": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjZDNkMmZlNDg0ZjQ5MDRlYzdjMGJmOCIsImFsZ29yaXRobSI6IkhTMjU2IiwiZXhwIjoxNTYwNTMxNzQ4LCJpYXQiOjE1NjAxNzAzMDh9.9AjvQpjhQxq5Qerw1jPuwDKmxnr5xzU_NN1n1TB5a-0",
+                    "uniqueItems": true
+                }
+            }
+        },
+        "ForgotPassword": {
+            "required": [
+                "emailId"
+            ],
+            "properties": {
+                "emailId": {
+                    "type": "string",
+                    "example": "neha.bhavsar@indianic.com",
+                    "uniqueItems": true
+                }
+            }
+        },
+        "UpdateProfile": {
+            "required": [
+                "firstname",
+                "lastname",
+                "username",
+                "photo"
+            ],
+            "properties": {
+                "lastname": {
+                    "example": "Bhavsar",
+                    "type": "string"
+                },
+                "firstname": {
+                    "example": "Neha",
+                    "type": "string"
+                },
+                "username": {
+                    "example": "neha_bhavsar",
+                    "type": "string",
+                    "uniqueItems": true
+                },
+                "photo": {
+                    "example": "5cbead5921ccde05e5cca7b8",
+                    "type": "string"
+                }
+            }
+        },
+        "ChangePassword": {
+            "required": [
+                "oldPassword",
+                "newPassword"
+            ],
+            "properties": {
+                "oldPassword": {
+                    "type": "string",
+                    "example": "Test1234",
+                    "uniqueItems": true
+                },
+                "newPassword": {
+                    "type": "string",
+                    "example": "Test123",
+                    "uniqueItems": true
+                }
+            }
+        },
+        "Uploadfile": {
+            "properties": {
+                "file": {
+                    "type": "file"
+                }
+            }
+        },
+        "socialAccess": {
+            "required": [
+                "socialId",
+                "socialKey"
+            ],
+            "properties": {
+                "socialId": {
+                    "type": "string",
+                    "example": "123456789",
+                    "uniqueItems": true
+                },
+                "socialKey": {
+                    "type": "string",
+                    "example": "fbId or googleId or twitterId or InstagramId",
+                    "uniqueItems": true
+                },
+                "emailId": {
+                    "type": "string",
+                    "example": "lakshmi@grr.la",
+                    "uniqueItems": true
+                },
+                "mobile": {
+                    "type": "string",
+                    "example": "000000000",
+                    "uniqueItems": true
+                },
+                "lastname": {
+                    "example": "lakshmi",
+                    "type": "string"
+                },
+                "firstname": {
+                    "example": "matta",
+                    "type": "string"
+                },
+                "username": {
+                    "example": "lakshmi_matta",
+                    "type": "string",
+                    "uniqueItems": true
+                },
+                "deviceToken": {
+                    "type": "string",
+                    "example": "Nadia"
+                },
+                "device": {
+                    "type": "string",
+                    "example": "android"
+                }
+            }
+        }
+    }
+}

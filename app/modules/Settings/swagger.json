@@ -1,0 +1,591 @@
+{
+    "paths": {
+        "/addEmailSettings": {
+            "post": {
+                "tags": [
+                    "Settings"
+                ],
+                "description": "Add email settings",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Add settings",
+                        "schema": {
+                            "$ref": "#/definitions/AddEmailSettings"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string",
+                        "required": true
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Settings added successfully.",
+                        "schema": {
+                            "$ref": "#/definitions/AddEmailSettings"
+                        }
+                    }
+                }
+            }
+        },
+        "/getEmailSettings": {
+            "get": {
+                "tags": [
+                    "Settings"
+                ],
+                "description": "Get email settings",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string",
+                        "required": true
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Settings."
+                    }
+                }
+            }
+        },
+        "/deleteEmailSetting/{settingsId}": {
+            "delete": {
+                "tags": [
+                    "Settings"
+                ],
+                "description": "Delete email settings",
+                "parameters": [
+                    {
+                        "name": "settingsId",
+                        "in": "path",
+                        "description": "Id of settings",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string",
+                        "required": true
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Setting Deleted."
+                    }
+                }
+            }
+        },
+        "/addDefaultEmailSettings": {
+            "post": {
+                "tags": [
+                    "Settings"
+                ],
+                "description": "Add default email settings",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Add settings",
+                        "schema": {
+                            "$ref": "#/definitions/AddDefaultEmailSettings"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string",
+                        "required": true
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Default settings added successfully.",
+                        "schema": {
+                            "$ref": "#/definitions/AddDefaultEmailSettings"
+                        }
+                    }
+                }
+            }
+        },
+        "/addGlobalSettings": {
+            "post": {
+                "tags": [
+                    "Settings"
+                ],
+                "description": "Add global settings",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Add global settings",
+                        "schema": {
+                            "$ref": "#/definitions/AddGlobalSettings"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string",
+                        "required": true
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Global settings added successfully.",
+                        "schema": {
+                            "$ref": "#/definitions/AddGlobalSettings"
+                        }
+                    }
+                }
+            }
+        },
+        "/addAllCurrency": {
+            "post": {
+                "tags": [
+                    "Settings"
+                ],
+                "description": "Add all currency",
+                "parameters": [
+                    {
+                        "name": "file",
+                        "required": true,
+                        "in": "formData",
+                        "type": "file",
+                        "description": "Upload file"
+                    },
+                    {
+                        "name": "Authorization",
+                        "required": true,
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Global settings added successfully.",
+                        "schema": {
+                            "$ref": "#/definitions/AddGlobalSettings"
+                        }
+                    }
+                }
+            }
+        },
+        "/getCurrency": {
+            "get": {
+                "tags": [
+                    "Settings"
+                ],
+                "description": "Get all currency",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "required": true,
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "All currency."
+                    }
+                }
+            }
+        },
+        "/getGlobalSettings": {
+            "get": {
+                "tags": [
+                    "Settings"
+                ],
+                "description": "Get all settings",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "required": true,
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "All settings."
+                    }
+                }
+            }
+        },
+        "/changeCurrencyStatus": {
+            "post": {
+                "tags": [
+                    "Settings"
+                ],
+                "description": "Change currency status",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "required": true,
+                        "in": "body",
+                        "description": "Array of ids",
+                        "schema": {
+                            "$ref": "#/definitions/ChangeStatus"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "required": true,
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Currency status changed successfully..",
+                        "schema": {
+                            "$ref": "#/definitions/ChangeStatus"
+                        }
+                    }
+                }
+            }
+        },
+        "/changeDateFormatStatus": {
+            "post": {
+                "tags": [
+                    "Settings"
+                ],
+                "description": "Change date format status",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "required": true,
+                        "in": "body",
+                        "description": "Array of ids",
+                        "schema": {
+                            "$ref": "#/definitions/ChangeStatus"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "required": true,
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Currency status changed successfully.",
+                        "schema": {
+                            "$ref": "#/definitions/ChangeStatus"
+                        }
+                    }
+                }
+            }
+        },
+        "/addAllDateFormat": {
+            "post": {
+                "tags": [
+                    "Settings"
+                ],
+                "description": "Add all dateformat",
+                "parameters": [
+                    {
+                        "name": "file",
+                        "required": true,
+                        "in": "formData",
+                        "type": "file",
+                        "description": "Upload file"
+                    },
+                    {
+                        "name": "Authorization",
+                        "required": true,
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Global settings added successfully.",
+                        "schema": {
+                            "$ref": "#/definitions/AddGlobalSettings"
+                        }
+                    }
+                }
+            }
+        },
+        "/getDateFormat": {
+            "get": {
+                "tags": [
+                    "Settings"
+                ],
+                "description": "Get all date format",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "required": true,
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "All date format."
+                    }
+                }
+            }
+        },
+        "/addSMTPSettings": {
+            "post": {
+                "tags": [
+                    "Settings"
+                ],
+                "description": "Add SMTP settings",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Add settings",
+                        "schema": {
+                            "$ref": "#/definitions/AddSMTPSettings"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string",
+                        "required": true
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Settings added successfully.",
+                        "schema": {
+                            "$ref": "#/definitions/AddSMTPSettings"
+                        }
+                    }
+                }
+            }
+        },
+        "/getSMTPSettings": {
+            "get": {
+                "tags": [
+                    "Settings"
+                ],
+                "description": "Get SMTP settings",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string",
+                        "required": true
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Settings."
+                    }
+                }
+            }
+        },
+        "/getEmailTitle": {
+            "get": {
+                "tags": [
+                    "Settings"
+                ],
+                "description": "Get email title",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string",
+                        "required": true
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Settings."
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "AddEmailSettings": {
+            "required": [
+                "emailTemplateId",
+                "fromEmail",
+                "adminEmail"
+            ],
+            "properties": {
+                "emailTemplateId": {
+                    "example": "5d25ecdf31f21b0f0ae96ba3",
+                    "type": "string"
+                },
+                "fromEmail": {
+                    "example": "donotreply2@test.com",
+                    "type": "string"
+                },
+                "adminEmail": {
+                    "example": "adminmail@test.com",
+                    "type": "string"
+                }
+            }
+        },
+        "AddDefaultEmailSettings": {
+            "required": [
+                "defaultFromEmail",
+                "defaultAdminEmail"
+            ],
+            "properties": {
+                "defaultFromEmail": {
+                    "example": "donotreply2@test.com",
+                    "type": "string"
+                },
+                "defaultAdminEmail": {
+                    "example": "adminmail@test.com",
+                    "type": "string"
+                }
+            }
+        },
+        "AddGlobalSettings": {
+            "required": [
+                "currency",
+                "dateFormat",
+                "metaTitle",
+                "metaDescription",
+                "metaKeyword"
+            ],
+            "properties": {
+                "currency": {
+                    "example": "AUD",
+                    "type": "string"
+                },
+                "dateFormat": {
+                    "example": "DD/MM/YYYY",
+                    "type": "string"
+                },
+                "metaTitle": {
+                    "example": "Seed node.js",
+                    "type": "string"
+                },
+                "metaDescription": {
+                    "example": "Seed project node.js",
+                    "type": "string"
+                },
+                "metaKeyword": {
+                    "example": "seed, node.js, swagger",
+                    "type": "string"
+                }
+            }
+        },
+        "AddSMTPSettings": {
+            "required": [
+                "host",
+                "port",
+                "username",
+                "password"
+            ],
+            "properties": {
+                "host": {
+                    "example": "smtp.gmail.com",
+                    "type": "string"
+                },
+                "port": {
+                    "example": 587,
+                    "type": "number"
+                },
+                "username": {
+                    "example": "meanstack2017@gmail.com",
+                    "type": "string"
+                },
+                "password": {
+                    "example": "Mean@123",
+                    "type": "string"
+                }
+            }
+        },
+        "ChangeStatus": {
+            "required": [
+                "ids",
+                "status"
+            ],
+            "properties": {
+                "ids": {
+                    "example": [
+                        "5d5256470daad20c9373f0f8",
+                        "5d5256470daad20c9373f0f7",
+                        "5d5256470daad20c9373f0f4",
+                        "5d5256470daad20c9373f0f3"
+                    ],
+                    "type": "array"
+                },
+                "status": {
+                    "example": false,
+                    "type": "boolean"
+                }
+            }
+        }
+    }
+}

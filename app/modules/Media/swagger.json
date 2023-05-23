@@ -1,0 +1,351 @@
+{
+    "paths": {
+        "/addUpdateMedia": {
+            "post": {
+                "tags": [
+                    "Media Management"
+                ],
+                "description": "Add Media",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Add Media",
+                        "schema": {
+                            "$ref": "#/definitions/AddMedia"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Media added successfully.",
+                        "schema": {
+                            "$ref": "#/definitions/AddMedia"
+                        }
+                    }
+                }
+            }
+        },
+        "/searchMedia": {
+            "post": {
+                "tags": [
+                    "Media Management"
+                ],
+                "description": "Search Media",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Search Media",
+                        "schema": {
+                            "$ref": "#/definitions/SearchMedia"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Searched Media.",
+                        "schema": {
+                            "$ref": "#/definitions/SearchMedia"
+                        }
+                    }
+                }
+            }
+        },
+        "/listMedia": {
+            "post": {
+                "tags": [
+                    "Media Management"
+                ],
+                "description": "Media list",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Params",
+                        "schema": {
+                            "$ref": "#/definitions/MediasList"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Media list.",
+                        "schema": {
+                            "$ref": "#/definitions/MediasList"
+                        }
+                    }
+                }
+            }
+        },
+        "/deleteMedia": {
+            "post": {
+                "tags": [
+                    "Media Management"
+                ],
+                "description": "Delete Medias",
+                "parameters": [
+                    {
+                        "name": "ids",
+                        "in": "body",
+                        "description": "Ids of users",
+                        "schema": {
+                            "$ref": "#/definitions/DeleteMedia"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Medias deleted successfully.",
+                        "schema": {
+                            "$ref": "#/definitions/DeleteMedia"
+                        }
+                    }
+                }
+            }
+        },
+        "/getMediaDetails/{MediaId}": {
+            "get": {
+                "tags": [
+                    "Media Management"
+                ],
+                "description": "Get Media",
+                "parameters": [
+                    {
+                        "name": "MediaId",
+                        "in": "path",
+                        "description": "Id of Media",
+                        "schema": {
+                            "$ref": "#/definitions/MediasList"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User data.",
+                        "schema": {
+                            "$ref": "#/definitions/MediasList"
+                        }
+                    }
+                }
+            }
+        },
+        "/getMediaColumnValues": {
+            "post": {
+                "tags": [
+                    "Media Management"
+                ],
+                "description": "Column values",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Params",
+                        "schema": {
+                            "$ref": "#/definitions/GetMediaColumn"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Column values.",
+                        "schema": {
+                            "$ref": "#/definitions/GetMediaColumn"
+                        }
+                    }
+                }
+            }
+        },
+        "/mediaColumnSettings": {
+            "post": {
+                "tags": [
+                    "Media Management"
+                ],
+                "description": "Column settings",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Params",
+                        "schema": {
+                            "$ref": "#/definitions/SaveMediaColumnSettings"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Column settings",
+                        "schema": {
+                            "$ref": "#/definitions/SaveMediaColumnSettings"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "MediasList": {
+            "required": [
+                "page",
+                "pagesize"
+            ],
+            "properties": {
+                "page": {
+                    "example": 1,
+                    "type": "number"
+                },
+                "pagesize": {
+                    "example": 10,
+                    "type": "number"
+                }
+            }
+        },
+        "DeleteMedia": {
+            "required": [
+                "ids"
+            ],
+            "properties": {
+                "ids": {
+                    "example": [
+                        "5ce25306e6405f7072059128",
+                        "5ce25320e6405f707205912f"
+                    ],
+                    "type": "array"
+                }
+            }
+        },
+        "AddMedia": {
+            "required": [
+                "name",
+                "imageUrl"
+            ],
+            "properties": {
+                "name": {
+                    "example": "Avatar",
+                    "type": "string"
+                },
+                "imageUrl": {
+                    "example": "http://localhost:4167/public/upload/image.png",
+                    "type": "string"
+                }
+            }
+        },
+        "SearchMedia": {
+            "required": [
+                "filter"
+            ],
+            "properties": {
+                "filter": {
+                    "example": {
+                        "name": "tit"
+                    },
+                    "type": "object"
+                }
+            }
+        },
+        "GetMediaColumn": {
+            "required": [
+                "page",
+                "pagesize",
+                "column"
+            ],
+            "properties": {
+                "page": {
+                    "example": 1,
+                    "type": "number"
+                },
+                "pagesize": {
+                    "example": 20,
+                    "type": "number"
+                },
+                "column": {
+                    "example": "name",
+                    "type": "string"
+                }
+            }
+        },
+        "SaveMediaColumnSettings": {
+            "required": [
+                "columns"
+            ],
+            "properties": {
+                "columns": {
+                    "example": [
+                        {
+                            "key": "name",
+                            "status": true
+                        },
+                        {
+                            "key": "imageUrl",
+                            "status": true
+                        }
+                    ],
+                    "type": "array"
+                }
+            }
+        }
+    }
+}

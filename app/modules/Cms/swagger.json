@@ -1,0 +1,370 @@
+{
+    "paths": {
+        "/addUpdateCMS": {
+            "post": {
+                "tags": [
+                    "CMS Management"
+                ],
+                "description": "Add CMS template",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Add CMS",
+                        "schema": {
+                            "$ref": "#/definitions/AddCMS"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "CMS added successfully.",
+                        "schema": {
+                            "$ref": "#/definitions/AddCMS"
+                        }
+                    }
+                }
+            }
+        },
+        "/searchCms": {
+            "post": {
+                "tags": [
+                    "CMS Management"
+                ],
+                "description": "Search CMS",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Search CMS",
+                        "schema": {
+                            "$ref": "#/definitions/Search"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Searched CMS.",
+                        "schema": {
+                            "$ref": "#/definitions/Search"
+                        }
+                    }
+                }
+            }
+        },
+        "/cmsDelete": {
+            "post": {
+                "tags": [
+                    "CMS Management"
+                ],
+                "description": "Delete cms template",
+                "parameters": [
+                    {
+                        "name": "ids",
+                        "in": "body",
+                        "description": "Delete templates",
+                        "schema": {
+                            "$ref": "#/definitions/DeleteCMS"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "CMS deleted successfully.",
+                        "schema": {
+                            "$ref": "#/definitions/DeleteCMS"
+                        }
+                    }
+                }
+            }
+        },
+        "/cmsList": {
+            "post": {
+                "tags": [
+                    "CMS Management"
+                ],
+                "description": "List cms template",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "List templates",
+                        "schema": {
+                            "$ref": "#/definitions/ListCMS"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "CMS List.",
+                        "schema": {
+                            "$ref": "#/definitions/ListCMS"
+                        }
+                    }
+                }
+            }
+        },
+        "/cmsDetail/{cmsId}": {
+            "get": {
+                "tags": [
+                    "CMS Management"
+                ],
+                "description": "Get CMS template",
+                "parameters": [
+                    {
+                        "name": "cmsId",
+                        "in": "path",
+                        "description": "Id of CMS template",
+                        "schema": {
+                            "$ref": "#/definitions/AddCMS"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "CMS data.",
+                        "schema": {
+                            "$ref": "#/definitions/AddCMS"
+                        }
+                    }
+                }
+            }
+        },
+        "/getCmsColumnValues": {
+            "post": {
+                "tags": [
+                    "CMS Management"
+                ],
+                "description": "Column values",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Params",
+                        "schema": {
+                            "$ref": "#/definitions/GetCmsColumn"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Column values.",
+                        "schema": {
+                            "$ref": "#/definitions/GetCmsColumn"
+                        }
+                    }
+                }
+            }
+        },
+        "/cmsColumnSettings": {
+            "post": {
+                "tags": [
+                    "CMS Management"
+                ],
+                "description": "Column settings",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Params",
+                        "schema": {
+                            "$ref": "#/definitions/SaveCmsColumnSettings"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Column settings",
+                        "schema": {
+                            "$ref": "#/definitions/SaveCmsColumnSettings"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "AddCMS": {
+            "required": [
+                "pageTitle",
+                "description",
+                "metaTitle",
+                "metaDescription",
+                "metaKeyword"
+            ],
+            "properties": {
+                "pageTitle": {
+                    "example": "About us",
+                    "type": "string"
+                },
+                "description": {
+                    "example": "<h4>Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...\"</h4>",
+                    "type": "string"
+                },
+                "metaTitle": {
+                    "example": "About us",
+                    "type": "string"
+                },
+                "metaDescription": {
+                    "example": "About us desc",
+                    "type": "string"
+                },
+                "metaKeyword": {
+                    "example": "match,date",
+                    "type": "string"
+                }
+            }
+        },
+        "DeleteCMS": {
+            "required": [
+                "ids"
+            ],
+            "properties": {
+                "ids": {
+                    "example": [
+                        "5ce25306e6405f7072059128",
+                        "5ce25320e6405f707205912f"
+                    ],
+                    "type": "array"
+                }
+            }
+        },
+        "ListCMS": {
+            "required": [
+                "page",
+                "pagesize"
+            ],
+            "properties": {
+                "page": {
+                    "example": 1,
+                    "type": "number"
+                },
+                "pagesize": {
+                    "example": 10,
+                    "type": "number"
+                }
+            }
+        },
+        "Search": {
+            "required": [
+                "filter"
+            ],
+            "properties": {
+                "filter": {
+                    "example": {
+                        "pageId": "_us"
+                    },
+                    "type": "object"
+                }
+            }
+        },
+        "GetCmsColumn": {
+            "required": [
+                "page",
+                "pagesize",
+                "column"
+            ],
+            "properties": {
+                "page": {
+                    "example": 1,
+                    "type": "number"
+                },
+                "pagesize": {
+                    "example": 20,
+                    "type": "number"
+                },
+                "column": {
+                    "example": "pageTitle",
+                    "type": "string"
+                }
+            }
+        },
+        "SaveCmsColumnSettings": {
+            "required": [
+                "columns"
+            ],
+            "properties": {
+                "columns": {
+                    "example": [
+                        {
+                            "key": "description",
+                            "status": true
+                        },
+                        {
+                            "key": "metaKeyword",
+                            "status": true
+                        },
+                        {
+                            "key": "pageTitle",
+                            "status": true
+                        }
+                    ],
+                    "type": "array"
+                }
+            }
+        }
+    }
+}

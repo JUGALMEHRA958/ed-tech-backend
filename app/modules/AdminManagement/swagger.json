@@ -1,0 +1,685 @@
+{
+    "paths": {
+        "/admin/userListing": {
+            "post": {
+                "tags": [
+                    "Admin User Management"
+                ],
+                "description": "Admins list",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Params",
+                        "schema": {
+                            "$ref": "#/definitions/AdminsList"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Admins list.",
+                        "schema": {
+                            "$ref": "#/definitions/AdminsList"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/getColumnValues": {
+            "post": {
+                "tags": [
+                    "Admin User Management"
+                ],
+                "description": "Column values",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Params",
+                        "schema": {
+                            "$ref": "#/definitions/GetAdminColumn"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Column values.",
+                        "schema": {
+                            "$ref": "#/definitions/GetAdminColumn"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/columnSettings": {
+            "post": {
+                "tags": [
+                    "Admin User Management"
+                ],
+                "description": "Column settings",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Params",
+                        "schema": {
+                            "$ref": "#/definitions/SaveAdminColumnSettings"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Column settings",
+                        "schema": {
+                            "$ref": "#/definitions/SaveAdminColumnSettings"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/saveFilter": {
+            "post": {
+                "tags": [
+                    "Admin User Management"
+                ],
+                "description": "Column settings",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Params",
+                        "schema": {
+                            "$ref": "#/definitions/SaveAdminFilter"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Column settings",
+                        "schema": {
+                            "$ref": "#/definitions/SaveAdminFilter"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/getFilters": {
+            "get": {
+                "tags": [
+                    "Admin User Management"
+                ],
+                "description": "Get filters.",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get filters."
+                    }
+                }
+            }
+        },
+        "/admin/deleteFilter/{filterId}": {
+            "delete": {
+                "tags": [
+                    "Admin User Management"
+                ],
+                "description": "Delete filter",
+                "parameters": [
+                    {
+                        "name": "filterId",
+                        "in": "path",
+                        "description": "Id of filter"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Filter data."
+                    }
+                }
+            }
+        },
+        "/admin/search": {
+            "post": {
+                "tags": [
+                    "Admin User Management"
+                ],
+                "description": "Search",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Params",
+                        "schema": {
+                            "$ref": "#/definitions/SearchAdminUser"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Searched data.",
+                        "schema": {
+                            "$ref": "#/definitions/SearchAdminUser"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/deleteUsers": {
+            "post": {
+                "tags": [
+                    "Admin User Management"
+                ],
+                "description": "Delete users",
+                "parameters": [
+                    {
+                        "name": "ids",
+                        "in": "body",
+                        "description": "Ids of users",
+                        "schema": {
+                            "$ref": "#/definitions/DeleteAdminUser"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Users deleted successfully.",
+                        "schema": {
+                            "$ref": "#/definitions/DeleteAdminUser"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/changeStatus": {
+            "post": {
+                "tags": [
+                    "Admin User Management"
+                ],
+                "description": "Change user status",
+                "parameters": [
+                    {
+                        "name": "userIds",
+                        "in": "body",
+                        "description": "Ids of users",
+                        "schema": {
+                            "$ref": "#/definitions/ChangeAdminStatus"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Status changed successfully.",
+                        "schema": {
+                            "$ref": "#/definitions/ChangeAdminStatus"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/userProfile/{userId}": {
+            "get": {
+                "tags": [
+                    "Admin User Management"
+                ],
+                "description": "Get user",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "description": "Id of user"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User data."
+                    }
+                }
+            }
+        },
+        "/admin/downloadCsv": {
+            "post": {
+                "tags": [
+                    "Admin User Management"
+                ],
+                "description": "Download CSV",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Params",
+                        "schema": {
+                            "$ref": "#/definitions/AdminDownloadFile"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Download CSV.",
+                        "schema": {
+                            "$ref": "#/definitions/AdminDownloadFile"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/downloadExcel": {
+            "post": {
+                "tags": [
+                    "Admin User Management"
+                ],
+                "description": "Download Excel",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Params",
+                        "schema": {
+                            "$ref": "#/definitions/AdminDownloadFile"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Download Excel.",
+                        "schema": {
+                            "$ref": "#/definitions/AdminDownloadFile"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/addAdminUser": {
+            "post": {
+                "tags": [
+                    "Admin User Management"
+                ],
+                "description": "Create new admin user in system",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "body",
+                        "description": "User that we want to create",
+                        "schema": {
+                            "$ref": "#/definitions/AddUser"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "required": true,
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "New user is created",
+                        "schema": {
+                            "$ref": "#/definitions/AddUser"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/updateUser": {
+            "post": {
+                "tags": [
+                    "Admin User Management"
+                ],
+                "description": "Update admin user in system",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "body",
+                        "description": "User that we want to edit",
+                        "schema": {
+                            "$ref": "#/definitions/UpdateUser"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "required": true,
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User is updated",
+                        "schema": {
+                            "$ref": "#/definitions/UpdateUser"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "AdminDownloadFile": {
+            "required": [],
+            "properties": {
+                "columns": {
+                    "example": [
+                        "firstname",
+                        "lastname",
+                        "username",
+                        "emailId",
+                        "mobile"
+                    ],
+                    "type": "array"
+                }
+            }
+        },
+        "GetAdminColumn": {
+            "required": [
+                "filter"
+            ],
+            "properties": {
+                "filter": {
+                    "example": {
+                        "firstname": "s"
+                    },
+                    "type": "object"
+                }
+            }
+        },
+        "SaveAdminColumnSettings": {
+            "required": [
+                "columns"
+            ],
+            "properties": {
+                "columns": {
+                    "example": [
+                        {
+                            "key": "firstName",
+                            "status": false
+                        },
+                        {
+                            "key": "lastName",
+                            "status": false
+                        },
+                        {
+                            "key": "emailId",
+                            "status": true
+                        }
+                    ],
+                    "type": "array"
+                }
+            }
+        },
+        "SaveAdminFilter": {
+            "required": [
+                "filterName",
+                "filter"
+            ],
+            "properties": {
+                "filterName": {
+                    "example": "firstnameFilter",
+                    "type": "string"
+                },
+                "filter": {
+                    "example": [
+                        {
+                            "firstname": [
+                                "Neha",
+                                "Madhuri"
+                            ]
+                        },
+                        {
+                            "lastname": [
+                                "Dodla"
+                            ]
+                        }
+                    ],
+                    "type": "array"
+                }
+            }
+        },
+        "SearchAdminUser": {
+            "required": [
+                "filter"
+            ],
+            "properties": {
+                "filter": {
+                    "example": {
+                        "firstname": "neh"
+                    },
+                    "type": "object"
+                }
+            }
+        },
+        "DeleteAdminUser": {
+            "required": [
+                "userIds",
+                "status"
+            ],
+            "properties": {
+                "userIds": {
+                    "example": [
+                        "5ce25306e6405f7072059128",
+                        "5ce25320e6405f707205912f"
+                    ],
+                    "type": "array"
+                }
+            }
+        },
+        "ChangeAdminStatus": {
+            "required": [
+                "userIds"
+            ],
+            "properties": {
+                "userIds": {
+                    "example": [
+                        "5ce25306e6405f7072059128",
+                        "5ce25320e6405f707205912f"
+                    ],
+                    "type": "array"
+                },
+                "status": {
+                    "example": true,
+                    "type": "boolean"
+                }
+            }
+        },
+        "AdminsList": {
+            "required": [
+                "page",
+                "pagesize"
+            ],
+            "properties": {
+                "page": {
+                    "example": 1,
+                    "type": "number"
+                },
+                "pagesize": {
+                    "example": 10,
+                    "type": "number"
+                }
+            }
+        },
+        "AddUser": {
+            "required": [
+                "emailId"
+            ],
+            "properties": {
+                "emailId": {
+                    "type": "string",
+                    "example": "manager@grr.la",
+                    "uniqueItems": true
+                },
+                "mobile": {
+                    "type": "string",
+                    "example": "000000000",
+                    "uniqueItems": true
+                },
+                "lastname": {
+                    "example": "Manager",
+                    "type": "string"
+                },
+                "firstname": {
+                    "example": "Manager",
+                    "type": "string"
+                },
+                "username": {
+                    "example": "manager",
+                    "type": "string",
+                    "uniqueItems": true
+                },
+                "role": {
+                    "type": "string",
+                    "example": "5d5695d5102b691ac4c18e2c"
+                }
+            }
+        },
+        "UpdateUser": {
+            "required": [
+                "userId"
+            ],
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "example": "5ad5d198f657ca54cfe39ba0",
+                    "uniqueItems": true
+                },
+                "mobile": {
+                    "type": "string",
+                    "example": "000000000",
+                    "uniqueItems": true
+                },
+                "lastname": {
+                    "example": "Manager",
+                    "type": "string"
+                },
+                "firstname": {
+                    "example": "Manager",
+                    "type": "string"
+                },
+                "username": {
+                    "example": "manager",
+                    "type": "string",
+                    "uniqueItems": true
+                },
+                "role": {
+                    "type": "string",
+                    "example": "manager"
+                }
+            }
+        }
+    }
+}

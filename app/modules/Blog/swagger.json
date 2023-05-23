@@ -1,0 +1,377 @@
+{
+    "paths": {
+        "/addUpdateBlog": {
+            "post": {
+                "tags": [
+                    "Blog Management"
+                ],
+                "description": "Add Blog",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Add Blog",
+                        "schema": {
+                            "$ref": "#/definitions/AddBlog"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Blog added successfully.",
+                        "schema": {
+                            "$ref": "#/definitions/AddBlog"
+                        }
+                    }
+                }
+            }
+        },
+        "/searchBlog": {
+            "post": {
+                "tags": [
+                    "Blog Management"
+                ],
+                "description": "Search Blog",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Search Blog",
+                        "schema": {
+                            "$ref": "#/definitions/SearchBlog"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Searched Blog.",
+                        "schema": {
+                            "$ref": "#/definitions/SearchBlog"
+                        }
+                    }
+                }
+            }
+        },
+        "/listBlog": {
+            "post": {
+                "tags": [
+                    "Blog Management"
+                ],
+                "description": "Blog list",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Params",
+                        "schema": {
+                            "$ref": "#/definitions/BlogsList"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Blog list.",
+                        "schema": {
+                            "$ref": "#/definitions/BlogsList"
+                        }
+                    }
+                }
+            }
+        },
+        "/deleteBlog": {
+            "post": {
+                "tags": [
+                    "Blog Management"
+                ],
+                "description": "Delete blogs",
+                "parameters": [
+                    {
+                        "name": "ids",
+                        "in": "body",
+                        "description": "Ids of users",
+                        "schema": {
+                            "$ref": "#/definitions/DeleteBlog"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Blogs deleted successfully.",
+                        "schema": {
+                            "$ref": "#/definitions/DeleteBlog"
+                        }
+                    }
+                }
+            }
+        },
+        "/getBlogDetails/{blogId}": {
+            "get": {
+                "tags": [
+                    "Blog Management"
+                ],
+                "description": "Get blog",
+                "parameters": [
+                    {
+                        "name": "blogId",
+                        "in": "path",
+                        "description": "Id of blog",
+                        "schema": {
+                            "$ref": "#/definitions/BlogsList"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User data.",
+                        "schema": {
+                            "$ref": "#/definitions/BlogsList"
+                        }
+                    }
+                }
+            }
+        },
+        "/getBlogColumnValues": {
+            "post": {
+                "tags": [
+                    "Blog Management"
+                ],
+                "description": "Column values",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Params",
+                        "schema": {
+                            "$ref": "#/definitions/GetBlogColumn"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Column values.",
+                        "schema": {
+                            "$ref": "#/definitions/GetBlogColumn"
+                        }
+                    }
+                }
+            }
+        },
+        "/blogColumnSettings": {
+            "post": {
+                "tags": [
+                    "Blog Management"
+                ],
+                "description": "Column settings",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Params",
+                        "schema": {
+                            "$ref": "#/definitions/SaveBlogColumnSettings"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Column settings",
+                        "schema": {
+                            "$ref": "#/definitions/SaveBlogColumnSettings"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "BlogsList": {
+            "required": [
+                "page",
+                "pagesize"
+            ],
+            "properties": {
+                "page": {
+                    "example": 1,
+                    "type": "number"
+                },
+                "pagesize": {
+                    "example": 10,
+                    "type": "number"
+                }
+            }
+        },
+        "DeleteBlog": {
+            "required": [
+                "ids"
+            ],
+            "properties": {
+                "ids": {
+                    "example": [
+                        "5ce25306e6405f7072059128",
+                        "5ce25320e6405f707205912f"
+                    ],
+                    "type": "array"
+                }
+            }
+        },
+        "AddBlog": {
+            "required": [
+                "blogTitle",
+                "blogContent",
+                "blogCategory",
+                "metaTitle",
+                "metaDescription",
+                "metaKeyword",
+                "image",
+                "status"
+            ],
+            "properties": {
+                "blogTitle": {
+                    "example": "Blog 1",
+                    "type": "string"
+                },
+                "blogContent": {
+                    "example": "<h4>Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...\"</h4>",
+                    "type": "string"
+                },
+                "blogCategory": {
+                    "example": "Blog",
+                    "type": "string"
+                },
+                "metaTitle": {
+                    "example": "Blog",
+                    "type": "string"
+                },
+                "metaDescription": {
+                    "example": "Blog",
+                    "type": "string"
+                },
+                "metaKeyword": {
+                    "example": "Blog",
+                    "type": "string"
+                }
+            }
+        },
+        "SearchBlog": {
+            "required": [
+                "filter"
+            ],
+            "properties": {
+                "filter": {
+                    "example": {
+                        "blogTitle": "tit"
+                    },
+                    "type": "object"
+                }
+            }
+        },
+        "GetBlogColumn": {
+            "required": [
+                "page",
+                "pagesize",
+                "column"
+            ],
+            "properties": {
+                "page": {
+                    "example": 1,
+                    "type": "number"
+                },
+                "pagesize": {
+                    "example": 20,
+                    "type": "number"
+                },
+                "column": {
+                    "example": "blogTitle",
+                    "type": "string"
+                }
+            }
+        },
+        "SaveBlogColumnSettings": {
+            "required": [
+                "columns"
+            ],
+            "properties": {
+                "columns": {
+                    "example": [
+                        {
+                            "key": "blogTitle",
+                            "status": false
+                        },
+                        {
+                            "key": "blogContent",
+                            "status": false
+                        },
+                        {
+                            "key": "blogCategory",
+                            "status": true
+                        }
+                    ],
+                    "type": "array"
+                }
+            }
+        }
+    }
+}

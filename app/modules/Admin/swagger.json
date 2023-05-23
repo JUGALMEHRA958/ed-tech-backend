@@ -1,0 +1,383 @@
+{
+    "paths": {
+        "/admin/login": {
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "description": "Login",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Login",
+                        "schema": {
+                            "$ref": "#/definitions/AdminLogin"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Login.",
+                        "schema": {
+                            "$ref": "#/definitions/AdminLogin"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/forgotPassword": {
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "description": "Send forgot password mail",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "body",
+                        "description": "Send forgot password mail",
+                        "schema": {
+                            "$ref": "#/definitions/ForgotPasswordAdmin"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Mail sent successfully",
+                        "schema": {
+                            "$ref": "#/definitions/ForgotPasswordAdmin"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/resetPassword": {
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "description": "Reset password",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "body",
+                        "description": "Reset password",
+                        "schema": {
+                            "$ref": "#/definitions/ResetPasswordAdmin"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Password updated successfully",
+                        "schema": {
+                            "$ref": "#/definitions/ResetPasswordAdmin"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/setPassword": {
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "description": "Set password",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "body",
+                        "description": "Set password",
+                        "schema": {
+                            "$ref": "#/definitions/ResetPasswordAdmin"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Password added successfully.",
+                        "schema": {
+                            "$ref": "#/definitions/ResetPasswordAdmin"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/changePassword": {
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "description": "Change password",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Change password",
+                        "schema": {
+                            "$ref": "#/definitions/AdminChangePassword"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Password changed successfully.",
+                        "schema": {
+                            "$ref": "#/definitions/AdminChangePassword"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/editProfile": {
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "description": "Update User Profile",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "body",
+                        "description": "Update User Profile",
+                        "schema": {
+                            "$ref": "#/definitions/AdminUpdateProfile"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User details update successfully.",
+                        "schema": {
+                            "$ref": "#/definitions/AdminUpdateProfile"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/profile": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "description": "Get User Profile",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get User Profile."
+                    }
+                }
+            }
+        },
+        "/admin/logout": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "description": "Logout admin",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Logout admin."
+                    }
+                }
+            }
+        },
+        "/admin/fileUpload": {
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "description": "Upload file",
+                "parameters": [
+                    {
+                        "name": "file",
+                        "required": true,
+                        "in": "formData",
+                        "type": "file",
+                        "description": "Upload file"
+                    },
+                    {
+                        "name": "Authorization",
+                        "required": true,
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "multipart/form-data"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "File uploaded",
+                        "schema": {
+                            "$ref": "#/definitions/AdminUploadfile"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "AdminLogin": {
+            "required": [
+                "emailId",
+                "password"
+            ],
+            "properties": {
+                "emailId": {
+                    "type": "string",
+                    "example": "seed_admin@grr.la",
+                    "uniqueItems": true,
+                    "required": true
+                },
+                "password": {
+                    "type": "string",
+                    "example": "Test1234",
+                    "uniqueItems": true,
+                    "required": true
+                }
+            }
+        },
+        "ResetPasswordAdmin": {
+            "required": [
+                "password",
+                "token"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string",
+                    "example": "Test123",
+                    "uniqueItems": true
+                },
+                "token": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjZDNkMmZlNDg0ZjQ5MDRlYzdjMGJmOCIsImFsZ29yaXRobSI6IkhTMjU2IiwiZXhwIjoxNTYwNTMxNzQ4LCJpYXQiOjE1NjAxNzAzMDh9.9AjvQpjhQxq5Qerw1jPuwDKmxnr5xzU_NN1n1TB5a-0",
+                    "uniqueItems": true
+                }
+            }
+        },
+        "ForgotPasswordAdmin": {
+            "required": [
+                "emailId"
+            ],
+            "properties": {
+                "emailId": {
+                    "type": "string",
+                    "example": "seed_admin@grr.la",
+                    "uniqueItems": true
+                }
+            }
+        },
+        "AdminUpdateProfile": {
+            "required": [
+                "firstname",
+                "lastname",
+                "username",
+                "mobile",
+                "photo"
+            ],
+            "properties": {
+                "lastname": {
+                    "example": "Admin",
+                    "type": "string"
+                },
+                "firstname": {
+                    "example": "Admin",
+                    "type": "string"
+                },
+                "username": {
+                    "example": "admin",
+                    "type": "string",
+                    "uniqueItems": true
+                },
+                "mobile": {
+                    "example": "0000000000",
+                    "type": "string",
+                    "uniqueItems": true
+                },
+                "photo": {
+                    "example": "image_1568120233570.png",
+                    "type": "string"
+                }
+            }
+        },
+        "AdminChangePassword": {
+            "required": [
+                "oldPassword",
+                "newPassword"
+            ],
+            "properties": {
+                "oldPassword": {
+                    "type": "string",
+                    "example": "Test123",
+                    "uniqueItems": true
+                },
+                "newPassword": {
+                    "type": "string",
+                    "example": "123456",
+                    "uniqueItems": true
+                }
+            }
+        },
+        "AdminUploadfile": {
+            "properties": {
+                "file": {
+                    "type": "file"
+                }
+            }
+        }
+    }
+}

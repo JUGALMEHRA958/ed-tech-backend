@@ -1,0 +1,27 @@
+{
+    "emailTemplate": {
+        "emailTitle": 1
+    },
+    "settings": {
+        "__v": 0,
+        "createdAt": 0,
+        "updatedAt": 0
+    },
+    "defaultEmailSettings": {
+        "defaultFromEmail": 1,
+        "defaultAdminEmail": 1
+    },
+    "smtp": {
+        "smtp": 1
+    },
+    "globalSettings": {
+        "allCurrency": 0,
+        "allDateFormat": 0,
+        "defaultFromEmail": 0,
+        "defaultAdminEmail": 0,
+        "createdAt": 0,
+        "updatedAt": 0,
+        "smtp": 0,
+        "__v": 0
+    }
+}
