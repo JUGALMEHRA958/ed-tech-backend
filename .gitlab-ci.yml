@@ -122,15 +122,15 @@ stages:
     only:
       - master
   deploy-prod:
-#    stage: deploy-prod
-#    tags:
-#      - docker-exec
-#    script:
-#      - eval $(ssh-agent -s)
-#      - echo "$MASTER_KEY_PEM" > KEY_FILE && chmod 400 KEY_FILE  
-#      - ssh -T -o StrictHostKeyChecking=no -i KEY_FILE $AWS_USER@$AWS_HOST_MASTER "docker-compose -f /home/ubuntu/deploy/api/docker-compose.yml pull && docker-compose -f /home/ubuntu/deploy/api/docker-compose.yml up -d "    
-#      - ssh-add -D KEY_FILE
-#    only:
-#      - master
+    stage: deploy-prod
+    tags:
+      - docker-exec
+    script:
+      - eval $(ssh-agent -s)
+      - echo "$MASTER_KEY_PEM" > KEY_FILE && chmod 400 KEY_FILE  
+      - ssh -T -o StrictHostKeyChecking=no -i KEY_FILE $AWS_USER@$AWS_HOST_MASTER "docker-compose -f /home/ubuntu/deploy/api/docker-compose.yml pull && docker-compose -f /home/ubuntu/deploy/api/docker-compose.yml up -d "    
+      - ssh-add -D KEY_FILE
+    only:
+      - master
   #####################################################################################################################    
   
