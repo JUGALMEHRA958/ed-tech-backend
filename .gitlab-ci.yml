@@ -1,0 +1,136 @@
+stages:
+    - build_dev
+    - deploy-dev-kube
+    - build_qa
+    - deploy-qa-kube
+    - build_uat
+    - deploy-uat-kube
+    - build_beta
+    - deploy-beta-kube
+    - build_prod
+    - deploy-prod
+
+build_dev:
+    stage: build_dev
+    tags:
+      - docker-exec
+    script:
+      - touch .env
+      #- echo $DEV_ENV_VAR | jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' >> .env
+      - echo "$DEV_ENV_VAR" >> .env
+      - docker build -t docker.indianic.com/cambridge-ielts/dev-api:$CI_COMMIT_SHORT_SHA .
+      - docker push docker.indianic.com/cambridge-ielts/dev-api:$CI_COMMIT_SHORT_SHA
+      - docker rmi docker.indianic.com/cambridge-ielts/dev-api:$CI_COMMIT_SHORT_SHA
+    only:
+      - dev
+  
+deploy-dev-kube:
+    stage: deploy-dev-kube
+    tags:
+      - kube-prod-exec
+    script:
+      - sed -i "s/<VERSION>/${CI_COMMIT_SHORT_SHA}/g" cambridge-ielts-dev-api.yaml
+      - kubectl apply -f cambridge-ielts-dev-api.yaml -n internal-projects
+    only:
+      - dev
+######################################################################################################################
+  
+build_qa:
+    stage: build_qa
+    tags:
+      - docker-exec
+    script:
+      - touch .env
+      #- echo $QA_ENV_VAR | jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' >> .env
+      - echo "$QA_ENV_VAR" >> .env
+      - docker build -t docker.indianic.com/cambridge-ielts/qa-api:$CI_COMMIT_SHORT_SHA .
+      - docker push docker.indianic.com/cambridge-ielts/qa-api:$CI_COMMIT_SHORT_SHA
+      - docker rmi docker.indianic.com/cambridge-ielts/qa-api:$CI_COMMIT_SHORT_SHA
+    only:
+      - qa
+  
+deploy-qa-kube:
+    stage: deploy-qa-kube
+    tags:
+      - kube-prod-exec
+    script:
+      - sed -i "s/<VERSION>/${CI_COMMIT_SHORT_SHA}/g" cambridge-ielts-qa-api.yaml
+      - kubectl apply -f cambridge-ielts-qa-api.yaml -n internal-projects
+    only:
+      - qa
+  #####################################################################################################################
+  
+build_uat:
+    stage: build_uat
+    tags:
+      - docker-exec
+    script:
+      - touch .env
+      #- echo $UAT_ENV_VAR | jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' >> .env
+      - echo "$UAT_ENV_VAR" >> .env
+      - docker build -t docker.indianic.com/cambridge-ielts/uat-api:$CI_COMMIT_SHORT_SHA .
+      - docker push docker.indianic.com/cambridge-ielts/uat-api:$CI_COMMIT_SHORT_SHA
+      - docker rmi docker.indianic.com/cambridge-ielts/uat-api:$CI_COMMIT_SHORT_SHA
+    only:
+      - uat
+  
+deploy-uat-kube:
+    stage: deploy-uat-kube
+    tags:
+      - kube-prod-exec
+    script:
+      - sed -i "s/<VERSION>/${CI_COMMIT_SHORT_SHA}/g" cambridge-ielts-uat-api.yaml
+      - kubectl apply -f cambridge-ielts-uat-api.yaml -n internal-projects
+    only:
+      - uat
+  ####################################################################################################################
+  
+build_beta:
+    stage: build_beta
+    tags:
+      - docker-exec
+    script:
+      - touch .env
+      #- echo $BETA_ENV_VAR | jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' >> .env
+      - echo "$BETA_ENV_VAR" >> .env
+      - docker build -t docker.indianic.com/cambridge-ielts/beta-api:$CI_COMMIT_SHORT_SHA .
+      - docker push docker.indianic.com/cambridge-ielts/beta-api:$CI_COMMIT_SHORT_SHA
+      - docker rmi docker.indianic.com/cambridge-ielts/beta-api:$CI_COMMIT_SHORT_SHA
+    only:
+      - beta
+  
+deploy-beta-kube:
+    stage: deploy-beta-kube
+    tags:
+      - kube-prod-exec
+    script:
+      - sed -i "s/<VERSION>/${CI_COMMIT_SHORT_SHA}/g" cambridge-ielts-beta-api.yaml
+      - kubectl apply -f cambridge-ielts-beta-api.yaml -n internal-projects
+    only:
+      - beta
+  #####################################################################################################################
+  
+build_prod:
+    stage: build_prod
+    tags:
+      - docker-exec
+    script:
+      - echo "$PROD_ENV_VAR" >> .env
+      - docker build -t docker.indianic.com/cambridge-ielts/prod-api:latest .
+      - docker push docker.indianic.com/cambridge-ielts/prod-api:latest
+      - docker rmi docker.indianic.com/cambridge-ielts/prod-api:latest
+    only:
+      - master
+#deploy-prod:
+#    stage: deploy-prod
+#    tags:
+#      - docker-exec
+#    script:
+#      - eval $(ssh-agent -s)
+#      - echo "$MASTER_KEY_PEM" > KEY_FILE && chmod 400 KEY_FILE  
+#      - ssh -T -o StrictHostKeyChecking=no -i KEY_FILE $AWS_USER@$AWS_HOST_MASTER "docker-compose -f /home/ubuntu/deploy/api/docker-compose.yml pull && docker-compose -f /home/ubuntu/deploy/api/docker-compose.yml up -d "    
+#      - ssh-add -D KEY_FILE
+#    only:
+#      - master
+  #####################################################################################################################    
+  
