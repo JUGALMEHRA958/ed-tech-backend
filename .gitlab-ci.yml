@@ -121,7 +121,7 @@ stages:
       - docker rmi docker.indianic.com/cambridge-ielts/prod-api:latest
     only:
       - master
-#  deploy-prod:
+  deploy-prod:
 #    stage: deploy-prod
 #    tags:
 #      - docker-exec
