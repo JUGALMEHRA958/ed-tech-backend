@@ -9,8 +9,8 @@ stages:
     - deploy-beta-kube
     - build_prod
     - deploy-prod
-  
-  build_dev:
+
+build_dev:
     stage: build_dev
     tags:
       - docker-exec
@@ -24,7 +24,7 @@ stages:
     only:
       - dev
   
-  deploy-dev-kube:
+deploy-dev-kube:
     stage: deploy-dev-kube
     tags:
       - kube-prod-exec
@@ -33,9 +33,9 @@ stages:
       - kubectl apply -f cambridge-ielts-dev-api.yaml -n internal-projects
     only:
       - dev
-  ######################################################################################################################
+######################################################################################################################
   
-  build_qa:
+build_qa:
     stage: build_qa
     tags:
       - docker-exec
@@ -49,7 +49,7 @@ stages:
     only:
       - qa
   
-  deploy-qa-kube:
+deploy-qa-kube:
     stage: deploy-qa-kube
     tags:
       - kube-prod-exec
@@ -60,7 +60,7 @@ stages:
       - qa
   #####################################################################################################################
   
-  build_uat:
+build_uat:
     stage: build_uat
     tags:
       - docker-exec
@@ -74,7 +74,7 @@ stages:
     only:
       - uat
   
-  deploy-uat-kube:
+deploy-uat-kube:
     stage: deploy-uat-kube
     tags:
       - kube-prod-exec
@@ -85,7 +85,7 @@ stages:
       - uat
   ####################################################################################################################
   
-  build_beta:
+build_beta:
     stage: build_beta
     tags:
       - docker-exec
@@ -99,7 +99,7 @@ stages:
     only:
       - beta
   
-  deploy-beta-kube:
+deploy-beta-kube:
     stage: deploy-beta-kube
     tags:
       - kube-prod-exec
@@ -110,7 +110,7 @@ stages:
       - beta
   #####################################################################################################################
   
-  build_prod:
+build_prod:
     stage: build_prod
     tags:
       - docker-exec
@@ -121,16 +121,16 @@ stages:
       - docker rmi docker.indianic.com/cambridge-ielts/prod-api:latest
     only:
       - master
-  #deploy-prod:
-  #  stage: deploy-prod
-  #  tags:
-  #    - docker-exec
-  #  script:
-  #    - eval $(ssh-agent -s)
-  #    - echo "$MASTER_KEY_PEM" > KEY_FILE && chmod 400 KEY_FILE  
-  #    - ssh -T -o StrictHostKeyChecking=no -i KEY_FILE $AWS_USER@$AWS_HOST_MASTER "docker-compose -f /home/ubuntu/deploy/api/docker-compose.yml pull && docker-compose -f /home/ubuntu/deploy/api/docker-compose.yml up -d "    
-  #    - ssh-add -D KEY_FILE
-  #  only:
-  #    - master
+#deploy-prod:
+#    stage: deploy-prod
+#    tags:
+#      - docker-exec
+#    script:
+#      - eval $(ssh-agent -s)
+#      - echo "$MASTER_KEY_PEM" > KEY_FILE && chmod 400 KEY_FILE  
+#      - ssh -T -o StrictHostKeyChecking=no -i KEY_FILE $AWS_USER@$AWS_HOST_MASTER "docker-compose -f /home/ubuntu/deploy/api/docker-compose.yml pull && docker-compose -f /home/ubuntu/deploy/api/docker-compose.yml up -d "    
+#      - ssh-add -D KEY_FILE
+#    only:
+#      - master
   #####################################################################################################################    
   
