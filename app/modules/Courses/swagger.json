@@ -1,0 +1,82 @@
+{
+    "paths": {
+        "/courses": {
+            "post": {
+                "tags": [
+                    "Courses Management"
+                ],
+                "description": "Add a course",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Add Blog",
+                        "schema": {
+                            "$ref": "#/definitions/AddCourse"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "image": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Course added successfully.",
+                        "schema": {
+                            "$ref": "#/definitions/AddCourse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "AddCourse": {
+            "required": [
+                "title",
+                "productId",
+                "idpNumber",
+                "picture",
+                "category",
+                "price",
+                "type"
+            ],
+            "properties": {
+                "title": {
+                    "example": "Title goes here",
+                    "image": "string"
+                },
+                "productId": {
+                    "example": "ProductIdGoesHere",
+                    "image": "string"
+                },
+                "idpNumber": {
+                    "example": "IDPNumber",
+                    "image": "string"
+                },
+                "picture": {
+                    "example": "PICTURE",
+                    "image": "string"
+                },
+                "category": {
+                    "example": "CategoryGoesHere",
+                    "image": "string"
+                },
+                "price": {
+                    "example": 58,
+                    "image": "string"
+                },
+                "type": {
+                    "example": "free",
+                    "image": "string"
+                }
+            }
+        }
+    }
+}

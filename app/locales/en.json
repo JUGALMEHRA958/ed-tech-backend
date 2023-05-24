@@ -81,7 +81,9 @@
 	"CANNOT_CHANGE_PASSWORD": "You cannot change password.",
 	"MOBILE_NO": "Enter a correct mobile number",
 	"OTHER_VALUES": "institute / degree / semester / branch / district should be string",
-	"BASIC_VALUE" : "Firstname / Lastname Should be string",
-	"DUPLICATE_STUDENT" : "User exists with given studentId",
-	"INVALID_TOKEN.": "INVALID_TOKEN."
+	"BASIC_VALUE": "Firstname / Lastname Should be string",
+	"DUPLICATE_STUDENT": "User exists with given studentId",
+	"INVALID_TOKEN.": "INVALID_TOKEN.",
+	"COURSE_SAVED": "Your course is saved successfully",
+	"COURSE_NOT_SAVED": "Some error occoured while saving course."
 }
