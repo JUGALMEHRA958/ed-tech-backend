@@ -28,7 +28,7 @@ class CourseController extends Controller {
         fieldsArray
       );
 
-      let savedData = await new Model(CourseSchema).store(data);
+      let savedData = await new Model(CourseSchema).store({...data , createdBy:this.req.currentUser._id});
       return this.res.send({
         status: 1,
         message:i18n.__('COURSE_SAVED')

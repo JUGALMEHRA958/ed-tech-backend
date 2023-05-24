@@ -20,6 +20,10 @@ const courseSchema = new Schema(
       enum: ["paid", "free","sample"],
       default: "sample",
     },
+    createdBy:{type: Schema.Types.ObjectId, ref: "admins" , default:null},
+    updatedBy:{type: Schema.Types.ObjectId, ref: "admins",default:null},
+    status:{type: Boolean, default: true },
+    isDeleted:{type: Boolean, default: false }
   },
   {
     timestamps: true,
