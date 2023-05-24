@@ -11,6 +11,7 @@ let path = require('path');
 let fs = require('fs');
 let https = require('https');
 let i18n = require("i18n");
+const expressApp = require('express');
 
 let config = require('./configs/configs');
 let express = require('./configs/express');
@@ -48,6 +49,7 @@ global.appRoot = path.resolve(__dirname);
 
 db = mongoose();
 const app = express();
+app.use('/images', expressApp.static(path.join(__dirname, 'images')));
 
 app.get('/', function (req, res, next) {
     res.send('hello world');
