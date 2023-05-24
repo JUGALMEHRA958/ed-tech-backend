@@ -34,7 +34,7 @@ module.exports = (app, express) => {
           res.status(400).send('No file uploaded.');
         } else {
           const filePath = req.file.path;
-          res.send(`${config.serverUrl}${filePath}`);
+          res.send({"path":`${config.serverUrl}${filePath}`});
         }
       });
       

@@ -35,6 +35,41 @@
                 }
             }
         },
+        "/upload": {
+            "post": {
+                "tags": [
+                    "Upload image"
+                ],
+                "description": "Upload Media",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Add Media",
+                        "schema": {
+                            "$ref": "#/definitions/AddMedia"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Media added successfully.",
+                        "schema": {
+                            "$ref": "#/definitions/AddMedia"
+                        }
+                    }
+                }
+            }
+        },
         "/searchMedia": {
             "post": {
                 "tags": [
@@ -279,17 +314,12 @@
         },
         "AddMedia": {
             "required": [
-                "name",
-                "imageUrl"
+                "file"
             ],
             "properties": {
-                "name": {
+                "file": {
                     "example": "Avatar",
-                    "type": "string"
-                },
-                "imageUrl": {
-                    "example": "http://localhost:4167/public/upload/image.png",
-                    "type": "string"
+                    "type": "file"
                 }
             }
         },
