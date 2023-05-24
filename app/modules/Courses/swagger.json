@@ -89,7 +89,7 @@
                     "image": "string"
                 },
                 "category": {
-                    "example": "CategoryGoesHere",
+                    "example": "testbank",
                     "image": "string"
                 },
                 "price": {
