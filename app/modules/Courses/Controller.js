@@ -42,5 +42,36 @@ class CourseController extends Controller {
       });
     }
   }
+
+  async get(){
+    try{
+        
+        let testbank = await CourseSchema.find({
+          category:"testbank",
+          status:true,
+          isDeleted:false
+        });
+        let writeAndImprove = await CourseSchema.find({
+          category:"writeAndImprove",
+          status:true,
+          isDeleted:false
+        });;
+
+        return this.res.send({
+            status: 1,
+            data : {testbank, writeAndImprove} ,
+            message:i18n.__('SUCCESS')
+          });
+
+
+    }catch(e){
+    console.log(e);
+      return this.res.send({
+        status: 0,
+        message:i18n.__('SOME_ERROR_OCCOURED_WHILE_FETCHING_COURSES'),
+        error: e,
+      });
+    }
+  }
 }
 module.exports = CourseController;

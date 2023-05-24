@@ -9,7 +9,12 @@ module.exports = (app, express) => {
     router.post('/courses', Globals.isAdminAuthorised(),Validators.validate, (req, res, next) => {
         const courseObj = (new CourseController()).boot(req, res, next);
         return courseObj.add();
-    });    
+    }); 
+
+    router.get('/courses', Globals.isAdminAuthorised(),Validators.validate, (req, res, next) => {
+        const courseObj = (new CourseController()).boot(req, res, next);
+        return courseObj.get();
+    });  
 
     app.use(config.baseApiUrl, router);
 }

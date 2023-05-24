@@ -85,5 +85,6 @@
 	"DUPLICATE_STUDENT": "User exists with given studentId",
 	"INVALID_TOKEN.": "INVALID_TOKEN.",
 	"COURSE_SAVED": "Your course is saved successfully",
-	"COURSE_NOT_SAVED": "Some error occoured while saving course."
+	"COURSE_NOT_SAVED": "Some error occoured while saving course.",
+	"SUCCESS": "SUCCESS"
 }
