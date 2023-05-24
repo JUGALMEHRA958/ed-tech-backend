@@ -11,7 +11,7 @@ module.exports = (app, express) => {
         return courseObj.add();
     }); 
 
-    router.get('/courses', Globals.isAdminAuthorised(),Validators.validate, (req, res, next) => {
+    router.get('/courses/getAllCategoryWise', Globals.isAdminAuthorised(),Validators.validate, (req, res, next) => {
         const courseObj = (new CourseController()).boot(req, res, next);
         return courseObj.get();
     });  

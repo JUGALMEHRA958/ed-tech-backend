@@ -35,7 +35,7 @@
                 }
             }
         },
-        "/courses": {
+        "/courses/getAllCategoryWise": {
             "get": {
                 "tags": [
                     "Courses Management"
