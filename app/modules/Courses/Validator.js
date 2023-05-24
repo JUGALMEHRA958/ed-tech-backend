@@ -8,6 +8,25 @@
  
  class Validators {
  
+
+    static addCourseValidator() {
+        try {
+            return [
+                check('title').exists().withMessage(i18n.__("%s REQUIRED", 'title')),
+                check('productId').exists().withMessage(i18n.__("%s REQUIRED", 'productId')),
+                check('idpNumber').exists().withMessage(i18n.__("%s REQUIRED", 'idpNumber')),
+                check('picture').exists().withMessage(i18n.__("%s REQUIRED", 'picture')),
+                check('category').exists().withMessage(i18n.__("%s REQUIRED", 'category')),
+                check('price').exists().withMessage(i18n.__("%s REQUIRED", 'price')),
+                check('type').exists().withMessage(i18n.__("%s REQUIRED", 'type'))
+
+            ];
+        } catch (error) {
+            return error;
+        }
+    }
+
+
     
      static validate(req, res, next) {
          try {

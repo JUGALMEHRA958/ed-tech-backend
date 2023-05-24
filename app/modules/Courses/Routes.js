@@ -6,7 +6,7 @@ module.exports = (app, express) => {
     const config = require('../../../configs/configs');
     const Validators = require("./Validator")
     
-    router.post('/courses', Globals.isAdminAuthorised(),Validators.validate, (req, res, next) => {
+    router.post('/courses', Validators.addCourseValidator() ,Globals.isAdminAuthorised(),Validators.validate, (req, res, next) => {
         const courseObj = (new CourseController()).boot(req, res, next);
         return courseObj.add();
     }); 

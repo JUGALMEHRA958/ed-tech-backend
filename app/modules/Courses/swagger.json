@@ -34,6 +34,30 @@
                     }
                 }
             }
+        },
+        "/courses": {
+            "get": {
+                "tags": [
+                    "Courses Management"
+                ],
+                "description": "Get course",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "image": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Course added successfully."
+                    }
+                }
+            }
         }
     },
     "definitions": {
