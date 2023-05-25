@@ -26,5 +26,10 @@ module.exports = (app, express) => {
         return courseObj.deleteCourse();
     });  
 
+    router.post('/courses/getCourseById',Validators.editdeleteCourseValidator(), Globals.isAdminAuthorised(),Validators.validate, (req, res, next) => {
+        const courseObj = (new CourseController()).boot(req, res, next);
+        return courseObj.getCourseById();
+    }); 
+
     app.use(config.baseApiUrl, router);
 }

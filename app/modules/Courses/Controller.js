@@ -107,5 +107,19 @@ class CourseController extends Controller {
       this.res.status(400).json({ status:0,error: error.message });
     }
   };
+
+  async getCourseById (){
+    try {
+      const courseId = this.req.body.id;
+      const course = await CourseSchema.findById(courseId);
+      if (!course) {
+        throw new Error('Course not found');
+      }
+      this.res.json({status:1, course:course});
+    } catch (error) {
+      this.res.status(400).json({status:0, error: error.message });
+    }
+  };
+  
 }
 module.exports = CourseController;
