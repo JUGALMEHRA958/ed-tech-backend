@@ -53,8 +53,164 @@
                     "application/json"
                 ],
                 "responses": {
+                    "200":{
+                        "status": 1,
+                        "data": {
+                            "testbank": [
+                                {
+                                    "_id": "646dfbb0e1af91000856f054",
+                                    "updatedAt": "2023-05-24T11:57:36.998Z",
+                                    "createdAt": "2023-05-24T11:57:36.998Z",
+                                    "title": "1 full reading test",
+                                    "productId": "987654321",
+                                    "idpNumber": "123456987",
+                                    "picture": "https://cambridge-ielts-api-dev.devpress.net/images/7018c9.png",
+                                    "price": 50,
+                                    "__v": 0,
+                                    "isDeleted": false,
+                                    "status": true,
+                                    "updatedBy": null,
+                                    "createdBy": "646dd4c75990a22d874fc3b4",
+                                    "type": "paid",
+                                    "category": "testbank"
+                                }
+                            ],
+                            "writeAndImprove": [
+                                {
+                                    "_id": "646df241e1af91000856f03f",
+                                    "updatedAt": "2023-05-25T05:39:43.216Z",
+                                    "createdAt": "2023-05-24T11:17:21.608Z",
+                                    "title": "iielts",
+                                    "productId": "ABsCDsaf1s23s4",
+                                    "idpNumber": "IDPGOESHERE",
+                                    "picture": "IDPGOESHERE",
+                                    "price": 0,
+                                    "__v": 0,
+                                    "isDeleted": false,
+                                    "status": true,
+                                    "updatedBy": null,
+                                    "createdBy": "646dd4c75990a22d874fc3b4",
+                                    "type": "free",
+                                    "category": "writeAndImprove"
+                                },
+                                {
+                                    "_id": "646ef4ec46d9260d0bd89f10",
+                                    "updatedAt": "2023-05-25T05:41:00.296Z",
+                                    "createdAt": "2023-05-25T05:41:00.296Z",
+                                    "title": "iielts",
+                                    "productId": "ABsCDsafss1s23s4",
+                                    "idpNumber": "IDPGOESHERE",
+                                    "picture": "IDPGOESHERE",
+                                    "price": 0,
+                                    "__v": 0,
+                                    "isDeleted": false,
+                                    "status": true,
+                                    "updatedBy": null,
+                                    "createdBy": "646dd4c75990a22d874fc3b4",
+                                    "type": "free",
+                                    "category": "writeAndImprove"
+                                }
+                            ]
+                        },
+                        "message": "SUCCESS"
+                    }
+                }
+            }
+        },
+        "/courses/edit": {
+            "post": {
+                "tags": [
+                    "Courses Management"
+                ],
+                "description": "Edit a course",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Edit a course",
+                        "schema": {
+                            "$ref": "#/definitions/EditCourse"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "image": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
                     "200": {
-                        "description": "Course added successfully."
+                        "status": 1,
+                        "updatedCourse": {
+                            "_id": "646df241e1af91000856f03f",
+                            "updatedAt": "2023-05-25T05:42:43.338Z",
+                            "createdAt": "2023-05-24T11:17:21.608Z",
+                            "title": "iielts",
+                            "productId": "ABsCDsaf1s23s4",
+                            "idpNumber": "IDPGOESHERE",
+                            "picture": "IDPGOESHERE",
+                            "price": 0,
+                            "__v": 0,
+                            "isDeleted": false,
+                            "status": true,
+                            "updatedBy": null,
+                            "createdBy": "646dd4c75990a22d874fc3b4",
+                            "type": "free",
+                            "category": "writeAndImprove"
+                        }
+                    }
+                }
+            }
+        },
+        "/courses/delete": {
+            "delete": {
+                "tags": [
+                    "Courses Management"
+                ],
+                "description": "delete a course",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "delete a course",
+                        "schema": {
+                            "$ref": "#/definitions/DeleteCourse"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "image": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "status": 1,
+                        "deletedCourse": {
+                            "_id": "646ef7545f3002110c787df8",
+                            "updatedAt": "2023-05-25T05:56:36.064Z",
+                            "createdAt": "2023-05-25T05:51:16.309Z",
+                            "title": "iielts",
+                            "productId": "ABsCsssDsaf1s23s4",
+                            "idpNumber": "IDPGOESHERE",
+                            "picture": "IDPGOESHERE",
+                            "price": 0,
+                            "__v": 0,
+                            "isDeleted": true,
+                            "status": false,
+                            "updatedBy": null,
+                            "createdBy": "646dd4c75990a22d874fc3b4",
+                            "type": "free",
+                            "category": "writeAndImprove"
+                        }
                     }
                 }
             }
@@ -100,6 +256,64 @@
                     "example": "free",
                     "image": "string"
                 }
+            }
+        },
+        "EditCourse": {
+            "required": [
+                "id",
+                "title",
+                "productId",
+                "idpNumber",
+                "picture",
+                "category",
+                "price",
+                "type"
+            ],
+            "properties": {
+                "id": {
+                    "example": "646df241e1af91000856f03f",
+                    "image": "string"
+                },
+                "title": {
+                    "example": "Title goes here",
+                    "image": "string"
+                },
+                "productId": {
+                    "example": "ProductIdGoesHere",
+                    "image": "string"
+                },
+                "idpNumber": {
+                    "example": "IDPNumber",
+                    "image": "string"
+                },
+                "picture": {
+                    "example": "PICTURE",
+                    "image": "string"
+                },
+                "category": {
+                    "example": "testbank",
+                    "image": "string"
+                },
+                "price": {
+                    "example": 58,
+                    "image": "string"
+                },
+                "type": {
+                    "example": "free",
+                    "image": "string"
+                }
+            }
+        },
+        "DeleteCourse": {
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "example": "646ef7545f3002110c787df8",
+                    "image": "string"
+                }
+                
             }
         }
     }

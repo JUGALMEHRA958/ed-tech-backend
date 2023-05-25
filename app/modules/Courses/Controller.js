@@ -73,5 +73,39 @@ class CourseController extends Controller {
       });
     }
   }
+
+  async editCourse  ()  {
+    try {
+      const courseId = this.req.body.id;
+      const courseData = this.req.body;
+      const updatedCourse = await CourseSchema.findOneAndUpdate({_id:courseId , status:true,isDeleted:false}, courseData, {
+        new: true,
+      });
+      if (!updatedCourse) {
+        throw new Error('Course not found');
+      }
+      this.res.json({status:1,updatedCourse:updatedCourse});
+    } catch (error) {
+      console.log(error)
+      this.res.status(400).json({status:0, error: error.message });
+    }
+  };
+
+  async deleteCourse  ()  {
+    try {
+      const courseId = this.req.body.id;
+      const deletedCourse = await CourseSchema.findByIdAndUpdate(
+        courseId,
+        { isDeleted: true , status:false},
+        { new: true }
+      );
+      if (!deletedCourse) {
+        throw new Error('Course not found');
+      }
+      this.res.json({status:1,deletedCourse:deletedCourse});
+    } catch (error) {
+      this.res.status(400).json({ status:0,error: error.message });
+    }
+  };
 }
 module.exports = CourseController;

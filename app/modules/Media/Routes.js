@@ -29,7 +29,7 @@ module.exports = (app, express) => {
     
     
     // Define a route to handle file uploads
-    router.post('/upload', upload.single('file'), (req, res) => {
+    router.post('/upload', Globals.isAdminAuthorised(),upload.single('file'), (req, res) => {
         if (!req.file) {
           res.status(400).send('No file uploaded.');
         } else {

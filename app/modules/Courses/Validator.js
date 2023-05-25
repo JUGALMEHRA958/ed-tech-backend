@@ -26,6 +26,19 @@
         }
     }
 
+    static editdeleteCourseValidator() {
+        try {
+            return [
+                check('id').exists().withMessage(i18n.__("%s REQUIRED", 'id'))
+
+            ];
+        } catch (error) {
+            return error;
+        }
+    }
+
+
+
 
     
      static validate(req, res, next) {
