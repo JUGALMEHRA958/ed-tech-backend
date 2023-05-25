@@ -18,7 +18,23 @@
                 check('picture').exists().withMessage(i18n.__("%s REQUIRED", 'picture')),
                 check('category').exists().withMessage(i18n.__("%s REQUIRED", 'category')),
                 check('price').exists().withMessage(i18n.__("%s REQUIRED", 'price')),
-                check('type').exists().withMessage(i18n.__("%s REQUIRED", 'type'))
+                check('type').exists().withMessage(i18n.__("%s REQUIRED", 'type')),
+                check('description').exists().withMessage(i18n.__("%s REQUIRED", 'description')),
+                check('moduleType').exists().withMessage(i18n.__("%s REQUIRED", 'moduleType')),
+
+
+            ];
+        } catch (error) {
+            return error;
+        }
+    }
+
+    static getCourseValidatior() {
+        try {
+            return [
+                check('pageNumber').exists().withMessage(i18n.__("%s REQUIRED", 'pageNumber')),
+                check('pageSize').exists().withMessage(i18n.__("%s REQUIRED", 'pageSize'))
+
 
             ];
         } catch (error) {

@@ -4,6 +4,7 @@ var Schema = require("mongoose").Schema;
 const courseSchema = new Schema(
   {
     title: { type: String, require: true },
+    description: { type: String, require: true },
     productId: { type: String, require: true , unique:true},
     idpNumber: { type: String, require: true },
     picture: { type: String, require: true },
@@ -12,6 +13,12 @@ const courseSchema = new Schema(
       require: true,
       enum: ["testbank", "writeAndImprove"],
       default: "testbank",
+    },
+    moduleType:{
+      type: String,
+      require: true,
+      enum: ["listening", "reading","speaking","writing"],
+      default: "listening",
     },
     price: { type: Number, require: true },
     type: {

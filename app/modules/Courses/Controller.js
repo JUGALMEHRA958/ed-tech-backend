@@ -16,12 +16,14 @@ class CourseController extends Controller {
     try {
       let fieldsArray = [
         "title",
+        "description",
         "productId",
         "idpNumber",
         "picture",
         "category",
         "price",
         "type",
+        "moduleType"
       ];
       let data = await new RequestBody().processRequestBody(
         this.req.body,
@@ -45,21 +47,22 @@ class CourseController extends Controller {
 
   async get(){
     try{
-        
-        let testbank = await CourseSchema.find({
-          category:"testbank",
-          status:true,
-          isDeleted:false
-        });
-        let writeAndImprove = await CourseSchema.find({
-          category:"writeAndImprove",
-          status:true,
-          isDeleted:false
-        });;
+      let fieldsArray = [
+        "pageNumber",
+        "pageSize"
+      ];
+      let data = await new RequestBody().processRequestBody(
+        this.req.body,
+        fieldsArray
+      );
+        let courseData = await CourseSchema.find({
+          isDeleted:false,
+          status:true
+        }).limit(data.pageSize).skip((data.pageNumber-1)*data.pageSize);
 
         return this.res.send({
             status: 1,
-            data : {testbank, writeAndImprove} ,
+            data : courseData ,
             message:i18n.__('SUCCESS')
           });
 
@@ -84,10 +87,10 @@ class CourseController extends Controller {
       if (!updatedCourse) {
         throw new Error('Course not found');
       }
-      this.res.json({status:1,updatedCourse:updatedCourse});
+      return this.res.json({status:1,updatedCourse:updatedCourse});
     } catch (error) {
       console.log(error)
-      this.res.status(400).json({status:0, error: error.message });
+      return  this.res.status(400).json({status:0, error: error.message });
     }
   };
 
@@ -102,9 +105,9 @@ class CourseController extends Controller {
       if (!deletedCourse) {
         throw new Error('Course not found');
       }
-      this.res.json({status:1,deletedCourse:deletedCourse});
+      return this.res.json({status:1,deletedCourse:deletedCourse});
     } catch (error) {
-      this.res.status(400).json({ status:0,error: error.message });
+      return this.res.status(400).json({ status:0,error: error.message });
     }
   };
 
@@ -115,9 +118,9 @@ class CourseController extends Controller {
       if (!course) {
         throw new Error('Course not found');
       }
-      this.res.json({status:1, course:course});
+      return this.res.json({status:1, course:course});
     } catch (error) {
-      this.res.status(400).json({status:0, error: error.message });
+      return this.res.status(400).json({status:0, error: error.message });
     }
   };
   
