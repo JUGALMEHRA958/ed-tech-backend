@@ -77,6 +77,37 @@ class CourseController extends Controller {
     }
   }
 
+  async getCategoryWise(){
+    try{
+      
+      let testbankData = await CourseSchema.find({
+          isDeleted:false,
+          status:true,
+          category:"testbank"
+        });
+      let writeAndImprove = await CourseSchema.find({
+        isDeleted:false,
+        status:true,
+        category:"writeAndImprove"
+      });
+
+        return this.res.send({
+            status: 1,
+            data : {testbankData:testbankData,writeAndImprove:writeAndImprove} ,
+            message:i18n.__('SUCCESS')
+          });
+
+
+    }catch(e){
+    console.log(e);
+      return this.res.send({
+        status: 0,
+        message:i18n.__('SOME_ERROR_OCCOURED_WHILE_FETCHING_COURSES'),
+        error: e,
+      });
+    }
+  }
+
   async editCourse  ()  {
     try {
       const courseId = this.req.body.id;

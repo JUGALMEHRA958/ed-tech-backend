@@ -260,6 +260,47 @@
                     }
                 }
             }
+        },
+        "/courses/getAllCoursesCategoryWise": {
+            "post": {
+                "tags": [
+                    "Courses Management"
+                ],
+                "description": "Get the courses categorywise",
+                "parameters": [
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description":"Course fetched",
+                        "status": 1,
+                        "course": {
+                            "_id": "646ef4ec46d9260d0bd89f10",
+                            "updatedAt": "2023-05-25T05:47:27.010Z",
+                            "createdAt": "2023-05-25T05:41:00.296Z",
+                            "title": "iielts",
+                            "productId": "ABsCDsafss1s23s4",
+                            "idpNumber": "IDPGOESHERE",
+                            "picture": "IDPGOESHERE",
+                            "price": 0,
+                            "__v": 0,
+                            "isDeleted": false,
+                            "status": true,
+                            "updatedBy": null,
+                            "createdBy": "646dd4c75990a22d874fc3b4",
+                            "type": "free",
+                            "category": "writeAndImprove"
+                        }
+                    },
+                    "400":{
+                        "description":"Course fetching failed due to wrong id",
+                        "status": 0,
+                        "error": "Cast to ObjectId failed for value \"646ef4ec46d9260ds0bd89f10\" at path \"_id\" for model \"courses\""
+                    }
+                }
+            }
         }
     },
     "definitions": {
