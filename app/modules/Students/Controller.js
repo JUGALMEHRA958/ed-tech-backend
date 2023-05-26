@@ -772,7 +772,7 @@ class StudentsController extends Controller {
         return this.res.send({
           status: 1,
           message: i18n.__("LOGIN_SUCCESS"),
-          access_token: token,
+          token: token,
           refreshToken: refreshToken,
           data: updatedUser,
         });
