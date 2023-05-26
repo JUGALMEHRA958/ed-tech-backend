@@ -268,6 +268,12 @@
                 ],
                 "description": "Get the courses categorywise",
                 "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "image": "string"
+                    }
                 ],
                 "produces": [
                     "application/json"

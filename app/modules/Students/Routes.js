@@ -13,6 +13,11 @@ module.exports = (app, express) => {
         return userObj.register();
     });
 
+    router.post('/students/login', Validators.loginValidator(), Validators.validate, (req, res, next) => {
+        const userObj = (new StudentsController()).boot(req, res);
+        return userObj.login();
+    });
+
     router.post('/students/nmRegister', Validators.userSignupValidator(), Validators.validate, (req, res, next) => {
         const userObj = (new StudentsController()).boot(req, res);
         return userObj.nmRegister();
@@ -50,10 +55,7 @@ module.exports = (app, express) => {
         return userObj.resetPassword();
     });
 
-    router.post('/students/login', Validators.loginValidator(), Validators.validate, (req, res, next) => {
-        const userObj = (new StudentsController()).boot(req, res);
-        return userObj.login();
-    });
+
 
     router.post('/students/changePassword', Globals.isAuthorised, Validators.changePasswordValidator(), Validators.validate, (req, res, next) => {
         const userObj = (new StudentsController()).boot(req, res);

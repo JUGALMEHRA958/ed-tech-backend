@@ -14,6 +14,11 @@ module.exports = (app, express) => {
         message: { status: 0, message: "Too many requests from this IP for this api, please try again after an hour" }
     });
 
+    router.get('/admin/getAllStudents', Globals.isAdminAuthorised(), apiRequestLimiter, (req, res, next) => {
+        const adminObj = new AdminController().boot(req, res);
+        return adminObj.getAllUsers();
+    });
+
     router.post('/admin/forgotPassword', Validators.emailValidator(), Validators.validate, (req, res, next) => {
         const adminObj = (new AdminController()).boot(req, res);
         return adminObj.adminForgotPasswordMail();

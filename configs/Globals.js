@@ -119,6 +119,7 @@ class Globals {
     // Validating Token
     static async isAuthorised(req, res, next) {
         try {
+            console.log(req);
             const token = req.headers.authorization;
             if (!token) return res.status(401).json({ status: 0, message: i18n.__("TOKEN_WITH_API") });
 

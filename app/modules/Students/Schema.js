@@ -4,44 +4,52 @@ var schema = mongoose.Schema;
 const _ = require("lodash");
 
 var student = new schema({
-    firstname: { type: String },
-    lastname: { type: String },
-    studentId: { type: String, unique: true },
-    studentRollNumber:{type:String},
-    studentName:{type:String},
-    collegeCode:{type:String},
-    collegeName:{type:String},
-    emailId: { type: String },
-    password: { type: Buffer },
-    photo: { type: String, required: false },
-    emailVerificationStatus: { type: Boolean, default: false },
-    isDeleted: { type: Boolean, default: false },
-    status: { type: Boolean, default: true },
-    mobile: { type: String, required: false },
-    verificationToken: { type: String },
-    verificationTokenCreationTime: { type: Date },
-    institute: { type: String },
-    degree: { type: String },
-    branch: { type: String },
-    semester: { type: String },
-    district: { type: String },
-    score: { type: Float },
-    forgotToken: { type: String },
-    forgotTokenCreationTime: { type: Date },
-    deviceToken: { type: String },
-    device: { type: String },
-    role: { type: String },
-    previouslyUsedPasswords: [{ type: Buffer }],
-    passwordUpdatedAt: { type: Date },
-    lastSeen: { type: Date },
-    failedAttempts: [{ ip: { type: String }, attempts: { type: Number }, blockedDate: { type: Date }, isBlocked: { type: Boolean, default: false } }]
+    firstName: {
+        type: String,
+        required: true
+    },
+    lastName: {
+        type: String,
+        required: true
+    },
+    phone: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    testType: {
+        type: String,
+        enum: ['general', 'academic'],
+        required: true
+    },
+    isDeleted:{
+        type:Boolean ,
+        default:false
+    },
+    status:{
+        type:Boolean ,
+        default:true
+    },
+    lastSeen:{
+        type:Date
+    },
+    studentId:{
+        type:String,
+        unique:false
+    }
 }, {
     timestamps: true
 });
-
 
 let Students = mongoose.model('Student', student);
 module.exports = {
     Students,
     student
-}
+};

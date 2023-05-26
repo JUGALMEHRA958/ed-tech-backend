@@ -13,6 +13,7 @@ const RequestBody = require("../../services/RequestBody");
 const Authentication = require('../Authentication/Schema').Authtokens;
 const adminProjection = require('../Admin/Projection');
 const config = require('../../../configs/configs');
+const { Students } = require("../Students/Schema");
 
 class AdminController extends Controller {
 
@@ -30,6 +31,17 @@ class AdminController extends Controller {
             const currentUser = this.req.currentUser && this.req.currentUser._id ? this.req.currentUser._id : "";
             const admin = await Admin.findOne({ _id: currentUser }, adminProjection.admin);
             return _.isEmpty(admin) ? this.res.send({ status: 0, message: i18n.__("USER_NOT_EXIST") }) : this.res.send({ status: 1, data: admin });
+        } catch (error) {
+            console.log('error', error);
+            this.res.send({ status: 0, message: error });
+        }
+    }
+
+    async getAllUsers() {
+        
+        try {
+            let students = await Students.find({});
+            return this.res.send({status:1,students:students})
         } catch (error) {
             console.log('error', error);
             this.res.send({ status: 0, message: error });

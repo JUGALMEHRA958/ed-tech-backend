@@ -210,6 +210,30 @@
                 }
             }
         },
+        "/admin/getAllStudents": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "description": "Get students Profile",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get students Profile"
+                    }
+                }
+            }
+        },
         "/admin/logout": {
             "get": {
                 "tags": [

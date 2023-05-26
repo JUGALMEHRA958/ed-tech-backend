@@ -26,7 +26,7 @@ class StudentsController extends Controller {
    Purpose: user register
    Parameter:
       {
-          "emailId":"john@doe.com",
+          "email":"john@doe.com",
           "password":"john"
           "firstname":"john",
           "lastname":"deo"
@@ -36,19 +36,18 @@ class StudentsController extends Controller {
   async register() {
     const transaction = new Transaction();
     try {
-      // check emailId is exist or not
+      // check email is exist or not
       let filter = {
         $or: [
-          { emailId: this.req.body.emailId.toLowerCase() },
-          { studentId: this.req.body.studentId },
+          { email: this.req.body.email.toLowerCase() }
         ],
       };
       const user = await Students.findOne(filter);
       //if user exist give error
-      if (!_.isEmpty(user) && (user.emailId || user.studentId)) {
+      if (!_.isEmpty(user) && (user.email )) {
         return this.res.send({
           status: 0,
-          message: i18n.__("DUPLICATE_EMAIL_OR_STUDENT"),
+          message: i18n.__("DUPLICATE_EMAIL_"),
         });
       } else {
         let data = this.req.body;
@@ -63,7 +62,7 @@ class StudentsController extends Controller {
         });
 
         data = { ...data, password: password, role: "user" };
-        data["emailId"] = data["emailId"].toLowerCase();
+        data["email"] = data["email"].toLowerCase();
 
         // save new user
         const newUserId = await new Model(Students).store(data);
@@ -75,45 +74,14 @@ class StudentsController extends Controller {
             message: i18n.__("USER_NOT_SAVED"),
           });
         } else {
-          const token = await new Globals().generateToken(newUserId);
-
-          //sending mail to verify user
-          let emailData = {
-            emailId: data["emailId"],
-            emailKey: "signup_mail",
-            replaceDataObj: {
-              fullName: data.firstname + " " + data.lastname,
-              verificationLink:
-                Config.rootUrl + "/Students/verifyUser?token=" + token,
-            },
-          };
-
-          const verifyResult = await new Email().verifySmtp();
-
-          const sendingMail = await new Email().sendMail(emailData);
-          console.log("sendingMail", sendingMail);
-          if (sendingMail && sendingMail.status == 0) {
-            transaction.rollback();
-            return this.res.send(sendingMail);
-          } else if (sendingMail && !sendingMail.response) {
-            transaction.rollback();
-            return this.res.send({
-              status: 0,
-              message: i18n.__("MAIL_NOT_SEND_SUCCESSFULLY"),
-            });
-          }
-          //transaction.update('Student', newUserId, { verificationToken: token, verificationTokenCreationTime: new Date() });
-
-          let updatedUser = await Students.findByIdAndUpdate(newUserId, {
-            verificationToken: token,
-            verificationTokenCreationTime: new Date(),
-          }).select(userProjection.user);
-          //await transaction.run();
-
+          let { token, refreshToken } =
+          await new Globals().getTokenWithRefreshToken({ id: newUserId._id });
           return this.res.send({
             status: 1,
             message: i18n.__("REGISTRATION_SCUCCESS"),
-            data: updatedUser,
+            data: newUserId,
+            token:token,
+            refreshToken:refreshToken
           });
         }
       }
@@ -161,7 +129,7 @@ class StudentsController extends Controller {
   async nmRegister() {
     const transaction = new Transaction();
     try {
-      // check emailId is exist or not
+      // check email is exist or not
       if (this.req.body.token !== "jahsdkashdjaskdjklasjdka") {
         return this.res.send({ status: 0, message: i18n.__("INVALID_TOKEN") });
       }
@@ -294,15 +262,15 @@ class StudentsController extends Controller {
 
       // old
       // let filter = { "studentId": this.req.body.studentId }
-      // if (this.req.body.emailId) {
-      //     filter = { "$or": [{ "emailId": this.req.body.emailId.toLowerCase() }, { "studentId": this.req.body.studentId }] }
+      // if (this.req.body.email) {
+      //     filter = { "$or": [{ "email": this.req.body.email.toLowerCase() }, { "studentId": this.req.body.studentId }] }
       // }
       // const user = await Students.findOne(filter);
       // //if user exist give error
-      // if (!_.isEmpty(user) && this.req.body.emailId && (user.emailId || user.studentId)) {
+      // if (!_.isEmpty(user) && this.req.body.email && (user.email || user.studentId)) {
       //     return this.res.send({ status: 0, message: i18n.__("DUPLICATE_EMAIL_OR_STUDENT") });
       // }
-      // else if (!_.isEmpty(user) && (user.emailId || user.studentId)) {
+      // else if (!_.isEmpty(user) && (user.email || user.studentId)) {
       //     return this.res.send({ status: 0, message: i18n.__("DUPLICATE_STUDENT") });
       // } else {
       //     let data = this.req.body;
@@ -313,8 +281,8 @@ class StudentsController extends Controller {
       //     let password = await (new CommonService()).ecryptPassword({ password: data['password'] });
 
       //     data = { ...data, password: password, role: 'user' };
-      //     if (data['emailId']) {
-      //         data['emailId'] = data['emailId'].toLowerCase()
+      //     if (data['email']) {
+      //         data['email'] = data['email'].toLowerCase()
       //         data['emailVerificationStatus'] = true
       //     }
       //     // save new user
@@ -329,7 +297,7 @@ class StudentsController extends Controller {
 
       //         //sending mail to verify user
       //         // let emailData = {
-      //         //     emailId: data['emailId'],
+      //         //     email: data['email'],
       //         //     emailKey: 'signup_mail',
       //         //     replaceDataObj: { fullName: data.firstname + " " + data.lastname, verificationLink: Config.rootUrl + '/Students/verifyUser?token=' + token }
       //         // };
@@ -636,14 +604,14 @@ class StudentsController extends Controller {
     Purpose: Forgot password mail
     Parameter:
         {
-            "emailId":"john@doe.com"
+            "email":"john@doe.com"
         }
     Return: JSON String
    ********************************************************/
   async forgotPasswordMail() {
     try {
-      let emailId = this.req.body.emailId;
-      let user = await Students.findOne({ emailId: emailId });
+      let email = this.req.body.email;
+      let user = await Students.findOne({ email: email });
       if (_.isEmpty(user)) {
         return this.res.send({
           status: 0,
@@ -658,7 +626,7 @@ class StudentsController extends Controller {
       });
 
       let emailData = {
-        emailId: emailId,
+        email: email,
         emailKey: "forgot_password_mail",
         replaceDataObj: {
           fullName: user.firstname + " " + user.lastname,
@@ -740,7 +708,7 @@ class StudentsController extends Controller {
     Purpose: Login
     Parameter:
         {
-            "emailId":"john@doe.com"
+            "email":"john@doe.com"
             "password":"123456",
             "deviceToken": "errrrwqqqsssfdfvfgfdewwwww",
             "device": "ios"
@@ -749,7 +717,7 @@ class StudentsController extends Controller {
    ********************************************************/
   async login() {
     try {
-      let fieldsArray = ["emailId", "password"];
+      let fieldsArray = ["email", "password"];
       let emptyFields = await new RequestBody().checkEmptyWithFields(
         this.req.body,
         fieldsArray
@@ -770,7 +738,7 @@ class StudentsController extends Controller {
         "device",
       ]);
       const user = await Students.findOne({
-        emailId: this.req.body.emailId.toString().toLowerCase(),
+        email: this.req.body.email.toString().toLowerCase(),
         isDeleted: false,
       });
 
@@ -779,25 +747,8 @@ class StudentsController extends Controller {
           status: 0,
           message: i18n.__("USER_NOT_EXIST_OR_DELETED"),
         });
-      } else if (!user.emailVerificationStatus) {
-        return this.res.send({ status: 0, message: i18n.__("VERIFY_EMAIL") });
-      } else if (!user.password) {
-        return this.res.send({ status: 0, message: i18n.__("SET_PASSWORD") });
-      }
-
-      if (
-        Config.isBlockAfterFailedAttempt &&
-        Config.isBlockAfterFailedAttempt == "true"
-      ) {
-        let result = await new CommonService().handleWrongPasswordAttempt({
-          user: user,
-          ip: this.req.ip,
-          password: this.req.body.password,
-        });
-        if (result && result.status == 0) {
-          return this.res.send(result);
-        }
-      } else {
+      } 
+      
         const status = await new CommonService().verifyPassword({
           password: this.req.body.password,
           savedPassword: user.password,
@@ -808,7 +759,7 @@ class StudentsController extends Controller {
             message: i18n.__("INVALID_PASSWORD"),
           });
         }
-      }
+      
 
       data["lastSeen"] = new Date();
       let updatedUser = await Students.findByIdAndUpdate(user._id, data, {
@@ -830,7 +781,7 @@ class StudentsController extends Controller {
         return this.res.send({
           status: 1,
           message: i18n.__("LOGIN_SUCCESS"),
-          access_token: token,
+          token: token,
           data: updatedUser,
         });
       }
@@ -1113,7 +1064,7 @@ class StudentsController extends Controller {
             "socialId":"12343434234",
             "socialKey":"fbId"
             "mobile":"987654321",
-            "emailId":"john@grr.la"
+            "email":"john@grr.la"
             "firstname":"john",
             "lastname":"deo",
             "username":"john123",
@@ -1151,16 +1102,16 @@ class StudentsController extends Controller {
 
       /**** if user not exists with socialId *****/
       if (_.isEmpty(user)) {
-        if (_this.req.body.emailId) {
-          /******** checking whether user is already exists with emailId or not *******/
+        if (_this.req.body.email) {
+          /******** checking whether user is already exists with email or not *******/
           let userDetails = await Students.findOne(
-            { emailId: _this.req.body.emailId },
+            { email: _this.req.body.email },
             userProjection.user
           );
 
-          /****** If user not exists with above emailId *******/
+          /****** If user not exists with above email *******/
           if (_.isEmpty(userDetails)) {
-            /******** This is the signUp process for socialAccess with emailId *****/
+            /******** This is the signUp process for socialAccess with email *****/
             let newUser = await this.createSocialUser(details);
             return _this.res.send(newUser);
           } else {
@@ -1172,18 +1123,18 @@ class StudentsController extends Controller {
             return _this.res.send(updatedUser);
           }
         } else {
-          /******** This is the signUp process for socialAccess without emailId *****/
+          /******** This is the signUp process for socialAccess without email *****/
           let newUser = await this.createSocialUser(details);
           return _this.res.send(newUser);
         }
       } else {
       /****** if user exists with socialId ******/
-        if (_this.req.body.emailId) {
-          /******** to check whether is already exists with emailId or not *******/
+        if (_this.req.body.email) {
+          /******** to check whether is already exists with email or not *******/
           let userDetails = await Students.findOne({
-            emailId: _this.req.body.emailId,
+            email: _this.req.body.email,
           });
-          /****** If user not exists with above emailId *******/
+          /****** If user not exists with above email *******/
 
           if (_.isEmpty(userDetails)) {
             /****** updating details in existing user with socialId details *****/
@@ -1198,7 +1149,7 @@ class StudentsController extends Controller {
             return _this.res.send(updatedUser);
           }
         } else {
-          /****** updating details in existing user with emailId details ********/
+          /****** updating details in existing user with email details ********/
           let updatedUser = await this.updateSocialUserDetails(details);
           return _this.res.send(updatedUser);
         }
@@ -1288,9 +1239,9 @@ class StudentsController extends Controller {
             message: i18n.__("LINK_WITH_ANOTHER_SOCIAL_ACCOUNT"),
           });
         }
-        /****** updating details in existing user with emailId details ********/
+        /****** updating details in existing user with email details ********/
         let updatedUser = await Students.findOneAndUpdate(
-          { emailId: details.emailId },
+          { email: details.email },
           details,
           { upsert: true, new: true }
         ).select(userProjection.user);

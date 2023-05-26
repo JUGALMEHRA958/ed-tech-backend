@@ -36,7 +36,7 @@ class Validators {
         try {
             return [
                 ...this.emailValidator(),
-                ...this.passwordValidator({ key: 'password' })
+                // ...this.passwordValidator({ key: 'password' })
             ];
         } catch (error) {
             throw new Error(error);
@@ -116,7 +116,14 @@ class Validators {
      ********************************************************/
     static studentIdValidator() {
         try {
-            return [check('studentId').exists().withMessage(i18n.__("%s REQUIRED", 'studentId'))];
+            return [
+            check('firstName').exists().withMessage(i18n.__("%s REQUIRED", 'firstName')),
+            check('lastName').exists().withMessage(i18n.__("%s REQUIRED", 'lastName')),
+            check('phone').exists().withMessage(i18n.__("%s REQUIRED", 'phone')),
+            check('email').exists().withMessage(i18n.__("%s REQUIRED", 'email')),
+            check('password').exists().withMessage(i18n.__("%s REQUIRED", 'password')),
+            check('testType').exists().withMessage(i18n.__("%s REQUIRED", 'testType'))
+        ];
         } catch (error) {
             return error;
         }
