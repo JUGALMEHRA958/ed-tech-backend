@@ -19,6 +19,11 @@ module.exports = (app, express) => {
         return adminObj.getAllUsers();
     });
 
+    router.post('/admin/getStudentById', Globals.isAdminAuthorised(),Validators.idValidator(), apiRequestLimiter, (req, res, next) => {
+        const adminObj = new AdminController().boot(req, res);
+        return adminObj.getstudentById();
+    });
+
     router.post('/admin/forgotPassword', Validators.emailValidator(), Validators.validate, (req, res, next) => {
         const adminObj = (new AdminController()).boot(req, res);
         return adminObj.adminForgotPasswordMail();

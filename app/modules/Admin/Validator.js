@@ -73,6 +73,15 @@ class Validators {
             return error;
         }
     }
+    static idValidator() {
+        try {
+            return [
+                check('testType').exists().withMessage(i18n.__("%s REQUIRED", 'testType'))
+            ];
+        } catch (error) {
+            return error;
+        }
+    }
     /********************************************************
      Purpose: Function for change password validator
      Parameter:

@@ -210,6 +210,36 @@
                 }
             }
         },
+        "/admin/getStudentById": {
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "description": "Get User Profile",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "body",
+                        "description": "id of user you want to get",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get User Profile."
+                    }
+                }
+            }
+        },
         "/admin/getAllStudents": {
             "get": {
                 "tags": [

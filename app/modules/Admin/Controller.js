@@ -47,6 +47,20 @@ class AdminController extends Controller {
             this.res.send({ status: 0, message: error });
         }
     }
+
+    async getstudentById() {
+        if(!this.req.body.id){
+            return this.res.send({status:0, message:"Please send id in request body"})
+        }
+        let id = this.req.body.id ;
+        try {
+            let students = await Students.findOne({_id:id});
+            return this.res.send({status:1,studentDetail:students})
+        } catch (error) {
+            console.log('error', error);
+            this.res.send({ status: 0, message: error });
+        }
+    }
     /********************************************************
      Purpose: Update admin profile details
      Parameter:
