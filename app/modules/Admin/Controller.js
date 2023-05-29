@@ -14,7 +14,7 @@ const Authentication = require('../Authentication/Schema').Authtokens;
 const adminProjection = require('../Admin/Projection');
 const config = require('../../../configs/configs');
 const { Students } = require("../Students/Schema");
-
+const CoursePurchases = require("../CoursePurchase/Schema").CoursePurchases;
 class AdminController extends Controller {
 
     constructor() {
@@ -54,7 +54,23 @@ class AdminController extends Controller {
             const skip = (pageNumber - 1) * pageSize;
             
             // Query the database with pagination
-            let students = await Students.find({}).limit(pageSize).skip(skip);
+            let students = await Students.aggregate([
+                { $skip: skip },
+                { $limit: pageSize },
+                {
+                  $lookup: {
+                    from: 'purchases',
+                    localField: '_id',
+                    foreignField: 'studentId',
+                    as: 'courseCount'
+                  }
+                },
+                {
+                  $addFields: {
+                    courseCount: { $size: '$courseCount' }
+                  }
+                }
+              ]);
             const totalPages = Math.ceil(totalCount / pageSize);
 
             return this.res.send({
