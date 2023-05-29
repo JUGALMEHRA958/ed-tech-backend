@@ -241,7 +241,7 @@
             }
         },
         "/admin/getAllStudents": {
-            "get": {
+            "post": {
                 "tags": [
                     "Admin"
                 ],
@@ -252,6 +252,14 @@
                         "in": "header",
                         "description": "Authorization token",
                         "type": "string"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Login",
+                        "schema": {
+                            "$ref": "#/definitions/GetAllStudents"
+                        }
                     }
                 ],
                 "produces": [
@@ -340,6 +348,26 @@
                 "password": {
                     "type": "string",
                     "example": "Test1234",
+                    "uniqueItems": true,
+                    "required": true
+                }
+            }
+        },
+        "GetAllStudents": {
+            "required": [
+                "pageNumber",
+                "pageSize"
+            ],
+            "properties": {
+                "pageNumber": {
+                    "type": "number",
+                    "example": 1,
+                    "uniqueItems": true,
+                    "required": true
+                },
+                "pageSize": {
+                    "type": "number",
+                    "example": 10,
                     "uniqueItems": true,
                     "required": true
                 }
