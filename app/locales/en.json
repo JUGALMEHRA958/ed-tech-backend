@@ -90,5 +90,6 @@
 	"DUPLICATE_EMAIL_": "This email id already exist with us",
 	"id": "id",
 	"COURSE_PURCHASE_SAVED": "Course purchased successfully",
-	"ALREADY_PURCHASED": "You have already purchased this course"
+	"ALREADY_PURCHASED": "You have already purchased this course",
+	"COURSE_DELETED_CANT_BUY": "Course is deleted, Can not buy"
 }

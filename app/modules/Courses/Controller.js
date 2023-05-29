@@ -164,7 +164,13 @@ class CourseController extends Controller {
         this.req.body,
         fieldsArray
       );
-
+      let checkIfDeleted = await CourseSchema.findOne({_id:data.courseId});
+      if(checkIfDeleted.isDeleted==true){
+        return this.res.send({
+          status: 1,
+          message:i18n.__('COURSE_DELETED_CANT_BUY')
+        });
+      }
       let newObject={
         courseId:data.courseId,
         studentId:this.req.currentUser,
