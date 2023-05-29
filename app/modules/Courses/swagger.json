@@ -47,7 +47,7 @@
                         "in": "body",
                         "description": "Add Blog",
                         "schema": {
-                            "$ref": "#/definitions/DeleteCourse"
+                            "$ref": "#/definitions/BuyCourse"
                         }
                     },
                     {
@@ -464,6 +464,18 @@
             ],
             "properties": {
                 "id": {
+                    "example": "646ef7545f3002110c787df8",
+                    "image": "string"
+                }
+                
+            }
+        },
+        "BuyCourse": {
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "courseId": {
                     "example": "646ef7545f3002110c787df8",
                     "image": "string"
                 }
