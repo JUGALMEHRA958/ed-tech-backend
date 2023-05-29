@@ -48,13 +48,21 @@ class AdminController extends Controller {
             // Extract pageNumber and pageSize from the userData object
             const { pageNumber, pageSize } = userData;
             
+            // Query the database to get the total count of documents
+            const totalCount = await Students.count({});
             // Calculate the skip value based on the pageNumber and pageSize
             const skip = (pageNumber - 1) * pageSize;
             
             // Query the database with pagination
             let students = await Students.find({}).limit(pageSize).skip(skip);
-            
-            return this.res.send({ status: 1, students: students });
+            const totalPages = Math.ceil(totalCount / pageSize);
+
+            return this.res.send({
+              status: 1,
+              students: students,
+              totalEntries: totalCount,
+              totalPages: totalPages,
+            });
             
         } catch (error) {
             console.log('error', error);
