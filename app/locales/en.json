@@ -88,5 +88,7 @@
 	"COURSE_NOT_SAVED": "Some error occoured while saving course.",
 	"SUCCESS": "SUCCESS",
 	"DUPLICATE_EMAIL_": "This email id already exist with us",
-	"id": "id"
+	"id": "id",
+	"COURSE_PURCHASE_SAVED": "Course purchased successfully",
+	"ALREADY_PURCHASED": "You have already purchased this course"
 }

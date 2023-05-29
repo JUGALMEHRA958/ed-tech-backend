@@ -7,7 +7,7 @@ const CommonService = require("../../services/Common");
 const RequestBody = require("../../services/RequestBody");
 const { CourseSchema } = require("./Schema");
 
-class CourseController extends Controller {
+class CoursePurchaseController extends Controller {
   constructor() {
     super();
   }
@@ -154,33 +154,6 @@ class CourseController extends Controller {
       return this.res.status(400).json({status:0, error: error.message });
     }
   };
-  async buyCourse(){
-    try{
-      let fieldsArray = [
-        "courseId"
-      ];
-      let data = await new RequestBody().processRequestBody(
-        this.req.body,
-        fieldsArray
-      );
-
-      let newObject={
-        courseId:data.courseId,
-        studentId:this.req.currentUser,
-      }
-      let checkIfExist = await CoursePurchases.findOne(newObject);
-      if(checkIfExist){ return this.res.send({status:0, message:i18n.__("ALREADY_PURCHASED")})}
-      let savedData = await new Model(CoursePurchases).store(newObject);
-      console.log(savedData,"savedData");
-      return this.res.send({
-        status: 1,
-        message:i18n.__('COURSE_PURCHASE_SAVED')
-      });
-      
-    }catch(e){
-      console.log("Error ",e);
-      return this.res.send({status:0, error:e})
-    }
-  }
+  
 }
-module.exports = CourseController;
+module.exports = CoursePurchaseController;

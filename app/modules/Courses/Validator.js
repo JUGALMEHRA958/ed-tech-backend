@@ -53,6 +53,17 @@
         }
     }
 
+    static purchaseValidator() {
+        try {
+            return [
+                check('courseId').exists().withMessage(i18n.__("%s REQUIRED", 'courseId'))
+
+            ];
+        } catch (error) {
+            return error;
+        }
+    }
+
 
 
 
