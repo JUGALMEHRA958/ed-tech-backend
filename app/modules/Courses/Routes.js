@@ -36,7 +36,7 @@ module.exports = (app, express) => {
         return courseObj.getCourseById();
     }); 
 
-    router.get('/courses/buyCourse', Validators.purchaseValidator(),Globals.isAuthorised,Validators.validate, (req, res, next) => {
+    router.post('/courses/buyCourse', Validators.purchaseValidator(),Globals.isAuthorised,Validators.validate, (req, res, next) => {
         const courseObj = (new CourseController()).boot(req, res, next);
         return courseObj.buyCourse();
     }); 
