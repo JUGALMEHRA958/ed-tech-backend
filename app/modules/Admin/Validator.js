@@ -73,6 +73,16 @@ class Validators {
             return error;
         }
     }
+    static getValidator() {
+        try {
+            return [
+                check('pageNumber').exists().isNumeric().withMessage(i18n.__("%s REQUIRED", 'pageNumber')),
+                check('pageSize').isNumeric().exists().withMessage(i18n.__("%s REQUIRED", 'pageSize'))
+            ];
+        } catch (error) {
+            return error;
+        }
+    }
     static idValidator() {
         try {
             return [

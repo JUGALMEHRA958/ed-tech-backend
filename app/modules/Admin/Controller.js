@@ -40,8 +40,22 @@ class AdminController extends Controller {
     async getAllUsers() {
         
         try {
-            let students = await Students.find({});
-            return this.res.send({status:1,students:students})
+            let fieldsArray = ['pageNumber', 'pageSize'];
+            let userData = await (new RequestBody()).processRequestBody(this.req.body, fieldsArray);
+            if(!userData.pageNumber || !userData.pageNumber ){
+                return this.res.send({ status: 0, message: i18n.__("PAGENUMBER_PAGESIZE_MISSING") });
+            }
+            // Extract pageNumber and pageSize from the userData object
+            const { pageNumber, pageSize } = userData;
+            
+            // Calculate the skip value based on the pageNumber and pageSize
+            const skip = (pageNumber - 1) * pageSize;
+            
+            // Query the database with pagination
+            let students = await Students.find({}).limit(pageSize).skip(skip);
+            
+            return this.res.send({ status: 1, students: students });
+            
         } catch (error) {
             console.log('error', error);
             this.res.send({ status: 0, message: error });

@@ -91,5 +91,8 @@
 	"id": "id",
 	"COURSE_PURCHASE_SAVED": "Course purchased successfully",
 	"ALREADY_PURCHASED": "You have already purchased this course",
-	"COURSE_DELETED_CANT_BUY": "Course is deleted, Can not buy"
+	"COURSE_DELETED_CANT_BUY": "Course is deleted, Can not buy",
+	"pageNumber": "pageNumber",
+	"pageSize": "pageSize",
+	"PAGENUMBER_PAGESIZE_MISSING": "In body, pageNumber & pageSize required"
 }
