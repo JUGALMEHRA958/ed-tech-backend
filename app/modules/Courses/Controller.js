@@ -6,6 +6,7 @@ const Model = require("../Base/Model");
 const CommonService = require("../../services/Common");
 const RequestBody = require("../../services/RequestBody");
 const { CourseSchema } = require("./Schema");
+const { CoursePurchases } = require("../CoursePurchase/Schema");
 
 class CourseController extends Controller {
   constructor() {
