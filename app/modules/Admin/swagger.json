@@ -210,6 +210,143 @@
                 }
             }
         },
+        "/admin/getStudentById": {
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "description": "Get User Profile",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "body",
+                        "description": "id of user you want to get",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get User Profile."
+                    }
+                }
+            }
+        },
+        "/admin/getAllStudents": {
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "description": "Get students Profile",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Login",
+                        "schema": {
+                            "$ref": "#/definitions/GetAllStudents"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description":"success",
+                        "status": 1,
+                        "students": [
+                            {
+                                "_id": "647092f1e181d928236ff9bf",
+                                "updatedAt": "2023-05-26T11:07:29.458Z",
+                                "createdAt": "2023-05-26T11:07:29.458Z",
+                                "firstName": "jugakkkkkk",
+                                "lastName": "Doe",
+                                "phone": "1234567890",
+                                "email": "jugalmehraa17a@g  dmagial.com",
+                                "password": "$2b$10$nxWTBpTLPSGuZ4PwAXXQV.Ozx2QJJkdRQK705fODIr933vte2HO42",
+                                "testType": "general",
+                                "__v": 0,
+                                "status": true,
+                                "isDeleted": false
+                            },
+                            {
+                                "_id": "6470930c32346a283cf45b15",
+                                "updatedAt": "2023-05-26T11:07:56.642Z",
+                                "createdAt": "2023-05-26T11:07:56.642Z",
+                                "firstName": "jugakkkkkk",
+                                "lastName": "Doe",
+                                "phone": "1234567890",
+                                "email": "digit@gmailc.om",
+                                "password": "$2b$10$Lwhj/WyityCtE5ihGvXl6OfIVF09MqB7dBoTLPg/qMzDWy5X6mk96",
+                                "testType": "general",
+                                "__v": 0,
+                                "status": true,
+                                "isDeleted": false
+                            },
+                            {
+                                "_id": "6470932032a315285b6758c0",
+                                "updatedAt": "2023-05-26T11:08:16.314Z",
+                                "createdAt": "2023-05-26T11:08:16.314Z",
+                                "firstName": "jugakkkkkk",
+                                "lastName": "Doe",
+                                "phone": "1234567890",
+                                "email": "digit@gmailc.aom",
+                                "password": "$2b$10$pkSw1fmvsnZiy.8XBI81NukmrCZO1kcbTRnSo8.6G8JZFIa9WTeB6",
+                                "testType": "general",
+                                "__v": 0,
+                                "status": true,
+                                "isDeleted": false
+                            },
+                            {
+                                "_id": "6470958f370d372c17d5ca35",
+                                "updatedAt": "2023-05-26T11:18:39.348Z",
+                                "createdAt": "2023-05-26T11:18:39.348Z",
+                                "firstName": "jugakkkkkk",
+                                "lastName": "Doe",
+                                "phone": "1234567890",
+                                "email": "digit@gmailc.aoms",
+                                "password": "$2b$10$1vQhMalG0jP0wHGHxii5yuBFvrhFeEYxVZ8OWe3dp8ppyJHzmKTqe",
+                                "testType": "general",
+                                "__v": 0,
+                                "status": true,
+                                "isDeleted": false
+                            },
+                            {
+                                "_id": "647095b5370d372c17d5ca36",
+                                "updatedAt": "2023-05-26T11:19:17.377Z",
+                                "createdAt": "2023-05-26T11:19:17.377Z",
+                                "firstName": "jugakkkkkk",
+                                "lastName": "Doe",
+                                "phone": "1234567890",
+                                "email": "dsigit@gmailc.aoms",
+                                "password": "$2b$10$3zTAYX2TnJuqFjTp5qXene8OxU/XzQZYBFD48UJCK1P1ZCWG1ENzK",
+                                "testType": "general",
+                                "__v": 0,
+                                "status": true,
+                                "isDeleted": false
+                            }
+                        ],
+                        "totalEntries": 9,
+                        "totalPages": 2
+                    }
+                }
+            }
+        },
         "/admin/logout": {
             "get": {
                 "tags": [
@@ -286,6 +423,26 @@
                 "password": {
                     "type": "string",
                     "example": "Test1234",
+                    "uniqueItems": true,
+                    "required": true
+                }
+            }
+        },
+        "GetAllStudents": {
+            "required": [
+                "pageNumber",
+                "pageSize"
+            ],
+            "properties": {
+                "pageNumber": {
+                    "type": "number",
+                    "example": 1,
+                    "uniqueItems": true,
+                    "required": true
+                },
+                "pageSize": {
+                    "type": "number",
+                    "example": 10,
                     "uniqueItems": true,
                     "required": true
                 }

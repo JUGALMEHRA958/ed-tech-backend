@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cambridge-ielts-uat-api
+  labels:
+    app: cambridge-ielts-uat-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cambridge-ielts-uat-api
+  template:
+    metadata:
+      labels:
+        app: cambridge-ielts-uat-api
+    spec:
+      imagePullSecrets:
+      - name : creddocker
+      containers:
+        - name: cambridge-ielts-uat-api
+          image: docker.indianic.com/cambridge-ielts/uat-api:<VERSION>
+          ports:
+            - containerPort: 4000
+          imagePullPolicy: Always
+              
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cambridge-ielts-uat-api
+  labels:
+    app: cambridge-ielts-uat-api
+spec:
+  selector:
+    app: cambridge-ielts-uat-api
+  ports:
+    - port: 4000
+      targetPort: 4000
+
+
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cambridge-ielts-uat-api-ingress
+spec:
+  #tls:
+    #- hosts:
+      #- test.example.com
+      #secretName: nginx-tls-secret
+  rules:
+  - host: cambridge-ielts-api-uat.devpress.net
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: cambridge-ielts-uat-api
+            port:
+              number: 4000

@@ -18,7 +18,7 @@
 	"DUPLICATE_EMAIL": "Email Id or mobile already exist.",
 	"DUPLICATE_MOBILE": "Mobile already exist.",
 	"SERVER_ERROR": "Internal server error",
-	"REGISTRATION_SCUCCESS": "Registered successfully. Please verify your email.",
+	"REGISTRATION_SCUCCESS": "Registered successfully. ",
 	"REGISTRATION_SCUCCESS_NM": "Registered successfully",
 	"USER_NOT_EXIST": "User not found.",
 	"ADMIN_NOT_EXIST": "Admin not found.",

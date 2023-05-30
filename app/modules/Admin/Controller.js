@@ -13,7 +13,8 @@ const RequestBody = require("../../services/RequestBody");
 const Authentication = require('../Authentication/Schema').Authtokens;
 const adminProjection = require('../Admin/Projection');
 const config = require('../../../configs/configs');
-
+const { Students } = require("../Students/Schema");
+const CoursePurchases = require("../CoursePurchase/Schema").CoursePurchases;
 class AdminController extends Controller {
 
     constructor() {
@@ -30,6 +31,69 @@ class AdminController extends Controller {
             const currentUser = this.req.currentUser && this.req.currentUser._id ? this.req.currentUser._id : "";
             const admin = await Admin.findOne({ _id: currentUser }, adminProjection.admin);
             return _.isEmpty(admin) ? this.res.send({ status: 0, message: i18n.__("USER_NOT_EXIST") }) : this.res.send({ status: 1, data: admin });
+        } catch (error) {
+            console.log('error', error);
+            this.res.send({ status: 0, message: error });
+        }
+    }
+
+    async getAllUsers() {
+        
+        try {
+            let fieldsArray = ['pageNumber', 'pageSize'];
+            let userData = await (new RequestBody()).processRequestBody(this.req.body, fieldsArray);
+            if(!userData.pageNumber || !userData.pageNumber ){
+                return this.res.send({ status: 0, message: i18n.__("PAGENUMBER_PAGESIZE_MISSING") });
+            }
+            // Extract pageNumber and pageSize from the userData object
+            const { pageNumber, pageSize } = userData;
+            
+            // Query the database to get the total count of documents
+            const totalCount = await Students.count({});
+            // Calculate the skip value based on the pageNumber and pageSize
+            const skip = (pageNumber - 1) * pageSize;
+            
+            // Query the database with pagination
+            let students = await Students.aggregate([
+                { $skip: skip },
+                { $limit: pageSize },
+                {
+                  $lookup: {
+                    from: 'purchases',
+                    localField: '_id',
+                    foreignField: 'studentId',
+                    as: 'courseCount'
+                  }
+                },
+                {
+                  $addFields: {
+                    courseCount: { $size: '$courseCount' }
+                  }
+                }
+              ]);
+            const totalPages = Math.ceil(totalCount / pageSize);
+
+            return this.res.send({
+              status: 1,
+              students: students,
+              totalEntries: totalCount,
+              totalPages: totalPages,
+            });
+            
+        } catch (error) {
+            console.log('error', error);
+            this.res.send({ status: 0, message: error });
+        }
+    }
+
+    async getstudentById() {
+        if(!this.req.body.id){
+            return this.res.send({status:0, message:"Please send id in request body"})
+        }
+        let id = this.req.body.id ;
+        try {
+            let students = await Students.findOne({_id:id});
+            return this.res.send({status:1,studentDetail:students})
         } catch (error) {
             console.log('error', error);
             this.res.send({ status: 0, message: error });

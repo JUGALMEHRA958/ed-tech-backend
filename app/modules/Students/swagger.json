@@ -22,7 +22,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Registered successfully. Please verify your email."
+                        "description": "Registered successfully."
                     }
                 }
             }
@@ -378,62 +378,39 @@
     "definitions": {
         "Register": {
             "required": [
-                "emailId",
-                "studentId",
-                "firstname",
-                "lastname",
-                "password"
+                "firstName",
+                "lastName",
+                "phone",
+                "email",
+                "password",
+                "testType"
             ],
             "properties": {
-                "emailId": {
+                "firstName": {
                     "type": "string",
-                    "example": "neha.bhavsar@indianic.com",
+                    "example": "Priyanka",
                     "uniqueItems": true
+                },
+                "lastName": {
+                    "type": "string",
+                    "example": "Chopra"
+                },
+                "phone": {
+                    "type": "string",
+                    "example": "8963055477"
+                },
+                "email": {
+                    "example": "Bhavsar@gmail.com",
+                    "type": "string"
                 },
                 "password": {
-                    "type": "string",
-                    "example": "Test1234"
-                },
-                "mobile": {
-                    "type": "string",
-                    "example": "000000000"
-                },
-                "lastname": {
-                    "example": "Bhavsar",
+                    "example": "password",
                     "type": "string"
                 },
-                "firstname": {
-                    "example": "Neha",
-                    "type": "string"
-                },
-                "studentId": {
-                    "example": "123456",
+                "testType": {
+                    "example": "academic",
                     "type": "string",
                     "uniqueItems": true
-                },
-                "institute": {
-                    "type": "string",
-                    "example": "vidyasagar college"
-                },
-                "degree": {
-                    "type": "string",
-                    "example": "bsc"
-                },
-                "branch": {
-                    "type": "string",
-                    "example": "cse"
-                },
-                "semester": {
-                    "type": "string",
-                    "example": "5"
-                },
-                "district": {
-                    "type": "string",
-                    "example": "Nodia"
-                },
-                "score": {
-                    "type": "float",
-                    "example": 12.3
                 }
             }
         },
@@ -505,11 +482,11 @@
         },
         "Login": {
             "required": [
-                "emailId",
+                "email",
                 "password"
             ],
             "properties": {
-                "emailId": {
+                "email": {
                     "type": "string",
                     "example": "neha.bhavsar@indianic.com",
                     "uniqueItems": true
@@ -518,14 +495,6 @@
                     "type": "string",
                     "example": "Test1234",
                     "uniqueItems": true
-                },
-                "deviceToken": {
-                    "type": "string",
-                    "example": "mcnjkACBjkbacjbacjkscbJ"
-                },
-                "device": {
-                    "type": "string",
-                    "example": "android"
                 }
             }
         },
