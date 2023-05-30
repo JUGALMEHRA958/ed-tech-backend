@@ -495,14 +495,6 @@
                     "type": "string",
                     "example": "Test1234",
                     "uniqueItems": true
-                },
-                "deviceToken": {
-                    "type": "string",
-                    "example": "mcnjkACBjkbacjbacjkscbJ"
-                },
-                "device": {
-                    "type": "string",
-                    "example": "android"
                 }
             }
         },
