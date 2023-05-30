@@ -85,12 +85,23 @@ class CourseController extends Controller {
           isDeleted:false,
           status:true,
           category:"testbank"
-        });
+        }).lean();
       let writeAndImprove = await CourseSchema.find({
         isDeleted:false,
         status:true,
         category:"writeAndImprove"
-      });
+      }).lean();
+
+      for(let i=0;i<testbankData.length;i++){
+        let isCourseStarted = await CoursePurchases.findOne({studentId:this.req.currentUser.id , courseId : testbankData[i]._id});
+        let isStarted= isCourseStarted ? true : false;
+        testbankData[i]={...testbankData[i],isStarted:isStarted}
+      }
+      for(let i=0;i<writeAndImprove.length;i++){
+        let isCourseStarted = await CoursePurchases.findOne({studentId:this.req.currentUser.id , courseId : writeAndImprove[i]._id});
+        let isStarted= isCourseStarted ? true : false;
+        writeAndImprove[i]={...writeAndImprove[i],isStarted:isStarted}
+      }
 
         return this.res.send({
             status: 1,

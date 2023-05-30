@@ -94,5 +94,6 @@
 	"COURSE_DELETED_CANT_BUY": "Course is deleted, Can not buy",
 	"pageNumber": "pageNumber",
 	"pageSize": "pageSize",
-	"PAGENUMBER_PAGESIZE_MISSING": "In body, pageNumber & pageSize required"
+	"PAGENUMBER_PAGESIZE_MISSING": "In body, pageNumber & pageSize required",
+	"SOME_ERROR_OCCOURED_WHILE_FETCHING_COURSES": "SOME_ERROR_OCCOURED_WHILE_FETCHING_COURSES"
 }

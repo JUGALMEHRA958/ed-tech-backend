@@ -1,7 +1,7 @@
 const _ = require("lodash");
 const i18n = require("i18n");
 const Transaction = require("mongoose-transactions");
-
+const CoursePurchases = require("../CoursePurchase/Schema").CoursePurchases
 const Controller = require("../Base/Controller");
 const Students = require("./Schema").Students;
 const Email = require("../../services/Email");
@@ -16,7 +16,7 @@ const Form = require("../../services/Form");
 const File = require("../../services/File");
 var FormData = require("form-data");
 const axios = require("axios").default;
-
+const CourseSchema = require("../Courses/Schema").CourseSchema
 class StudentsController extends Controller {
   constructor() {
     super();
@@ -381,32 +381,7 @@ class StudentsController extends Controller {
         return this.res.send({ status: 0, message: "Please send token" });
       }
 
-      // let formdata = new FormData();
-      // formdata.append("token", token);
-
-      const payload = { token: token };
-
-      // const response = await axios({
-      //   method: "post",
-      //   url: Config.NmValidationAPI,
-      //   data: payload,
-      //   // headers: { "Content-Type": "multipart/form-data" },
-      //   // headers: { "Content-Type": "application/json" },
-      // });
-
-      // console.log("\n----------student-data-from-nm-ssoCheck----------\n", response.data,"\n-----------------------------\n");
-      console.log(this.req.currentUser._id);
-      const student = await Students.findOne({
-        _id: this.req.currentUser._id,
-        isDeleted: false,
-      });
-
-      if (_.isEmpty(student)) {
-        return this.res.send({
-          status: 0,
-          message: i18n.__("USER_NOT_EXIST_OR_DELETED"),
-        });
-      }
+ 
       // else if (!student.emailVerificationStatus) {
       //     return this.res.send({ status: 0, message: i18n.__("VERIFY_EMAIL") });
       // }
@@ -414,28 +389,35 @@ class StudentsController extends Controller {
       //     return this.res.send({ status: 0, message: i18n.__("SET_PASSWORD") });
       // }
 
-      let updatedStudent = await Students.findByIdAndUpdate(
-        student._id,
-        { lastSeen: new Date() },
-        { new: true }
-      ).select(userProjection.user);
-
+      // let updatedStudent = await Students.findByIdAndUpdate(
+      //   student._id,
+      //   { lastSeen: new Date() },
+      //   { new: true }
+      // ).select(userProjection.user);
+      let coursesPurchased = await CoursePurchases.find({
+        studentId : this.req.currentUser._id
+      })
+      let courseIds = coursesPurchased.map((course)=>{
+        return course.courseId
+      })
+      let courses = await CourseSchema.find({ _id: { $in: courseIds } });
+      let productIds = courses.map((course)=>{
+        return course.productId
+      })
       if (Config.useRefreshToken && Config.useRefreshToken == "true") {
-        let { token, refreshToken } =
-          await new Globals().getTokenWithRefreshToken({ id: student._id });
         return this.res.send({
           status: 1,
           message: i18n.__("LOGIN_SUCCESS"),
-          access_token: token,
-          refreshToken: refreshToken,
-          data: updatedStudent,
+          // access_token: token,
+          // refreshToken: refreshToken,
+          data: this.req.currentUser,
+          productIds:productIds
         });
       } else {
-        let token = await new Globals().getToken({ id: user._id });
         return this.res.send({
           status: 1,
           message: i18n.__("LOGIN_SUCCESS"),
-          access_token: token,
+          // access_token: token,
           data: updatedStudent,
         });
       }
