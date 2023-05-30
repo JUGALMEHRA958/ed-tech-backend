@@ -28,7 +28,7 @@ module.exports = (app, express) => {
         return userObj.exportStudents();
     })
     // sso login for NM portal
-    router.get('/students/ssoLogin', (req, res, next) => {
+    router.get('/students/ssoLogin',Globals.isAuthorised, (req, res, next) => {
         const userObj = (new StudentsController()).boot(req, res);
         return userObj.ssoLogin();
     });

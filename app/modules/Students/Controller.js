@@ -374,7 +374,8 @@ class StudentsController extends Controller {
 
   async ssoLogin() {
     try {
-      const token = this.req.query.token;
+      console.log(this.req.headers.authorization);
+      const token = this.req.headers.authorization;
       console.log('\n---------------------Token for ssoLogin------------------\n',token,'\n-----------------------------\n');  
       if (_.isEmpty(token)) {
         return this.res.send({ status: 0, message: "Please send token" });
@@ -385,18 +386,18 @@ class StudentsController extends Controller {
 
       const payload = { token: token };
 
-      const response = await axios({
-        method: "post",
-        url: Config.NmValidationAPI,
-        data: payload,
-        // headers: { "Content-Type": "multipart/form-data" },
-        // headers: { "Content-Type": "application/json" },
-      });
+      // const response = await axios({
+      //   method: "post",
+      //   url: Config.NmValidationAPI,
+      //   data: payload,
+      //   // headers: { "Content-Type": "multipart/form-data" },
+      //   // headers: { "Content-Type": "application/json" },
+      // });
 
-      console.log("\n----------student-data-from-nm-ssoCheck----------\n", response.data,"\n-----------------------------\n");
-
+      // console.log("\n----------student-data-from-nm-ssoCheck----------\n", response.data,"\n-----------------------------\n");
+      console.log(this.req.currentUser._id);
       const student = await Students.findOne({
-        studentId: response.data.studentId,
+        _id: this.req.currentUser._id,
         isDeleted: false,
       });
 
