@@ -77,48 +77,52 @@ class CourseController extends Controller {
       });
     }
   }
-
-  async getCategoryWise(){
-    try{
-      
-      let testbankData = await CourseSchema.find({
-          isDeleted:false,
-          status:true,
-          category:"testbank"
-        }).lean();
-      let writeAndImprove = await CourseSchema.find({
-        isDeleted:false,
-        status:true,
-        category:"writeAndImprove"
+  async getCourseStatus  (course,user) {
+    const isCourseStarted = await CoursePurchases.findOne({
+      studentId: user.id,
+      courseId: course._id
+    });
+    return {
+      ...course,
+      isStarted: !!isCourseStarted
+    };
+  };
+  async getCategoryWise() {
+    try {
+      const testbankData = await CourseSchema.find({
+        isDeleted: false,
+        status: true,
+        category: "testbank"
+      }).lean();
+  
+      const writeAndImprove = await CourseSchema.find({
+        isDeleted: false,
+        status: true,
+        category: "writeAndImprove"
       }).lean();
 
-      for(let i=0;i<testbankData.length;i++){
-        let isCourseStarted = await CoursePurchases.findOne({studentId:this.req.currentUser.id , courseId : testbankData[i]._id});
-        let isStarted= isCourseStarted ? true : false;
-        testbankData[i]={...testbankData[i],isStarted:isStarted}
-      }
-      for(let i=0;i<writeAndImprove.length;i++){
-        let isCourseStarted = await CoursePurchases.findOne({studentId:this.req.currentUser.id , courseId : writeAndImprove[i]._id});
-        let isStarted= isCourseStarted ? true : false;
-        writeAndImprove[i]={...writeAndImprove[i],isStarted:isStarted}
-      }
-
-        return this.res.send({
-            status: 1,
-            data : {testbankData:testbankData,writeAndImprove:writeAndImprove} ,
-            message:i18n.__('SUCCESS')
-          });
-
-
-    }catch(e){
-    console.log(e);
+  
+      const testbankDataWithStatus = await Promise.all(testbankData.map(this.getCourseStatus,this.req.currentUser));
+      const writeAndImproveWithStatus = await Promise.all(writeAndImprove.map(this.getCourseStatus,this.req.currentUser));
+  
+      return this.res.send({
+        status: 1,
+        data: {
+          testbankData: testbankDataWithStatus,
+          writeAndImprove: writeAndImproveWithStatus
+        },
+        message: i18n.__('SUCCESS')
+      });
+    } catch (e) {
+      console.log(e);
       return this.res.send({
         status: 0,
-        message:i18n.__('SOME_ERROR_OCCOURED_WHILE_FETCHING_COURSES'),
+        message: i18n.__('SOME_ERROR_OCCOURED_WHILE_FETCHING_COURSES'),
         error: e,
       });
     }
   }
+  
 
   async editCourse  ()  {
     try {
