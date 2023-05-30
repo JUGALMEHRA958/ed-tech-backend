@@ -97,7 +97,7 @@ class CourseController extends Controller {
         fieldsArray
       );
 
-        
+
 
       const testbankData = await CourseSchema.find({
         type:data.type,
@@ -120,8 +120,8 @@ class CourseController extends Controller {
       return this.res.send({
         status: 1,
         data: 
-        [ {name: "testbankData" , data: testbankData},
-        {name: "writeAndImprove" , data: writeAndImprove}],
+        [ {name: "testbankData" , data: testbankDataWithStatus},
+        {name: "writeAndImprove" , data: writeAndImproveWithStatus}],
         message: i18n.__('SUCCESS')
       });
     } catch (e) {
