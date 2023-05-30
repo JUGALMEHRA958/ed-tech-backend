@@ -11,7 +11,7 @@ const courseSchema = new Schema(
     category: {
       type: String,
       require: true,
-      enum: ["testbank", "writeAndImprove"],
+      enum: ["testbank", "writeAndImprove","ieltsebook","praxis","printpractice"],
       default: "testbank",
     },
     moduleType:{

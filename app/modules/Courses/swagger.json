@@ -297,7 +297,7 @@
             }
         },
         "/courses/getAllCoursesCategoryWise": {
-            "get": {
+            "post": {
                 "tags": [
                     "Courses Management"
                 ],
@@ -308,6 +308,13 @@
                         "in": "header",
                         "description": "Authorization token",
                         "image": "string"
+                    } ,{
+                        "name": "body",
+                        "in": "body",
+                        "description": "Get a course",
+                        "schema": {
+                            "$ref": "#/definitions/GetCategoryWise"
+                        }
                     }
                 ],
                 "produces": [
@@ -465,6 +472,18 @@
             "properties": {
                 "id": {
                     "example": "646ef7545f3002110c787df8",
+                    "image": "string"
+                }
+                
+            }
+        },
+        "GetCategoryWise": {
+            "required": [
+                "type"
+            ],
+            "properties": {
+                "type": {
+                    "example": "free",
                     "image": "string"
                 }
                 
