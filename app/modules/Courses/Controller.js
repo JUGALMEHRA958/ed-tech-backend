@@ -89,13 +89,25 @@ class CourseController extends Controller {
   };
   async getCategoryWise() {
     try {
+      let fieldsArray = [
+        "type"
+      ];
+      let data = await new RequestBody().processRequestBody(
+        this.req.body,
+        fieldsArray
+      );
+
+        
+
       const testbankData = await CourseSchema.find({
+        type:data.type,
         isDeleted: false,
         status: true,
         category: "testbank"
       }).lean();
   
       const writeAndImprove = await CourseSchema.find({
+        type:data.type,
         isDeleted: false,
         status: true,
         category: "writeAndImprove"
@@ -107,10 +119,9 @@ class CourseController extends Controller {
   
       return this.res.send({
         status: 1,
-        data: {
-          testbankData: testbankDataWithStatus,
-          writeAndImprove: writeAndImproveWithStatus
-        },
+        data: 
+        [ {name: "testbankData" , data: testbankData},
+        {name: "writeAndImprove" , data: writeAndImprove}],
         message: i18n.__('SUCCESS')
       });
     } catch (e) {

@@ -42,6 +42,17 @@
         }
     }
 
+    static getCategoryWiseValidator() {
+        try {
+            return [
+                check('type').exists().withMessage(i18n.__("%s REQUIRED", 'type'))
+
+            ];
+        } catch (error) {
+            return error;
+        }
+    }
+
     static editdeleteCourseValidator() {
         try {
             return [
