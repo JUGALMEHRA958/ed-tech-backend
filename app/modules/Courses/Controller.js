@@ -82,57 +82,58 @@ class CourseController extends Controller {
       studentId: user.id,
       courseId: course._id
     });
-    return {
-      ...course,
-      isStarted: !!isCourseStarted
-    };
+    if(isCourseStarted){return true}
+    return false;
   };
   async getCategoryWise() {
     try {
-      let fieldsArray = [
-        "type"
-      ];
+      let fieldsArray = ["type"];
       let data = await new RequestBody().processRequestBody(
         this.req.body,
         fieldsArray
       );
-
-        
-
+  
       const testbankData = await CourseSchema.find({
-        type:data.type,
+        type: data.type,
         isDeleted: false,
         status: true,
-        category: "testbank"
+        category: "testbank",
       }).lean();
   
       const writeAndImprove = await CourseSchema.find({
-        type:data.type,
+        type: data.type,
         isDeleted: false,
         status: true,
-        category: "writeAndImprove"
+        category: "writeAndImprove",
       }).lean();
-
   
-      const testbankDataWithStatus = await Promise.all(testbankData.map(this.getCourseStatus,this.req.currentUser));
-      const writeAndImproveWithStatus = await Promise.all(writeAndImprove.map(this.getCourseStatus,this.req.currentUser));
+      for(let i=0;i<testbankData.length;i++){
+        let isStarted = await this.getCourseStatus(testbankData[i], this.req.currentUser);
+        testbankData[i]={...testbankData[i], isStarted:isStarted}
+      }
+      for(let i=0;i<writeAndImprove.length;i++){
+        let isStarted = await this.getCourseStatus(writeAndImprove[i], this.req.currentUser);
+        writeAndImprove[i]={...writeAndImprove[i], isStarted:isStarted}
+      }
   
       return this.res.send({
         status: 1,
-        data: 
-        [ {name: "testbankData" , data: testbankData},
-        {name: "writeAndImprove" , data: writeAndImprove}],
-        message: i18n.__('SUCCESS')
+        data: [
+          { name: "testbankData", data: testbankData },
+          { name: "writeAndImprove", data: writeAndImprove },
+        ],
+        message: i18n.__("SUCCESS"),
       });
     } catch (e) {
       console.log(e);
       return this.res.send({
         status: 0,
-        message: i18n.__('SOME_ERROR_OCCOURED_WHILE_FETCHING_COURSES'),
+        message: i18n.__("SOME_ERROR_OCCOURED_WHILE_FETCHING_COURSES"),
         error: e,
       });
     }
   }
+  
   
 
   async editCourse  ()  {
