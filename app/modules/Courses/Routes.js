@@ -46,7 +46,7 @@ module.exports = (app, express) => {
         return courseObj.removeFromCart();
     }); 
 
-    router.get('/courses/getCart',Validators.purchaseValidator(), Globals.isAuthorised,Validators.validate, (req, res, next) => {
+    router.get('/courses/getCart', Globals.isAuthorised,Validators.validate, (req, res, next) => {
         const courseObj = (new CourseController()).boot(req, res, next);
         return courseObj.getCart();
     }); 
