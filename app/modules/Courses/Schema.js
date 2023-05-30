@@ -1,6 +1,32 @@
 const mongoose = require("mongoose");
 var Schema = require("mongoose").Schema;
 
+
+
+const cartSchema = new Schema(
+  {
+    userId:{type: Schema.Types.ObjectId, ref: "students" , default:null},
+    courseIds:[{type: Schema.Types.ObjectId, ref: "courses" , default:null}],
+    createdBy:{type: Schema.Types.ObjectId, ref: "admins" , default:null},
+    updatedBy:{type: Schema.Types.ObjectId, ref: "admins",default:null},
+    status:{type: Boolean, default: true },
+    isDeleted:{type: Boolean, default: false }
+  },
+  {
+    timestamps: true,
+  }
+);
+
+
+
+
+
+
+
+
+
+
+
 const courseSchema = new Schema(
   {
     title: { type: String, require: true },
@@ -37,8 +63,12 @@ const courseSchema = new Schema(
   }
 );
 
+
 let CourseSchema = mongoose.model("courses", courseSchema);
+let CartSchema = mongoose.model("cart", cartSchema);
+
 
 module.exports = {
   CourseSchema,
+  CartSchema
 };

@@ -36,6 +36,21 @@ module.exports = (app, express) => {
         return courseObj.getCourseById();
     }); 
 
+    router.post('/courses/addToCart',Validators.purchaseValidator(), Globals.isAuthorised,Validators.validate, (req, res, next) => {
+        const courseObj = (new CourseController()).boot(req, res, next);
+        return courseObj.addToCart();
+    }); 
+
+    router.post('/courses/removeFromCart',Validators.purchaseValidator(), Globals.isAuthorised,Validators.validate, (req, res, next) => {
+        const courseObj = (new CourseController()).boot(req, res, next);
+        return courseObj.removeFromCart();
+    }); 
+
+    router.get('/courses/getCart',Validators.purchaseValidator(), Globals.isAuthorised,Validators.validate, (req, res, next) => {
+        const courseObj = (new CourseController()).boot(req, res, next);
+        return courseObj.getCart();
+    }); 
+
     router.post('/courses/buyCourse', Validators.purchaseValidator(),Globals.isAuthorised,Validators.validate, (req, res, next) => {
         const courseObj = (new CourseController()).boot(req, res, next);
         return courseObj.buyCourse();
