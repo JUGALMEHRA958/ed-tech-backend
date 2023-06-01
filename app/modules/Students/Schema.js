@@ -43,6 +43,12 @@ var student = new schema({
     studentId:{
         type:String,
         unique:false
+    },
+    forgotToken:{
+        type:String,
+    },
+    forgotTokenCreationTime:{
+        type:Date
     }
 }, {
     timestamps: true
