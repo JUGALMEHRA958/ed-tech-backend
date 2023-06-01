@@ -103,7 +103,7 @@ class Validators {
      ********************************************************/
     static emailValidator() {
         try {
-            return [check('emailId').optional().isEmail().withMessage(i18n.__("VALID_EMAIL"))];
+            return [check('email').optional().isEmail().withMessage(i18n.__("VALID_EMAIL"))];
         } catch (error) {
             return error;
         }
