@@ -106,6 +106,27 @@ class CourseController extends Controller {
         status: true,
         category: "writeAndImprove",
       }).lean();
+
+      const ieltsebook = await CourseSchema.find({
+        type: data.type,
+        isDeleted: false,
+        status: true,
+        category: "ieltsebook",
+      }).lean();
+
+      const praxis = await CourseSchema.find({
+        type: data.type,
+        isDeleted: false,
+        status: true,
+        category: "praxis",
+      }).lean();
+
+      const printpractice = await CourseSchema.find({
+        type: data.type,
+        isDeleted: false,
+        status: true,
+        category: "printpractice",
+      }).lean();
   
       for(let i=0;i<testbankData.length;i++){
         let isStarted = await this.getCourseStatus(testbankData[i], this.req.currentUser);
@@ -121,6 +142,9 @@ class CourseController extends Controller {
         data: [
           { name: "testbank", data: testbankData },
           { name: "writeAndImprove", data: writeAndImprove },
+          { name: "ieltsebook", data: ieltsebook },
+          { name: "praxis", data: praxis },
+          { name: "printpractice", data: printpractice },
         ],
         message: i18n.__("SUCCESS"),
       });
