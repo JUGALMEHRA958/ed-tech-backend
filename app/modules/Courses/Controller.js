@@ -136,6 +136,18 @@ class CourseController extends Controller {
         let isStarted = await this.getCourseStatus(writeAndImprove[i], this.req.currentUser);
         writeAndImprove[i]={...writeAndImprove[i], isStarted:isStarted}
       }
+      for(let i=0;i<ieltsebook.length;i++){
+        let isStarted = await this.getCourseStatus(ieltsebook[i], this.req.currentUser);
+        ieltsebook[i]={...ieltsebook[i], isStarted:isStarted}
+      }
+      for(let i=0;i<praxis.length;i++){
+        let isStarted = await this.getCourseStatus(praxis[i], this.req.currentUser);
+        praxis[i]={...praxis[i], isStarted:isStarted}
+      }
+      for(let i=0;i<printpractice.length;i++){
+        let isStarted = await this.getCourseStatus(printpractice[i], this.req.currentUser);
+        printpractice[i]={...printpractice[i], isStarted:isStarted}
+      }
   
       return this.res.send({
         status: 1,
