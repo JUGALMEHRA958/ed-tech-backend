@@ -5,7 +5,7 @@ const Controller = require("../Base/Controller");
 const Model = require("../Base/Model");
 const CommonService = require("../../services/Common");
 const RequestBody = require("../../services/RequestBody");
-const { CourseSchema } = require("./Schema");
+const { CourseSchema, CartSchema } = require("./Schema");
 const { CoursePurchases } = require("../CoursePurchase/Schema");
 
 class CourseController extends Controller {
@@ -146,7 +146,7 @@ class CourseController extends Controller {
       if (!updatedCourse) {
         throw new Error('Course not found');
       }
-      return this.res.json({status:1,updatedCourse:updatedCourse});
+      return this.res.json({status:1,updatedCourse:updatedCourse,message:"Success"});
     } catch (error) {
       console.log(error)
       return  this.res.status(400).json({status:0, error: error.message });
@@ -182,6 +182,81 @@ class CourseController extends Controller {
       return this.res.status(400).json({status:0, error: error.message });
     }
   };
+  async addToCart (){
+    try {
+      let fieldsArray = [
+        "courseId"
+      ];
+      let data = await new RequestBody().processRequestBody(
+        this.req.body,
+        fieldsArray
+      );
+       // Check if the course exists
+    const course = await CourseSchema.findById(data.courseId);
+    if (!course) {
+      return res.status(404).json({ error: 'Course not found' });
+    }
+    let cart = await CartSchema.findOne({userId:this.req.currentUser._id});
+    if (!cart) {
+      // Create a new cart if it doesn't exist for the user
+      cart = new CartSchema({ userId:this.req.currentUser._id, courseIds: [data.courseId] });
+    } else {
+      cart.courseIds.addToSet(data.courseId);
+    }
+    await cart.save();
+    return this.res.send({status:1, message:"Added"})
+    } catch (error) {
+      console.log(error);
+      return this.res.status(400).json({status:0, error: error.message });
+    }
+  };
+  // Remove from cart
+  async removeFromCart() {
+  try {
+    let fieldsArray = [
+      "courseId"
+    ];
+    let data = await new RequestBody().processRequestBody(
+      this.req.body,
+      fieldsArray
+    );
+
+    // Remove the course from the user's cart
+    const cart = await CartSchema.findOneAndUpdate(
+      { userId: this.req.currentUser._id },
+      { $pull: { courseIds: data.courseId } },
+      { new: true }
+    ).populate('courseIds');
+
+    if (!cart) {
+      return this.res.status(404).json({ error: 'Cart not found' });
+    }
+
+    return this.res.send({ status: 1, message: "Removed" });
+  } catch (error) {
+    console.log(error);
+    return this.res.status(400).json({ status: 0, error: error.message });
+  }
+}
+// Get cart
+async getCart() {
+  try {
+    // Find the user's cart or create a new one if not found
+    let cart = await CartSchema.findOne({ userId: this.req.currentUser._id }).populate('courseIds');
+
+    if (!cart) {
+      // Create an empty cart for the user if not found
+      cart = new CartSchema({ userId: this.req.currentUser._id });
+      await cart.save();
+    }
+
+    return this.res.send({ status: 1, cart });
+  } catch (error) {
+    console.log(error);
+    return this.res.status(400).json({ status: 0, error: error.message });
+  }
+}
+
   async buyCourse(){
     try{
       let fieldsArray = [

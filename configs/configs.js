@@ -8,7 +8,7 @@ require('custom-env').env('dev')
 
 let ENV_VARIABLES = process.env;
 
-console.log("ENV_VARIABLES", ENV_VARIABLES.db)
+console.log("ENV_VARIABLES", ENV_VARIABLES)
 
 module.exports = {
     ...ENV_VARIABLES,
