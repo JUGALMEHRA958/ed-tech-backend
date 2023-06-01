@@ -45,6 +45,7 @@ module.exports = (app, express) => {
         return userObj.ssoValidate();
     });
 
+    
     router.post('/students/forgotPassword', Validators.emailValidator(), Validators.validate, (req, res, next) => {
         const userObj = (new StudentsController()).boot(req, res);
         return userObj.forgotPasswordMail();

@@ -609,13 +609,14 @@ class StudentsController extends Controller {
       });
 
       let emailData = {
-        email: email,
+        emailId: email,
         emailKey: "forgot_password_mail",
         replaceDataObj: {
-          fullName: user.firstname + " " + user.lastname,
-          resetPasswordLink: Config.dummyUrl + "?token=" + token,
+          fullName: user.firstName + " " + user.lastName,
+          resetPasswordLink: Config.setPassUrl  + token,
         },
       };
+      console.log(Config.setPassUrl,"Config.setPassUrl");
       const sendingMail = await new Email().sendMail(emailData);
       if (sendingMail && sendingMail.status == 0) {
         return _this.res.send(sendingMail);
