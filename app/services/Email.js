@@ -9,21 +9,31 @@ const EmailTemplate = require('../modules/EmailTemplate/Schema').EmailTemplate;
 const EmailSettings = require('../modules/Settings/Schema').EmailSettings;
 const DefaultSettings = require('../modules/Settings/Schema').SettingsSchema;
 
-let smtpTransport = nodemailer.createTransport({
-    pool: true,
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false, // use TLS,
-    auth: {
-        user: 'rahul.c@indianic.com',
-        pass: 'Rahul@8961'
-    },
-    tls: {
-        rejectUnauthorized: false
-    },
-    debug: true
-});
+// let smtpTransport = nodemailer.createTransport({
+//     pool: true,
+//     host: "smtp.gmail.com",
+//     port: 587,
+//     secure: false, // use TLS,
+//     auth: {
+//         user: 'rahul.c@indianic.com',
+//         pass: 'Rahul@8961'
+//     },
+//     tls: {
+//         rejectUnauthorized: false
+//     },
+//     debug: true
+// });
 
+const smtpTransport = nodemailer.createTransport({
+    host: 'smtp.mail.yahoo.com',
+    port: 587,
+    secure: false, // Set to false to use STARTTLS
+    requireTLS: true, // Enable TLS
+    auth: {
+      user: "testcambridge1@yahoo.com",
+      pass: "jigarjani@12"
+    }
+  });
 
 class Email {
 
