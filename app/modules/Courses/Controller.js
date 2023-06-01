@@ -119,7 +119,7 @@ class CourseController extends Controller {
       return this.res.send({
         status: 1,
         data: [
-          { name: "testbankData", data: testbankData },
+          { name: "testbank", data: testbankData },
           { name: "writeAndImprove", data: writeAndImprove },
         ],
         message: i18n.__("SUCCESS"),
