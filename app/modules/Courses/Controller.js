@@ -106,6 +106,27 @@ class CourseController extends Controller {
         status: true,
         category: "writeAndImprove",
       }).lean();
+
+      const ieltsebook = await CourseSchema.find({
+        type: data.type,
+        isDeleted: false,
+        status: true,
+        category: "ieltsebook",
+      }).lean();
+
+      const praxis = await CourseSchema.find({
+        type: data.type,
+        isDeleted: false,
+        status: true,
+        category: "praxis",
+      }).lean();
+
+      const printpractice = await CourseSchema.find({
+        type: data.type,
+        isDeleted: false,
+        status: true,
+        category: "printpractice",
+      }).lean();
   
       for(let i=0;i<testbankData.length;i++){
         let isStarted = await this.getCourseStatus(testbankData[i], this.req.currentUser);
@@ -115,12 +136,27 @@ class CourseController extends Controller {
         let isStarted = await this.getCourseStatus(writeAndImprove[i], this.req.currentUser);
         writeAndImprove[i]={...writeAndImprove[i], isStarted:isStarted}
       }
+      for(let i=0;i<ieltsebook.length;i++){
+        let isStarted = await this.getCourseStatus(ieltsebook[i], this.req.currentUser);
+        ieltsebook[i]={...ieltsebook[i], isStarted:isStarted}
+      }
+      for(let i=0;i<praxis.length;i++){
+        let isStarted = await this.getCourseStatus(praxis[i], this.req.currentUser);
+        praxis[i]={...praxis[i], isStarted:isStarted}
+      }
+      for(let i=0;i<printpractice.length;i++){
+        let isStarted = await this.getCourseStatus(printpractice[i], this.req.currentUser);
+        printpractice[i]={...printpractice[i], isStarted:isStarted}
+      }
   
       return this.res.send({
         status: 1,
         data: [
-          { name: "testbankData", data: testbankData },
+          { name: "testbank", data: testbankData },
           { name: "writeAndImprove", data: writeAndImprove },
+          { name: "ieltsebook", data: ieltsebook },
+          { name: "praxis", data: praxis },
+          { name: "printpractice", data: printpractice },
         ],
         message: i18n.__("SUCCESS"),
       });
