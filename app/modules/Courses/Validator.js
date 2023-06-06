@@ -45,7 +45,7 @@
     static getCategoryWiseValidator() {
         try {
             return [
-                check('type').exists().withMessage(i18n.__("%s REQUIRED", 'type'))
+                check('category').exists().withMessage(i18n.__("%s REQUIRED", 'category'))
 
             ];
         } catch (error) {
