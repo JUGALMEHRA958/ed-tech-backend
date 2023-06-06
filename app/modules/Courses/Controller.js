@@ -19,12 +19,12 @@ class CourseController extends Controller {
         "title",
         "description",
         "productId",
-        "idpNumber",
         "picture",
         "category",
         "price",
-        "type",
-        "moduleType"
+        "group",
+        "moduleType",
+        "isbnNumber"
       ];
       let data = await new RequestBody().processRequestBody(
         this.req.body,
@@ -87,88 +87,104 @@ class CourseController extends Controller {
   };
   async getCategoryWise() {
     try {
-      let fieldsArray = ["type"];
+      let fieldsArray = ["category"];
       let data = await new RequestBody().processRequestBody(
         this.req.body,
         fieldsArray
       );
   
+      let responseArray = [];
+  
       const testbankData = await CourseSchema.find({
         type: data.type,
         isDeleted: false,
         status: true,
-        category: "testbank",
+        group: "testbank",
       }).lean();
+  
+      if (testbankData.length > 0) {
+        for (let i = 0; i < testbankData.length; i++) {
+          let isStarted = await this.getCourseStatus(testbankData[i], this.req.currentUser);
+          testbankData[i] = { ...testbankData[i], isStarted: isStarted };
+        }
+        responseArray.push({ name: "testbank", data: testbankData });
+      }
   
       const writeAndImprove = await CourseSchema.find({
         type: data.type,
         isDeleted: false,
         status: true,
-        category: "writeAndImprove",
+        group: "writeAndImprove",
       }).lean();
-
+  
+      if (writeAndImprove.length > 0) {
+        for (let i = 0; i < writeAndImprove.length; i++) {
+          let isStarted = await this.getCourseStatus(writeAndImprove[i], this.req.currentUser);
+          writeAndImprove[i] = { ...writeAndImprove[i], isStarted: isStarted };
+        }
+        responseArray.push({ name: "writeAndImprove", data: writeAndImprove });
+      }
+  
       const ieltsebook = await CourseSchema.find({
         type: data.type,
         isDeleted: false,
         status: true,
-        category: "ieltsebook",
+        group: "ieltsebook",
       }).lean();
-
+  
+      if (ieltsebook.length > 0) {
+        for (let i = 0; i < ieltsebook.length; i++) {
+          let isStarted = await this.getCourseStatus(ieltsebook[i], this.req.currentUser);
+          ieltsebook[i] = { ...ieltsebook[i], isStarted: isStarted };
+        }
+        responseArray.push({ name: "ieltsebook", data: ieltsebook });
+      }
+  
       const praxis = await CourseSchema.find({
         type: data.type,
         isDeleted: false,
         status: true,
-        category: "praxis",
+        group: "praxis",
       }).lean();
-
+  
+      if (praxis.length > 0) {
+        for (let i = 0; i < praxis.length; i++) {
+          let isStarted = await this.getCourseStatus(praxis[i], this.req.currentUser);
+          praxis[i] = { ...praxis[i], isStarted: isStarted };
+        }
+        responseArray.push({ name: "praxis", data: praxis });
+      }
+  
       const printpractice = await CourseSchema.find({
         type: data.type,
         isDeleted: false,
         status: true,
-        category: "printpractice",
+        group: "printpractice",
       }).lean();
   
-      for(let i=0;i<testbankData.length;i++){
-        let isStarted = await this.getCourseStatus(testbankData[i], this.req.currentUser);
-        testbankData[i]={...testbankData[i], isStarted:isStarted}
-      }
-      for(let i=0;i<writeAndImprove.length;i++){
-        let isStarted = await this.getCourseStatus(writeAndImprove[i], this.req.currentUser);
-        writeAndImprove[i]={...writeAndImprove[i], isStarted:isStarted}
-      }
-      for(let i=0;i<ieltsebook.length;i++){
-        let isStarted = await this.getCourseStatus(ieltsebook[i], this.req.currentUser);
-        ieltsebook[i]={...ieltsebook[i], isStarted:isStarted}
-      }
-      for(let i=0;i<praxis.length;i++){
-        let isStarted = await this.getCourseStatus(praxis[i], this.req.currentUser);
-        praxis[i]={...praxis[i], isStarted:isStarted}
-      }
-      for(let i=0;i<printpractice.length;i++){
-        let isStarted = await this.getCourseStatus(printpractice[i], this.req.currentUser);
-        printpractice[i]={...printpractice[i], isStarted:isStarted}
+      if (printpractice.length > 0) {
+        for (let i = 0; i < printpractice.length; i++) {
+          let isStarted = await this.getCourseStatus(printpractice[i], this.req.currentUser);
+          printpractice[i] = { ...printpractice[i], isStarted: isStarted };
+        }
+        responseArray.push({ name: "printpractice", data: printpractice });
       }
   
       return this.res.send({
         status: 1,
-        data: [
-          { name: "testbank", data: testbankData },
-          { name: "writeAndImprove", data: writeAndImprove },
-          { name: "ieltsebook", data: ieltsebook },
-          { name: "praxis", data: praxis },
-          { name: "printpractice", data: printpractice },
-        ],
+        data: responseArray,
         message: i18n.__("SUCCESS"),
       });
-    } catch (e) {
+      } catch (e) {
       console.log(e);
       return this.res.send({
-        status: 0,
-        message: i18n.__("SOME_ERROR_OCCOURED_WHILE_FETCHING_COURSES"),
-        error: e,
+      status: 0,
+      message: i18n.__("SOME_ERROR_OCCOURED_WHILE_FETCHING_COURSES"),
+      error: e,
       });
-    }
-  }
+      }
+      }
+  
   
   
 
