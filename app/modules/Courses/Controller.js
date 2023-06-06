@@ -19,7 +19,6 @@ class CourseController extends Controller {
         "title",
         "description",
         "productId",
-        "idpNumber",
         "picture",
         "category",
         "price",
