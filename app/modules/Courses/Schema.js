@@ -32,9 +32,9 @@ const courseSchema = new Schema(
     title: { type: String, require: true },
     description: { type: String, require: true },
     productId: { type: String, require: true , unique:true},
-    idpNumber: { type: String, require: true },
+    isbnNumber: { type: String, require: true },
     picture: { type: String, require: true },
-    category: {
+    group: {
       type: String,
       require: true,
       enum: ["testbank", "writeAndImprove","ieltsebook","praxis","printpractice"],
@@ -47,7 +47,7 @@ const courseSchema = new Schema(
       default: "listening",
     },
     price: { type: Number, require: true },
-    type: {
+    category: {
       type: String,
       require: true,
       enum: ["paid", "free","sample"],
