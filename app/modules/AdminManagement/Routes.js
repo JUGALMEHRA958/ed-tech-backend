@@ -69,7 +69,7 @@ module.exports = (app, express) => {
         return res.send(result);
     });
 
-    router.post('/admin/downloadCsv', Globals.isAdminAuthorised(['admin_user_download']), (req, res, next) => {
+    router.get('/admin/downloadCsv', (req, res, next) => {
         req.body = { ...req.body, ...obj };
         const userObj = (new UserManagementController()).boot(req, res);
         return userObj.downloadCsv();

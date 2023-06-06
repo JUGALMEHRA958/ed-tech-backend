@@ -513,11 +513,32 @@ class Common {
             try {
                 let bodyData = data.bodyData;
                 let model = data.bodyData.model;
-                let columns = bodyData && bodyData.columns ? bodyData.columns : ['firstname', 'lastname', 'username', 'emailId', 'mobile'];
-                let filter = bodyData && bodyData.filter ? bodyData.filter : { isDeleted: false, emailVerificationStatus: true };
-                filter = await this.constructFilter({ filter });
-                const records = await model.find(filter).lean();
-                const file = await (new File()).convertJsonToCsv({ jsonData: records, columns, fileName: 'userList', ext: data.ext });
+                let columns = bodyData && bodyData.columns ? bodyData.columns : ['firstName', 'lastName', 'email', 'phone', 'testType','courseCount'];
+                let filter = bodyData && bodyData.filter ? bodyData.filter : { isDeleted: false , status:true };
+                // filter = await this.constructFilter({ filter });
+                // const records = await Students.find(filter).lean();
+                 filter = await this.constructFilter({ filter });
+
+                let students = await Students.aggregate([
+                    {
+                        $lookup: {
+                            from: 'purchases',
+                            localField: '_id',
+                            foreignField: 'studentId',
+                            as: 'courseCount'
+                        }
+                    },
+                    {
+                        $addFields: {
+                            courseCount: { $size: '$courseCount' }
+                        }
+                    },
+                    {
+                        $match: filter // Add the filter as a $match stage in the pipeline
+                    }
+                ]);
+
+                const file = await (new File()).convertJsonToCsv({ jsonData: students, columns, fileName: 'userList', ext: data.ext });
                 resolve({ status: 1, data: file });
             } catch (error) {
                 reject(error);
