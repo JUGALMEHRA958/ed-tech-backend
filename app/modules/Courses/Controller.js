@@ -23,8 +23,9 @@ class CourseController extends Controller {
         "picture",
         "category",
         "price",
-        "type",
-        "moduleType"
+        "group",
+        "moduleType",
+        "isbnNumber"
       ];
       let data = await new RequestBody().processRequestBody(
         this.req.body,
