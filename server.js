@@ -52,7 +52,7 @@ const app = express();
 
 //middleware so our images can be shared 
 app.use('/images', expressApp.static(path.join(__dirname, 'images')));
-app.use('/csv', expressApp.static(path.join(__dirname, 'public', 'upload', 'csv')));
+app.use('/upload/csv', expressApp.static(path.join(__dirname, 'public', 'upload', 'csv')));
 
 
 app.get('/', function (req, res, next) {
