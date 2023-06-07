@@ -14,9 +14,9 @@ const multer = require('multer');
 const config = require('../../configs/configs');
 
 aws.config.update({
-    secretAccessKey: '',
-    accessKeyId: '',
-    region: ''
+    secretAccessKey: config.s3SecretAccessKey,
+    accessKeyId: config.s3AccessKeyId,
+    region: config.s3Region
 });
 
 const s3 = new aws.S3();
@@ -98,15 +98,26 @@ class File {
     }
     
     
+     generateRandomWord(length) {
+        let word = "";
+        const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
       
+        for (let i = 0; i < length; i++) {
+          const randomIndex = Math.floor(Math.random() * characters.length);
+          word += characters[randomIndex];
+        }
+      
+        return word;
+      } 
     uploadFileOnS3(file) {
+        console.log("a");
         let fileName = file.originalFilename.split(".");
         let newFileName = fileName[0] + Date.now().toString() + '.' + fileName[1];
         return new Promise((resolve, reject) => {
             s3.createBucket(() => {
                 let params = {
-                    Bucket: 'bucket1',
-                    Key: newFileName,
+                    Bucket: config.s3Bucket,
+                    Key: this.generateRandomWord(5),
                     Body: fs.createReadStream(file.path),
                     ACL: "public-read",
                 }
