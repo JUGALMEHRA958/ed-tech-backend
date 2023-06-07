@@ -321,7 +321,7 @@ async assignCourse({ email, code, isbn }) {
         productCode: [isbn],
       };
       const res = await axios.post(
-        `${ config.magicbox_host}/services//license/v1.0/poListBySchoolAndProducts/?token=${config.magicbox_api_token}`,
+        `${ config.magicbox_host}/services//license/v1.0/poListBySchoolAndProducts/?token=${config.magicbox_key}`,
         payload
       );
       const qPayload = {
@@ -333,7 +333,7 @@ async assignCourse({ email, code, isbn }) {
       };
       console.log("\nqPayload:-", qPayload, "\n--------\n");
       await axios.post(
-        `${Config.magicbox_host}/services//license/v1.0/consumelicense?token=${Config.magicbox_api_token}`,
+        `${config.magicbox_host}/services//license/v1.0/consumelicense?token=${config.magicbox_key}`,
         qPayload
       );
       resolve(1);
