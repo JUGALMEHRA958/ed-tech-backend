@@ -348,12 +348,27 @@
             }
         },
         "/admin/getPurchaseHistory":{
-            "get": {
+            "post": {
                 "tags": [
                     "Admin"
                 ],
                 "description": "getPurchaseHistory",
-                "parameters": [],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Login",
+                        "schema": {
+                            "$ref": "#/definitions/PurchaseHistory"
+                        }
+                    }
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -550,6 +565,26 @@
             "properties": {
                 "file": {
                     "type": "file"
+                }
+            }
+        },
+        "PurchaseHistory": {
+            "required": [
+                "pageNumber",
+                "pageSize"
+            ],
+            "properties": {
+                "pageNumber": {
+                    "type": "number",
+                    "example": 1,
+                    "uniqueItems": true,
+                    "required": true
+                },
+                "pageSize": {
+                    "type": "number",
+                    "example": 10,
+                    "uniqueItems": true,
+                    "required": true
                 }
             }
         }
