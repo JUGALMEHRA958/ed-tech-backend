@@ -328,20 +328,12 @@
             }
         },
         "/admin/downloadCsv": {
-            "post": {
+            "get": {
                 "tags": [
                     "Admin User Management"
                 ],
                 "description": "Download CSV",
                 "parameters": [
-                    {
-                        "name": "body",
-                        "in": "body",
-                        "description": "Params",
-                        "schema": {
-                            "$ref": "#/definitions/AdminDownloadFile"
-                        }
-                    },
                     {
                         "name": "Authorization",
                         "in": "header",

@@ -96,7 +96,7 @@ class CourseController extends Controller {
       let responseArray = [];
   
       const testbankData = await CourseSchema.find({
-        type: data.type,
+        type: data.category,
         isDeleted: false,
         status: true,
         group: "testbank",
@@ -111,7 +111,7 @@ class CourseController extends Controller {
       }
   
       const writeAndImprove = await CourseSchema.find({
-        type: data.type,
+        type: data.category,
         isDeleted: false,
         status: true,
         group: "writeAndImprove",
@@ -126,7 +126,7 @@ class CourseController extends Controller {
       }
   
       const ieltsebook = await CourseSchema.find({
-        type: data.type,
+        type: data.category,
         isDeleted: false,
         status: true,
         group: "ieltsebook",
@@ -141,7 +141,7 @@ class CourseController extends Controller {
       }
   
       const praxis = await CourseSchema.find({
-        type: data.type,
+        type: data.category,
         isDeleted: false,
         status: true,
         group: "praxis",
@@ -156,7 +156,7 @@ class CourseController extends Controller {
       }
   
       const printpractice = await CourseSchema.find({
-        type: data.type,
+        type: data.category,
         isDeleted: false,
         status: true,
         group: "printpractice",

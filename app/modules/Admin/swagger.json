@@ -347,6 +347,31 @@
                 }
             }
         },
+        "/admin/getPurchaseHistory": {
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "description": "Get students Profile",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description":"success",
+                        "status": 1
+                    }
+                }
+            }
+        },
         "/admin/logout": {
             "get": {
                 "tags": [
