@@ -242,11 +242,22 @@ class AdminController extends Controller {
      async getPurchaseHistory() {
         try {
          
-          let details = await CoursePurchases.find().populate('courseId');
+            let details = await CoursePurchases.find().populate('courseId').sort({ createdAt: 1 }).lean();
+            // console.log(details);
           let newArray=[];
           for(let i=0;i<details.length;i++){
+            let {amountBeforeTax , tax} = this.calculateGST(details[i].courseId.price) ;
+            // console.log(amountBeforeTax,"amountBeforeTax");
             newArray.push({
-                studentId:details[i].studentId
+                studentId:details[i].studentId,
+                courseIsbn:details[i].courseId.isbnNumber,
+                courseName:details[i].courseId.title,
+                category:details[i].courseId.category,
+                purchaseDate:details[i].createdAt,
+                amountBeforeTax : amountBeforeTax,
+                tax:tax,
+                total: details[i].price ? details[i].price : 0
+
             })
           }  
           return this.res.send({ status: 1, data: newArray });
@@ -255,6 +266,20 @@ class AdminController extends Controller {
           return this.res.send({ status: 0, message: error });
         }
       }
+
+       calculateGST(totalAmount) {
+        const taxRate = 0.18;
+        const amountBeforeTax = Math.floor(totalAmount / (1 + taxRate));
+        const tax = Math.floor(totalAmount - amountBeforeTax);
+        
+        return {
+          amountBeforeTax,
+          tax,
+          total: totalAmount
+        };
+      }
+      
+      
       
       
     /********************************************************
