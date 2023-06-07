@@ -242,9 +242,9 @@ class AdminController extends Controller {
      async getPurchaseHistory() {
         try {
          
-          let details = await CoursePurchases.find();
-      
-          return this.res.send({ status: 1, data: details }).populate('courseId');
+          let details = await CoursePurchases.find().populate('courseId');
+            
+          return this.res.send({ status: 1, data: details });
         } catch (error) {
           console.log("error- ", error);
           return this.res.send({ status: 0, message: error });
