@@ -347,27 +347,19 @@
                 }
             }
         },
-        "/admin/getPurchaseHistory": {
-            "post": {
+        "/admin/getPurchaseHistory":{
+            "get": {
                 "tags": [
                     "Admin"
                 ],
-                "description": "Get students Profile",
-                "parameters": [
-                    {
-                        "name": "Authorization",
-                        "in": "header",
-                        "description": "Authorization token",
-                        "type": "string"
-                    }
-                ],
+                "description": "getPurchaseHistory",
+                "parameters": [],
                 "produces": [
                     "application/json"
                 ],
                 "responses": {
                     "200": {
-                        "description":"success",
-                        "status": 1
+                        "description": "getPurchaseHistory"
                     }
                 }
             }
