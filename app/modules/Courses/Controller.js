@@ -7,6 +7,8 @@ const CommonService = require("../../services/Common");
 const RequestBody = require("../../services/RequestBody");
 const { CourseSchema, CartSchema } = require("./Schema");
 const { CoursePurchases } = require("../CoursePurchase/Schema");
+const axios=require("axios")
+const config = require('../../../configs/configs');
 
 class CourseController extends Controller {
   constructor() {
@@ -309,6 +311,40 @@ async getCart() {
   }
 }
 
+
+
+async assignCourse({ email, code, isbn }) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const payload = {
+        schoolCode: code,
+        productCode: [isbn],
+      };
+      const res = await axios.post(
+        `${ config.magicbox_host}/services//license/v1.0/poListBySchoolAndProducts/?token=${config.magicbox_api_token}`,
+        payload
+      );
+      const qPayload = {
+        ponumber: res.data.poList[0].purchaseOrderNumber,
+        username: email,
+        productcode: [isbn],
+        emailToUser: false,
+        enableAccountProvisioning: false,
+      };
+      console.log("\nqPayload:-", qPayload, "\n--------\n");
+      await axios.post(
+        `${Config.magicbox_host}/services//license/v1.0/consumelicense?token=${Config.magicbox_api_token}`,
+        qPayload
+      );
+      resolve(1);
+    } catch (e) {
+      console.log("error while assigning course to student", e);
+      resolve(0);
+    }
+  });
+}
+
+
   async buyCourse(){
     try{
       let fieldsArray = [
@@ -331,10 +367,18 @@ async getCart() {
         courseId:data.courseId,
         studentId:this.req.currentUser,
       }
-      let checkIfExist = await CoursePurchases.findOne(newObject);
+      let course = await CourseSchema.findById(data.courseId);
+      let checkIfExist = await CoursePurchases.findOne(newObject).populate("courseId");
       if(checkIfExist){ return this.res.send({status:0, message:i18n.__("ALREADY_PURCHASED")})}
       let savedData = await new Model(CoursePurchases).store(newObject);
       console.log(savedData,"savedData");
+      let dataToSendToRegister = {
+       email: this.req.currentUser.email , 
+       code : "IDPCENTRE",
+       isbn : course.isbnNumber
+
+      }
+      await this.assignCourse(dataToSendToRegister)
       return this.res.send({
         status: 1,
         message:i18n.__('COURSE_PURCHASE_SAVED')
