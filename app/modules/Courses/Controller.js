@@ -318,7 +318,9 @@ async getCart() {
         this.req.body,
         fieldsArray
       );
-      let checkIfDeleted = await CourseSchema.findOne({_id:data.courseId});
+      console.log(data.courseId);
+      let checkIfDeleted = await CourseSchema.findById(data.courseId);
+      console.log(checkIfDeleted,"checkIfDeleted");
       if(checkIfDeleted.isDeleted==true){
         return this.res.send({
           status: 1,
