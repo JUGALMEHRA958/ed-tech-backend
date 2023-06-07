@@ -72,7 +72,7 @@ module.exports = (app, express) => {
         return adminObj.resetPasswordAdmin();
     });
 
-    router.post('/admin/getPurchaseHistory',  Validators.validate, (req, res, next) => {
+    router.get('/admin/getPurchaseHistory',  Validators.validate, (req, res, next) => {
         const adminObj = (new AdminController()).boot(req, res);
         return adminObj.getPurchaseHistory();
     });
