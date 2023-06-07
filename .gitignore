@@ -37,6 +37,7 @@ yarn-error.log*
 configs/access.log
 
 /public/upload
+/images
 .scannerwork
 .DS_Store
 server-cert.pem
