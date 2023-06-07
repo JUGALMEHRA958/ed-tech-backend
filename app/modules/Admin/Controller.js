@@ -243,8 +243,13 @@ class AdminController extends Controller {
         try {
          
           let details = await CoursePurchases.find().populate('courseId');
-            
-          return this.res.send({ status: 1, data: details });
+          let newArray=[];
+          for(let i=0;i<details.length;i++){
+            newArray.push({
+                studentId:details[i].studentId
+            })
+          }  
+          return this.res.send({ status: 1, data: newArray });
         } catch (error) {
           console.log("error- ", error);
           return this.res.send({ status: 0, message: error });
