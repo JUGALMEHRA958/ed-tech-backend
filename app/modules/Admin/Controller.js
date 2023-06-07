@@ -241,31 +241,46 @@ class AdminController extends Controller {
      ********************************************************/
      async getPurchaseHistory() {
         try {
-         
-            let details = await CoursePurchases.find().populate('courseId').sort({ createdAt: 1 }).lean();
-            // console.log(details);
-          let newArray=[];
-          for(let i=0;i<details.length;i++){
-            let {amountBeforeTax , tax} = this.calculateGST(details[i].courseId.price) ;
-            // console.log(amountBeforeTax,"amountBeforeTax");
+          let {pageNumber, pageSize} = this.req.body;
+          const totalCount = await CoursePurchases.count();
+          const totalPages = Math.ceil(totalCount / pageSize);
+      
+          let details = await CoursePurchases.find()
+            .populate('courseId')
+            .sort({ createdAt: 1 })
+            .skip((pageNumber - 1) * pageSize)
+            .limit(pageSize)
+            .lean();
+      
+          let newArray = [];
+          for (let i = 0; i < details.length; i++) {
+            let { amountBeforeTax, tax } = this.calculateGST(details[i].courseId.price);
             newArray.push({
-                studentId:details[i].studentId,
-                courseIsbn:details[i].courseId.isbnNumber,
-                courseName:details[i].courseId.title,
-                category:details[i].courseId.category,
-                purchaseDate:details[i].createdAt,
-                amountBeforeTax : amountBeforeTax,
-                tax:tax,
-                total: details[i].price ? details[i].price : 0
-
-            })
-          }  
-          return this.res.send({ status: 1, data: newArray });
+              studentId: details[i].studentId,
+              courseIsbn: details[i].courseId.isbnNumber,
+              courseName: details[i].courseId.title,
+              category: details[i].courseId.category,
+              purchaseDate: details[i].createdAt,
+              amountBeforeTax: amountBeforeTax,
+              tax: tax,
+              total: details[i].price ? details[i].price : 0,
+            });
+          }
+      
+          return this.res.send({
+            status: 1,
+            data: newArray,
+            pageNumber: pageNumber,
+            pageSize: pageSize,
+            totalPages: totalPages,
+            totalCount: totalCount,
+          });
         } catch (error) {
           console.log("error- ", error);
           return this.res.send({ status: 0, message: error });
         }
       }
+      
 
        calculateGST(totalAmount) {
         const taxRate = 0.18;
