@@ -546,6 +546,18 @@ class Common {
             }
         });
     }
+
+    calculateGST(totalAmount) {
+        const taxRate = 0.18;
+        const amountBeforeTax = Math.floor(totalAmount / (1 + taxRate));
+        const tax = Math.floor(totalAmount - amountBeforeTax);
+        
+        return {
+          amountBeforeTax,
+          tax,
+          total: totalAmount
+        };
+      }
     downloadPurchaseData(data) {
         return new Promise(async (resolve, reject) => {
             try {
