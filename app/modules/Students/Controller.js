@@ -430,6 +430,7 @@ class StudentsController extends Controller {
       delete output.password;
       output.emailId = output.email;
       delete output.email;
+      console.log("");
       return this.res.send({ status: 1, data: output });
     } catch (error) {
       console.log("error = ", error);
