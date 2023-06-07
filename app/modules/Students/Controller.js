@@ -75,7 +75,7 @@ class StudentsController extends Controller {
           //magic registration starts here
           try {
             //static centreCode by shashi
-            let centreCode = "NM0001";
+            let centreCode = "IDPCENTRE";
             const schoolDetailsRes = await axios.get(
               `${Config.magicbox_host}/services//school/v1.1/getSchoolById?code=${centreCode}&token=${Config.magicbox_key}`
             );
@@ -117,10 +117,14 @@ class StudentsController extends Controller {
                 districtId: 0,
               };
               const studentRes = await axios.post(
-                `${Config.magicbox_host}/services//user/v1.0/add?token=${DEMO_TOKEN}`,
+                `${Config.magicbox_host}/services//user/v1.0/add?token=${Config.magicbox_key}`,
                 magicboxStudentPayload
               );
-              console.log(studentRes.data);
+              console.log(
+                "\n------------magic registration success--------------\n",
+                studentRes.data,
+                "\n-------------------------------\n"
+              );
             }
           } catch (e) {
             console.log(
@@ -1331,6 +1335,64 @@ class StudentsController extends Controller {
         reject(error);
       }
     });
+  }
+
+  async assignCourse({ email, code, isbn }) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const payload = {
+          schoolCode: code,
+          productCode: [isbn],
+        };
+        const res = await axios.post(
+          `${Config.magicbox_host}/services//license/v1.0/poListBySchoolAndProducts/?token=${Config.magicbox_api_token}`,
+          payload
+        );
+        const qPayload = {
+          ponumber: res.data.poList[0].purchaseOrderNumber,
+          username: email,
+          productcode: [isbn],
+          emailToUser: false,
+          enableAccountProvisioning: false,
+        };
+        console.log("\nqPayload:-", qPayload, "\n--------\n");
+        await axios.post(
+          `${Config.magicbox_host}/services//license/v1.0/consumelicense?token=${Config.magicbox_api_token}`,
+          qPayload
+        );
+        resolve(1);
+      } catch (e) {
+        console.log("error while assigning course to student", e);
+        resolve(0);
+      }
+    });
+  }
+
+  async addCourse() {
+    try {
+      let userId = this.req.currentUser ? this.req.currentUser._id : "";
+      let user = this.req.currentUser ? this.req.currentUser : {};
+      let data = this.req.body;
+      let code = "IDPCENTRE";
+      let assignStatus = await this.assignCourse({
+        email: user.email,
+        code,
+        isbn: data.isbn,
+      });
+      if (assignStatus) {
+        return this.res.send({
+          status: 1,
+          message: "Course assigned successfully.",
+        });
+      } else {
+        return this.res.send({
+          status: 0,
+          message: "Course assignment failed.",
+        });
+      }
+    } catch (e) {
+      console.log("error in assignign course", e);
+    }
   }
 }
 module.exports = StudentsController;
