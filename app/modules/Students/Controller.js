@@ -1374,6 +1374,7 @@ class StudentsController extends Controller {
       let user = this.req.currentUser ? this.req.currentUser : {};
       let data = this.req.body;
       let code = "IDPCENTRE";
+      //confirm that course is purchased or not
       let assignStatus = await this.assignCourse({
         email: user.email,
         code,
