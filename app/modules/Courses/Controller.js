@@ -96,12 +96,12 @@ class CourseController extends Controller {
       let responseArray = [];
   
       const testbankData = await CourseSchema.find({
-        type: data.category,
+        category: data.category,
         isDeleted: false,
         status: true,
         group: "testbank",
       }).lean();
-  
+      console.log(testbankData);
       if (testbankData.length > 0) {
         for (let i = 0; i < testbankData.length; i++) {
           let isStarted = await this.getCourseStatus(testbankData[i], this.req.currentUser);
@@ -111,7 +111,7 @@ class CourseController extends Controller {
       }
   
       const writeAndImprove = await CourseSchema.find({
-        type: data.category,
+        category: data.category,
         isDeleted: false,
         status: true,
         group: "writeAndImprove",
@@ -126,7 +126,7 @@ class CourseController extends Controller {
       }
   
       const ieltsebook = await CourseSchema.find({
-        type: data.category,
+        category: data.category,
         isDeleted: false,
         status: true,
         group: "ieltsebook",
@@ -141,7 +141,7 @@ class CourseController extends Controller {
       }
   
       const praxis = await CourseSchema.find({
-        type: data.category,
+        category: data.category,
         isDeleted: false,
         status: true,
         group: "praxis",
@@ -156,7 +156,7 @@ class CourseController extends Controller {
       }
   
       const printpractice = await CourseSchema.find({
-        type: data.category,
+        category: data.category,
         isDeleted: false,
         status: true,
         group: "printpractice",
@@ -318,7 +318,9 @@ async getCart() {
         this.req.body,
         fieldsArray
       );
-      let checkIfDeleted = await CourseSchema.findOne({_id:data.courseId});
+      console.log(data.courseId);
+      let checkIfDeleted = await CourseSchema.findById(data.courseId);
+      console.log(checkIfDeleted,"checkIfDeleted");
       if(checkIfDeleted.isDeleted==true){
         return this.res.send({
           status: 1,

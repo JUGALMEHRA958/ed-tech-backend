@@ -13,6 +13,7 @@ const Students = require('../modules/Students/Schema').Students;
 const RequestBody = require("./RequestBody");
 const File = require('./File');
 const Model = require("../modules/Base/Model");
+const { CoursePurchases } = require("../modules/CoursePurchase/Schema");
 const ColumnSettings = require('../modules/UserManagement/Schema').ColumnSettings;
 const FilterSettings = require('../modules/UserManagement/Schema').FilterSettings;
 
@@ -539,6 +540,55 @@ class Common {
                 ]);
 
                 const file = await (new File()).convertJsonToCsv({ jsonData: students, columns, fileName: 'userList', ext: data.ext });
+                resolve({ status: 1, data: file });
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+
+    calculateGST(totalAmount) {
+        const taxRate = 0.18;
+        const amountBeforeTax = Math.floor(totalAmount / (1 + taxRate));
+        const tax = Math.floor(totalAmount - amountBeforeTax);
+        
+        return {
+          amountBeforeTax,
+          tax,
+          total: totalAmount
+        };
+      }
+    downloadPurchaseData(data) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let bodyData = data.bodyData;
+                let model = data.bodyData.model;
+                let columns = bodyData && bodyData.columns ? bodyData.columns : ['studentId', 'courseIsbn', 'courseName', 'category', 'purchaseDate','amountBeforeTax','tax','total'];
+                let filter = bodyData && bodyData.filter ? bodyData.filter : { isDeleted: false , status:true };
+                // filter = await this.constructFilter({ filter });
+                // const records = await Students.find(filter).lean();
+                 filter = await this.constructFilter({ filter });
+
+                 let details = await CoursePurchases.find().populate('courseId').sort({ createdAt: 1 }).lean();
+                 // console.log(details);
+               let newArray=[];
+               for(let i=0;i<details.length;i++){
+                 let {amountBeforeTax , tax} = this.calculateGST(details[i].courseId.price) ;
+                 // console.log(amountBeforeTax,"amountBeforeTax");
+                 newArray.push({
+                     studentId:details[i].studentId,
+                     courseIsbn:details[i].courseId.isbnNumber,
+                     courseName:details[i].courseId.title,
+                     category:details[i].courseId.category,
+                     purchaseDate:details[i].createdAt,
+                     amountBeforeTax : amountBeforeTax,
+                     tax:tax,
+                     total: details[i].price ? details[i].price : 0
+     
+                 })
+               } 
+
+                const file = await (new File()).convertJsonToCsv({ jsonData: newArray, columns, fileName: 'userList', ext: data.ext });
                 resolve({ status: 1, data: file });
             } catch (error) {
                 reject(error);

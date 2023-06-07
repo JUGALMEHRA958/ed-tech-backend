@@ -77,6 +77,7 @@ module.exports = (app, express) => {
         const userObj = (new UserManagementController()).boot(req, res);
         return userObj.downloadCsv();
     });
+    
 
     router.post('/user/downloadExcel', Globals.isAdminAuthorised(['user_download']), (req, res, next) => {
         req.body = { ...req.body, ...obj };
