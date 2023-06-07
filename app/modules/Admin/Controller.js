@@ -231,6 +231,27 @@ class AdminController extends Controller {
             this.res.send({ status: 0, message: error });
         }
     }
+        /********************************************************
+     Purpose: get purchase history
+     Parameter:
+     {
+            
+     }
+     Return: JSON String
+     ********************************************************/
+     async getPurchaseHistory() {
+        try {
+         
+          let details = await CoursePurchases.find();
+      
+          return this.res.send({ status: 1, data: details }).populate('courseId');
+        } catch (error) {
+          console.log("error- ", error);
+          return this.res.send({ status: 0, message: error });
+        }
+      }
+      
+      
     /********************************************************
      Purpose: Login
      Parameter:
