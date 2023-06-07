@@ -428,6 +428,8 @@ class StudentsController extends Controller {
       // let output =  _.omit(userExist, ['password', 'emailVerificationStatus', 'isDeleted', 'previouslyUsedPasswords', 'failedAttempts', 'createdAt', 'updatedAt', 'verificationToken', 'verificationTokenCreationTime', 'lastSeen'])
       let output = userExist._doc;
       delete output.password;
+      output.emailId = output.email;
+      delete output.email;
       return this.res.send({ status: 1, data: output });
     } catch (error) {
       console.log("error = ", error);
