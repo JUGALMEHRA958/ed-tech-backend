@@ -113,7 +113,7 @@ class StudentsController extends Controller {
                 grade: [""],
                 schoolId: classDetailsRes.data.data.schoolId,
                 creator: classDetailsRes.data.data.schooladminlist[0].username,
-                emailToUser: true,
+                emailToUser: false,
                 districtId: 0,
               };
               const studentRes = await axios.post(
