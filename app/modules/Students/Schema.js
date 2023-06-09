@@ -24,11 +24,11 @@ var student = new schema({
         type: String,
         required: true
     },
-    testType: {
-        type: String,
-        enum: ['general', 'academic'],
-        required: true
-    },
+    // testType: {
+    //     type: String,
+    //     enum: ['general', 'academic'],
+    //     required: true
+    // },
     isDeleted:{
         type:Boolean ,
         default:false
