@@ -548,6 +548,7 @@ class Common {
     }
 
     calculateGST(totalAmount) {
+        totalAmount = totalAmount ? totalAmount : 0
         const taxRate = 0.18;
         const amountBeforeTax = Math.floor(totalAmount / (1 + taxRate));
         const tax = Math.floor(totalAmount - amountBeforeTax);
@@ -555,7 +556,7 @@ class Common {
         return {
           amountBeforeTax,
           tax,
-          total: totalAmount
+          total: totalAmount ? totalAmount : 0
         };
       }
     downloadPurchaseData(data) {
