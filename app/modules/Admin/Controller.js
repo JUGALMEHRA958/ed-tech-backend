@@ -241,12 +241,62 @@ class AdminController extends Controller {
      ********************************************************/
      async getPurchaseHistory() {
         try {
-          let {pageNumber, pageSize} = this.req.body;
+          let { pageNumber, pageSize, filter } = this.req.body;
           const totalCount = await CoursePurchases.count();
           const totalPages = Math.ceil(totalCount / pageSize);
       
-          let details = await CoursePurchases.find()
-            .populate('courseId')
+          let query = CoursePurchases.find();
+      
+          if (filter && Array.isArray(filter)) {
+            const orConditions = [];
+            const andConditions = [];
+      
+            filter.forEach((filterItem) => {
+              const { condition, key, type, value } = filterItem;
+              const conditionObject = {};
+      
+              switch (type) {
+                case "contains":
+                  if (key === "category") {
+                    conditionObject["courseId.category"] = { $regex: new RegExp(value, "i") };
+                  }
+                  break;
+                case "date":
+                  if (key === "createdAt") {
+                    const { startDate, endDate } = value;
+                    conditionObject[key] = { $gte: startDate, $lte: endDate };
+                  }
+                  break;
+                case "range":
+                  if (key === "price") {
+                    const { startValue, endValue } = value;
+                    conditionObject["courseId.price"] = { $gte: startValue, $lte: endValue };
+                  }
+                  break;
+              }
+      
+              if (condition === "$or") {
+                orConditions.push(conditionObject);
+              } else {
+                andConditions.push(conditionObject);
+              }
+            });
+      
+            if (andConditions.length > 0) {
+              query.and(andConditions);
+            }
+      
+            if (orConditions.length > 0) {
+              query.or(orConditions);
+            }
+          }
+      
+          query.populate({
+            path: "courseId",
+            select: "isbnNumber title category price",
+          });
+      
+          let details = await query
             .sort({ createdAt: 1 })
             .skip((pageNumber - 1) * pageSize)
             .limit(pageSize)
@@ -263,7 +313,7 @@ class AdminController extends Controller {
               purchaseDate: details[i].createdAt,
               amountBeforeTax: amountBeforeTax,
               tax: tax,
-              total: details[i].price ? details[i].price : 0,
+              total: details[i].courseId.price ? details[i].courseId.price : 0,
             });
           }
       
@@ -280,6 +330,7 @@ class AdminController extends Controller {
           return this.res.send({ status: 0, message: error });
         }
       }
+      
       
 
        calculateGST(totalAmount) {
