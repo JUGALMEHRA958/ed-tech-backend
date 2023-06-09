@@ -71,7 +71,7 @@ class AdminController extends Controller {
                   }
                 },
                 {
-                    $sort: { courseCount: 1 } // 1 for ascending order, -1 for descending order
+                    $sort: { courseCount: -1 } // 1 for ascending order, -1 for descending order
                 }
               ]);
             const totalPages = Math.ceil(totalCount / pageSize);
