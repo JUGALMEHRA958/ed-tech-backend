@@ -231,6 +231,123 @@ class AdminController extends Controller {
             this.res.send({ status: 0, message: error });
         }
     }
+        /********************************************************
+     Purpose: get purchase history
+     Parameter:
+     {
+            
+     }
+     Return: JSON String
+     ********************************************************/
+     async getPurchaseHistory() {
+        try {
+          let { pageNumber, pageSize, filter } = this.req.body;
+          const totalCount = await CoursePurchases.count();
+          const totalPages = Math.ceil(totalCount / pageSize);
+      
+          let query = CoursePurchases.find();
+      
+          if (filter && Array.isArray(filter)) {
+            const orConditions = [];
+            const andConditions = [];
+      
+            filter.forEach((filterItem) => {
+              const { condition, key, type, value } = filterItem;
+              const conditionObject = {};
+      
+              switch (type) {
+                case "contains":
+                  if (key === "category") {
+                    conditionObject["courseId.category"] = { $regex: new RegExp(value, "i") };
+                  }
+                  break;
+                case "date":
+                  if (key === "createdAt") {
+                    const { startDate, endDate } = value;
+                    conditionObject[key] = { $gte: startDate, $lte: endDate };
+                  }
+                  break;
+                case "range":
+                  if (key === "price") {
+                    const { startValue, endValue } = value;
+                    conditionObject["courseId.price"] = { $gte: startValue, $lte: endValue };
+                  }
+                  break;
+              }
+      
+              if (condition === "$or") {
+                orConditions.push(conditionObject);
+              } else {
+                andConditions.push(conditionObject);
+              }
+            });
+      
+            if (andConditions.length > 0) {
+              query.and(andConditions);
+            }
+      
+            if (orConditions.length > 0) {
+              query.or(orConditions);
+            }
+          }
+      
+          query.populate({
+            path: "courseId",
+            select: "isbnNumber title category price",
+          });
+      
+          let details = await query
+            .sort({ createdAt: 1 })
+            .skip((pageNumber - 1) * pageSize)
+            .limit(pageSize)
+            .lean();
+      
+          let newArray = [];
+          for (let i = 0; i < details.length; i++) {
+            let { amountBeforeTax, tax } = this.calculateGST(details[i].courseId.price);
+            newArray.push({
+              studentId: details[i].studentId,
+              courseIsbn: details[i].courseId.isbnNumber,
+              courseName: details[i].courseId.title,
+              category: details[i].courseId.category,
+              purchaseDate: details[i].createdAt,
+              amountBeforeTax: amountBeforeTax,
+              tax: tax,
+              total: details[i].courseId.price ? details[i].courseId.price : 0,
+            });
+          }
+      
+          return this.res.send({
+            status: 1,
+            data: newArray,
+            pageNumber: pageNumber,
+            pageSize: pageSize,
+            totalPages: totalPages,
+            totalCount: totalCount,
+          });
+        } catch (error) {
+          console.log("error- ", error);
+          return this.res.send({ status: 0, message: error });
+        }
+      }
+      
+      
+
+       calculateGST(totalAmount) {
+        const taxRate = 0.18;
+        const amountBeforeTax = Math.floor(totalAmount / (1 + taxRate));
+        const tax = Math.floor(totalAmount - amountBeforeTax);
+        
+        return {
+          amountBeforeTax,
+          tax,
+          total: totalAmount
+        };
+      }
+      
+      
+      
+      
     /********************************************************
      Purpose: Login
      Parameter:
@@ -290,7 +407,10 @@ class AdminController extends Controller {
      }
      Return: JSON String
      ********************************************************/
-    async fileUpload() {
+      getFileExtension(filename) {
+        return filename.slice((filename.lastIndexOf(".") - 1 >>> 0) + 2);
+      }
+     async fileUpload() {
         try {
             let form = new Form(this.req);
             let formObject = await form.parse();
@@ -299,21 +419,29 @@ class AdminController extends Controller {
             }
             const file = new File(formObject.files);
             let filePath = "";
+            let imagePath = config.s3ImagePath;
             if (config.s3upload && config.s3upload == 'true') {
-                filePath = file.uploadFileOnS3(formObject.files.file[0]);
-            }
-            else {
+                console.log(formObject.files);
+                filePath = await file.uploadFileOnS3(formObject.files.file[0]);
+            } else {
                 let fileObject = await file.store();
                 /***** uncommit this line to do manipulations in image like compression and resizing ****/
                 // let fileObject = await file.saveImage();
                 filePath = fileObject.filePath;
             }
-            this.res.send({ status: 1, data: { filePath } });
+            console.log(filePath,"filePath");
+            let extension = this.getFileExtension(formObject.files.file[0].originalFilename);
+            console.log(extension);
+            let path = config.s3ImagePath + "/" + filePath.key ;
+            return this.res.send({ status: 1, data: path});
         } catch (error) {
             console.log("error- ", error);
             this.res.send({ status: 0, message: error });
         }
     }
+
+   
+    
     async getMetaText() {
         let data = [
             "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",

@@ -8,13 +8,15 @@ const json2csv = require('json2csv').parse;
 const mv = require('mv');
 const aws = require('aws-sdk');
 const Jimp = require('jimp');
+const crypto = require('crypto');
+const multer = require('multer');
 
 const config = require('../../configs/configs');
 
 aws.config.update({
-    secretAccessKey: '',
-    accessKeyId: '',
-    region: ''
+    secretAccessKey: config.s3SecretAccessKey,
+    accessKeyId: config.s3AccessKeyId,
+    region: config.s3Region
 });
 
 const s3 = new aws.S3();
@@ -63,40 +65,59 @@ class File {
         });
     }
 
-    convertJsonToCsv(data) {
-        return new Promise(async (resolve, reject) => {
-            try {
-                let jsonData = data.jsonData && Array.isArray(data.jsonData) ? data.jsonData : [];
-                let ext = data.ext ? data.ext : ".csv"
-                const fields = data.columns;
-                const fileName = data.fileName ? data.fileName : "list";
-                const opts = { fields };
-                const csv = json2csv(jsonData, opts);
-                var flname = fileName + Date.now().toString() + ext;
-                var loc = path.join(__dirname, '..', '..', 'public', 'upload', 'csv', flname);
-                fs.writeFile(loc, csv, (err, result) => {
-                    if (err) {
-                        return reject(err);
-                    } else {
-                        let csvFile = path.join('public', 'upload', 'csv', flname);
-                        return resolve(config.apiUrl + '/' + csvFile);
-                    }
-                });
-            } catch (err) {
-                console.error(err);
-                return reject(err);
-            }
-        });
-    }
 
+
+    async convertJsonToCsv(data) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const jsonData = data.jsonData && Array.isArray(data.jsonData) ? data.jsonData : [];
+          const ext = data.ext ? data.ext : '.csv';
+          const fields = data.columns;
+          const fileName = data.fileName ? data.fileName : 'list';
+          const opts = { fields };
+          const csv = json2csv(jsonData, opts);
+          const uploadDir = path.join('public', 'upload', 'csv');
+          const randomString = crypto.randomBytes(3).toString('hex'); // Generate a random 5-letter string
+          const flname = `${fileName}${randomString}${ext}`;
+          const loc = path.join(uploadDir, flname); // Save the file in the 'public/upload/csv' directory
+    
+          try {
+            await fs.promises.mkdir(uploadDir, { recursive: true }); // Create the directory if it doesn't exist
+            await fs.promises.writeFile(loc, csv); // Write the file
+            const csvFile = config.serverUrl + 'upload/csv/' + flname; // Append serverUrl before the file link
+            return resolve(csvFile);
+          } catch (err) {
+            console.error(err);
+            return reject(err);
+          }
+        } catch (err) {
+          console.error(err);
+          return reject(err);
+        }
+      });
+    }
+    
+    
+     generateRandomWord(length) {
+        let word = "";
+        const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      
+        for (let i = 0; i < length; i++) {
+          const randomIndex = Math.floor(Math.random() * characters.length);
+          word += characters[randomIndex];
+        }
+      
+        return word;
+      } 
     uploadFileOnS3(file) {
+        console.log("a");
         let fileName = file.originalFilename.split(".");
         let newFileName = fileName[0] + Date.now().toString() + '.' + fileName[1];
         return new Promise((resolve, reject) => {
             s3.createBucket(() => {
                 let params = {
-                    Bucket: 'bucket1',
-                    Key: newFileName,
+                    Bucket: config.s3Bucket,
+                    Key: this.generateRandomWord(5),
                     Body: fs.createReadStream(file.path),
                     ACL: "public-read",
                 }

@@ -1,7 +1,7 @@
 const _ = require("lodash");
 const i18n = require("i18n");
 const Transaction = require("mongoose-transactions");
-const CoursePurchases = require("../CoursePurchase/Schema").CoursePurchases
+const CoursePurchases = require("../CoursePurchase/Schema").CoursePurchases;
 const Controller = require("../Base/Controller");
 const Students = require("./Schema").Students;
 const Email = require("../../services/Email");
@@ -16,7 +16,7 @@ const Form = require("../../services/Form");
 const File = require("../../services/File");
 var FormData = require("form-data");
 const axios = require("axios").default;
-const CourseSchema = require("../Courses/Schema").CourseSchema
+const CourseSchema = require("../Courses/Schema").CourseSchema;
 class StudentsController extends Controller {
   constructor() {
     super();
@@ -38,13 +38,11 @@ class StudentsController extends Controller {
     try {
       // check email is exist or not
       let filter = {
-        $or: [
-          { email: this.req.body.email.toLowerCase() }
-        ],
+        $or: [{ email: this.req.body.email.toLowerCase() }],
       };
       const user = await Students.findOne(filter);
       //if user exist give error
-      if (!_.isEmpty(user) && (user.email )) {
+      if (!_.isEmpty(user) && user.email) {
         return this.res.send({
           status: 0,
           message: i18n.__("DUPLICATE_EMAIL_"),
@@ -74,14 +72,77 @@ class StudentsController extends Controller {
             message: i18n.__("USER_NOT_SAVED"),
           });
         } else {
+          //magic registration starts here
+          try {
+            //static centreCode by shashi
+            let centreCode = "IDPCENTRE";
+            const schoolDetailsRes = await axios.get(
+              `${Config.magicbox_host}/services//school/v1.1/getSchoolById?code=${centreCode}&token=${Config.magicbox_key}`
+            );
+            console.log(
+              "\nschoolDetailsRes:\n",
+              schoolDetailsRes,
+              "\n--------\n"
+            );
+            const classDetailsRes = await axios.get(
+              `${Config.magicbox_host}/services//school/v1.0/school/${schoolDetailsRes.data.data.schoolId}/classes?token=${Config.magicbox_key}`
+            );
+            console.log(
+              "\nclassDetailsRes:\n",
+              classDetailsRes,
+              "\n--------\n"
+            );
+            const userRes = await axios.get(
+              `${
+                Config.magicbox_host
+              }/services//user/v1.0/${data.email.toLowerCase()}?status=ACT&token=${
+                Config.magicbox_key
+              }`
+            );
+            console.log("\nuserRes:\n", userRes, "\n--------\n");
+            if (userRes.data.response.responseCode === 200) {
+              console.log("magic: student is already registerd");
+            } else {
+              let magicboxStudentPayload = {
+                firstname: data.firstName,
+                lastname: data.lastName,
+                userName: data.email.toLowerCase(),
+                // password: randomPwd,
+                userType: "LEARNER",
+                classId: [classDetailsRes.data.data.classList[0].classId],
+                grade: [""],
+                schoolId: classDetailsRes.data.data.schoolId,
+                creator: classDetailsRes.data.data.schooladminlist[0].username,
+                emailToUser: false,
+                districtId: 0,
+              };
+              const studentRes = await axios.post(
+                `${Config.magicbox_host}/services//user/v1.0/add?token=${Config.magicbox_key}`,
+                magicboxStudentPayload
+              );
+              console.log(
+                "\n------------magic registration success--------------\n",
+                studentRes.data,
+                "\n-------------------------------\n"
+              );
+            }
+          } catch (e) {
+            console.log(
+              "magic registration error[NM-CC]-catch-block--------------\n",
+              e,
+              "\nmagic student register api error---------------"
+            );
+          }
+          //magic registration ended
+
           let { token, refreshToken } =
-          await new Globals().getTokenWithRefreshToken({ id: newUserId._id });
+            await new Globals().getTokenWithRefreshToken({ id: newUserId._id });
           return this.res.send({
             status: 1,
             message: i18n.__("REGISTRATION_SCUCCESS"),
             data: newUserId,
-            token:token,
-            refreshToken:refreshToken
+            token: token,
+            refreshToken: refreshToken,
           });
         }
       }
@@ -177,7 +238,10 @@ class StudentsController extends Controller {
           const classList = schoolData.data.data.classList;
           //check wether the class is present or not in the class list
           classList.forEach((e) => {
-            if (data.collegeName.toLowerCase().trim() == e.className.toLowerCase().trim()) {
+            if (
+              data.collegeName.toLowerCase().trim() ==
+              e.className.toLowerCase().trim()
+            ) {
               // return e.classId
               classId = [e.classId];
               return;
@@ -364,6 +428,9 @@ class StudentsController extends Controller {
       // let output =  _.omit(userExist, ['password', 'emailVerificationStatus', 'isDeleted', 'previouslyUsedPasswords', 'failedAttempts', 'createdAt', 'updatedAt', 'verificationToken', 'verificationTokenCreationTime', 'lastSeen'])
       let output = userExist._doc;
       delete output.password;
+      output.emailId = output.email;
+      delete output.email;
+      console.log("");
       return this.res.send({ status: 1, data: output });
     } catch (error) {
       console.log("error = ", error);
@@ -376,12 +443,15 @@ class StudentsController extends Controller {
     try {
       console.log(this.req.headers.authorization);
       const token = this.req.headers.authorization;
-      console.log('\n---------------------Token for ssoLogin------------------\n',token,'\n-----------------------------\n');  
+      console.log(
+        "\n---------------------Token for ssoLogin------------------\n",
+        token,
+        "\n-----------------------------\n"
+      );
       if (_.isEmpty(token)) {
         return this.res.send({ status: 0, message: "Please send token" });
       }
 
- 
       // else if (!student.emailVerificationStatus) {
       //     return this.res.send({ status: 0, message: i18n.__("VERIFY_EMAIL") });
       // }
@@ -395,15 +465,15 @@ class StudentsController extends Controller {
       //   { new: true }
       // ).select(userProjection.user);
       let coursesPurchased = await CoursePurchases.find({
-        studentId : this.req.currentUser._id
-      })
-      let courseIds = coursesPurchased.map((course)=>{
-        return course.courseId
-      })
+        studentId: this.req.currentUser._id,
+      });
+      let courseIds = coursesPurchased.map((course) => {
+        return course.courseId;
+      });
       let courses = await CourseSchema.find({ _id: { $in: courseIds } });
-      let productIds = courses.map((course)=>{
-        return course.productId
-      })
+      let productIds = courses.map((course) => {
+        return course.productId;
+      });
       if (Config.useRefreshToken && Config.useRefreshToken == "true") {
         return this.res.send({
           status: 1,
@@ -411,7 +481,7 @@ class StudentsController extends Controller {
           // access_token: token,
           // refreshToken: refreshToken,
           data: this.req.currentUser,
-          productIds:productIds
+          productIds: productIds,
         });
       } else {
         return this.res.send({
@@ -422,7 +492,11 @@ class StudentsController extends Controller {
         });
       }
     } catch (error) {
-      console.log("\n-----------ssoLogin-error-catched-----------\n", error , '\n---------------------------------\n');
+      console.log(
+        "\n-----------ssoLogin-error-catched-----------\n",
+        error,
+        "\n---------------------------------\n"
+      );
       // transaction.rollback();
       return this.res.send({ status: 0, message: error });
     }
@@ -475,7 +549,11 @@ class StudentsController extends Controller {
       const magicStudentData = await axios.get(
         `${Config.magicbox_host}/services/user/v1.0/userdetails/${student.studentId}?token=${Config.magicbox_key}`
       );
-        console.log('\n--------------magic response for student data--------------\n',magicStudentData.data,'\n------------------------------\n')
+      console.log(
+        "\n--------------magic response for student data--------------\n",
+        magicStudentData.data,
+        "\n------------------------------\n"
+      );
       if (magicStudentData.data.response.responseCode == 719) {
         //start pushing the student again to magic
         //magic registration starts here
@@ -491,7 +569,10 @@ class StudentsController extends Controller {
           const classList = schoolData.data.data.classList;
           //check wether the class is present or not in the class list
           classList.forEach((e) => {
-            if (student.collegeName.toLowerCase().trim() == e.className.toLowerCase().trim()) {
+            if (
+              student.collegeName.toLowerCase().trim() ==
+              e.className.toLowerCase().trim()
+            ) {
               // return e.classId
               classId = [e.classId];
               return;
@@ -556,14 +637,14 @@ class StudentsController extends Controller {
               "\n--------re-registration success-------\n"
             );
             // this.res.redirect(target='_blank','https://online.cambridgeconnect.org/security/cup/websso.htm?code='+token+'&source=CCNM');
-              return this.res.send({status:1})
+            return this.res.send({ status: 1 });
           } else {
             console.log(
               "\n--------magic re-add user api error-[NM-CC]-------\n",
               studentRes,
               "\n--------magic student re-register error--------\n"
             );
-            return this.res.send({status:1})
+            return this.res.send({ status: 1 });
           }
         } catch (e) {
           console.log(
@@ -571,15 +652,19 @@ class StudentsController extends Controller {
             e,
             "\n------------magic student re-register api error---------------\n"
           );
-            return this.res.send({status:1})
+          return this.res.send({ status: 1 });
         }
         //magic registration ended
       } else {
-        // this.res.redirect(target='_blank','https://online.cambridgeconnect.org/security/cup/websso.htm?code='+token+'&source=CCNM');   
-          return this.res.send({status:1})
+        // this.res.redirect(target='_blank','https://online.cambridgeconnect.org/security/cup/websso.htm?code='+token+'&source=CCNM');
+        return this.res.send({ status: 1 });
       }
     } catch (error) {
-      console.log("\n-----------magic student validate-catched-----------\n", error , '\n---------------------------------\n');
+      console.log(
+        "\n-----------magic student validate-catched-----------\n",
+        error,
+        "\n---------------------------------\n"
+      );
       return this.res.send({ status: 0, message: error });
     }
   }
@@ -613,10 +698,10 @@ class StudentsController extends Controller {
         emailKey: "forgot_password_mail",
         replaceDataObj: {
           fullName: user.firstName + " " + user.lastName,
-          resetPasswordLink: Config.setPassUrl  + token,
+          resetPasswordLink: Config.setPassUrl + token,
         },
       };
-      console.log(Config.setPassUrl,"Config.setPassUrl");
+      console.log(Config.setPassUrl, "Config.setPassUrl");
       const sendingMail = await new Email().sendMail(emailData);
       if (sendingMail && sendingMail.status == 0) {
         return _this.res.send(sendingMail);
@@ -731,19 +816,18 @@ class StudentsController extends Controller {
           status: 0,
           message: i18n.__("USER_NOT_EXIST_OR_DELETED"),
         });
-      } 
-      
-        const status = await new CommonService().verifyPassword({
-          password: this.req.body.password,
-          savedPassword: user.password,
+      }
+
+      const status = await new CommonService().verifyPassword({
+        password: this.req.body.password,
+        savedPassword: user.password,
+      });
+      if (!status) {
+        return this.res.send({
+          status: 0,
+          message: i18n.__("INVALID_PASSWORD"),
         });
-        if (!status) {
-          return this.res.send({
-            status: 0,
-            message: i18n.__("INVALID_PASSWORD"),
-          });
-        }
-      
+      }
 
       data["lastSeen"] = new Date();
       let updatedUser = await Students.findByIdAndUpdate(user._id, data, {
@@ -1112,7 +1196,7 @@ class StudentsController extends Controller {
           return _this.res.send(newUser);
         }
       } else {
-      /****** if user exists with socialId ******/
+        /****** if user exists with socialId ******/
         if (_this.req.body.email) {
           /******** to check whether is already exists with email or not *******/
           let userDetails = await Students.findOne({
@@ -1254,6 +1338,64 @@ class StudentsController extends Controller {
         reject(error);
       }
     });
+  }
+
+  async assignCourse({ email, code, isbn }) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const payload = {
+          schoolCode: code,
+          productCode: [isbn],
+        };
+        const res = await axios.post(
+          `${Config.magicbox_host}/services//license/v1.0/poListBySchoolAndProducts/?token=${Config.magicbox_api_token}`,
+          payload
+        );
+        const qPayload = {
+          ponumber: res.data.poList[0].purchaseOrderNumber,
+          username: email,
+          productcode: [isbn],
+          emailToUser: false,
+          enableAccountProvisioning: false,
+        };
+        console.log("\nqPayload:-", qPayload, "\n--------\n");
+        await axios.post(
+          `${Config.magicbox_host}/services//license/v1.0/consumelicense?token=${Config.magicbox_api_token}`,
+          qPayload
+        );
+        resolve(1);
+      } catch (e) {
+        console.log("error while assigning course to student", e);
+        resolve(0);
+      }
+    });
+  }
+
+  async addCourse() {
+    try {
+      let userId = this.req.currentUser ? this.req.currentUser._id : "";
+      let user = this.req.currentUser ? this.req.currentUser : {};
+      let data = this.req.body;
+      let code = "IDPCENTRE";
+      let assignStatus = await this.assignCourse({
+        email: user.email,
+        code,
+        isbn: data.isbn,
+      });
+      if (assignStatus) {
+        return this.res.send({
+          status: 1,
+          message: "Course assigned successfully.",
+        });
+      } else {
+        return this.res.send({
+          status: 0,
+          message: "Course assignment failed.",
+        });
+      }
+    } catch (e) {
+      console.log("error in assignign course", e);
+    }
   }
 }
 module.exports = StudentsController;

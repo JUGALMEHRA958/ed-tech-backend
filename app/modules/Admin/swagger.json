@@ -347,6 +347,38 @@
                 }
             }
         },
+        "/admin/getPurchaseHistory":{
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "description": "getPurchaseHistory",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Login",
+                        "schema": {
+                            "$ref": "#/definitions/PurchaseHistory"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "getPurchaseHistory"
+                    }
+                }
+            }
+        },
         "/admin/logout": {
             "get": {
                 "tags": [
@@ -533,6 +565,26 @@
             "properties": {
                 "file": {
                     "type": "file"
+                }
+            }
+        },
+        "PurchaseHistory": {
+            "required": [
+                "pageNumber",
+                "pageSize"
+            ],
+            "properties": {
+                "pageNumber": {
+                    "type": "number",
+                    "example": 1,
+                    "uniqueItems": true,
+                    "required": true
+                },
+                "pageSize": {
+                    "type": "number",
+                    "example": 10,
+                    "uniqueItems": true,
+                    "required": true
                 }
             }
         }
