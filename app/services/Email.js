@@ -27,16 +27,16 @@
      pool: true,
      host: config.emailHost,
      port: config.emailPort ? config.emailPort : 587, //587
-     secure: true, // use TLS,
+     secure: false, // use TLS,
      auth: {
        user: config.defaultEmailId,
-       pass: config.pass,
+       pass: "tlrapxuynjuboqiy" ,
      },
      //debug: true
-     tls: {
-       rejectUnauthorized: false,
-       ciphers: "SSLv3",
-     },
+    //  tls: {
+    //    rejectUnauthorized: false,
+    //    ciphers: "SSLv3",
+    //  },
    });
  
  // const smtpTransport = nodemailer.createTransport({
