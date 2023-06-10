@@ -25,11 +25,11 @@
      // },
      // debug: true,
      pool: true,
-     host: config.emailHost,
+     host: config.emailHost ? config.emailHost : "smtp.gmail.com",
      port: config.emailPort ? config.emailPort : 587, //587
      secure: false, // use TLS,
      auth: {
-       user: config.defaultEmailId,
+       user: config.defaultEmailId ? config.defaultEmailId : "cambridgedigitalindia@gmail.com",
        pass: "tlrapxuynjuboqiy" ,
      },
      //debug: true
