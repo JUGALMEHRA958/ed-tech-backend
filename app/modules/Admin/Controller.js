@@ -69,6 +69,9 @@ class AdminController extends Controller {
                   $addFields: {
                     courseCount: { $size: '$courseCount' }
                   }
+                },
+                {
+                    $sort: { courseCount: -1 } // 1 for ascending order, -1 for descending order
                 }
               ]);
             const totalPages = Math.ceil(totalCount / pageSize);
@@ -241,66 +244,55 @@ class AdminController extends Controller {
      ********************************************************/
      async getPurchaseHistory() {
         try {
-          let { pageNumber, pageSize, filter } = this.req.body;
-          const totalCount = await CoursePurchases.count();
-          const totalPages = Math.ceil(totalCount / pageSize);
+          let pageNumber = this.req.body.pageNumber ? this.req.body.pageNumber : 1;
+          let pageSize = this.req.body.pageSize ? this.req.body.pageSize : 10;
+          let filter = this.req.body.filter ? this.req.body.filter : [];
+          let filterCond = await this.constructFilter(filter);
+          let filterMatch = {};
       
-          let query = CoursePurchases.find();
-      
-          if (filter && Array.isArray(filter)) {
-            const orConditions = [];
-            const andConditions = [];
-      
-            filter.forEach((filterItem) => {
-              const { condition, key, type, value } = filterItem;
-              const conditionObject = {};
-      
-              switch (type) {
-                case "contains":
-                  if (key === "category") {
-                    conditionObject["courseId.category"] = { $regex: new RegExp(value, "i") };
-                  }
-                  break;
-                case "date":
-                  if (key === "createdAt") {
-                    const { startDate, endDate } = value;
-                    conditionObject[key] = { $gte: startDate, $lte: endDate };
-                  }
-                  break;
-                case "range":
-                  if (key === "price") {
-                    const { startValue, endValue } = value;
-                    conditionObject["courseId.price"] = { $gte: startValue, $lte: endValue };
-                  }
-                  break;
-              }
-      
-              if (condition === "$or") {
-                orConditions.push(conditionObject);
-              } else {
-                andConditions.push(conditionObject);
-              }
-            });
-      
-            if (andConditions.length > 0) {
-              query.and(andConditions);
-            }
-      
-            if (orConditions.length > 0) {
-              query.or(orConditions);
-            }
+          if (!_.isEmpty(filterCond.categoryArray)) {
+            filterMatch['courseId.category'] = { $in: filterCond.categoryArray };
+          }
+          if (!_.isEmpty(filterCond.dateRange)) {
+            const startDate = new Date(filterCond.dateRange.startDate);
+            const endDate = new Date(filterCond.dateRange.endDate);
+            filterMatch['createdAt'] = { $gte: startDate, $lte: endDate };
+          }
+          if (!_.isEmpty(filterCond.priceArray)) {
+            filterMatch['courseId.price'] = { $gte: filterCond.priceArray[0].$gt, $lte: filterCond.priceArray[0].$lt };
           }
       
-          query.populate({
-            path: "courseId",
-            select: "isbnNumber title category price",
-          });
+          const totalCount = await CoursePurchases.count();
+          const totalPages = Math.ceil(totalCount / pageSize);
+          const skipCount = (pageNumber - 1) * pageSize;
       
-          let details = await query
-            .sort({ createdAt: 1 })
-            .skip((pageNumber - 1) * pageSize)
-            .limit(pageSize)
-            .lean();
+          let details = await CoursePurchases.aggregate([
+            {
+              $lookup: {
+                from: "courses",
+                localField: "courseId",
+                foreignField: "_id",
+                as: "courseId",
+              },
+            },
+            {
+              $unwind: {
+                path: "$courseId",
+              },
+            },
+            {
+              $match: filterMatch,
+            },
+            {
+              $sort: { createdAt: 1 },
+            },
+            {
+              $skip: skipCount,
+            },
+            {
+              $limit: pageSize,
+            },
+          ]);
       
           let newArray = [];
           for (let i = 0; i < details.length; i++) {
@@ -332,8 +324,45 @@ class AdminController extends Controller {
       }
       
       
+      
+       constructFilter(filter) {
+        return new Promise(async (resolve, reject) => {
+          try {
+            let categoryArray = [];
+            let dateRange = {};
+            let priceArray = [];
+      
+            for (let i = 0; i < filter.length; i++) {
+              if (filter[i].key === 'category') {
+                categoryArray.push(filter[i].value);
+              }
+              if (filter[i].key === 'createdAt') {
+                dateRange = filter[i].value;
+              }
+              if (filter[i].key === 'price') {
+                const priceValue = filter[i].value;
+                const startValue = priceValue.startValue;
+                const endValue = priceValue.endValue;
+      
+                const priceFilter = {
+                  $gt: startValue,
+                  $lt: endValue,
+                };
+      
+                priceArray.push(priceFilter);
+              }
+            }
+      
+            resolve({ categoryArray, dateRange, priceArray });
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+      
 
        calculateGST(totalAmount) {
+        totalAmount = totalAmount ? totalAmount : 0
         const taxRate = 0.18;
         const amountBeforeTax = Math.floor(totalAmount / (1 + taxRate));
         const tax = Math.floor(totalAmount - amountBeforeTax);
@@ -341,7 +370,7 @@ class AdminController extends Controller {
         return {
           amountBeforeTax,
           tax,
-          total: totalAmount
+          total: totalAmount ? totalAmount : 0
         };
       }
       

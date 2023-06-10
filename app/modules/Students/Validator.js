@@ -137,10 +137,10 @@ class Validators {
         check("email").exists().withMessage(i18n.__("%s REQUIRED", "email")),
         check("password")
           .exists()
-          .withMessage(i18n.__("%s REQUIRED", "password")),
-        check("testType")
-          .exists()
-          .withMessage(i18n.__("%s REQUIRED", "testType")),
+          .withMessage(i18n.__("%s REQUIRED", "password"))
+      //   check("testType")
+      //     .exists()
+      //     .withMessage(i18n.__("%s REQUIRED", "testType")),
       ];
     } catch (error) {
       return error;
