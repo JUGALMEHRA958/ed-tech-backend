@@ -29,8 +29,8 @@
      port: config.emailPort ? config.emailPort : 587, //587
      secure: false, // use TLS,
      auth: {
-       user: "cambridgedigitalindia@gmail.com",
-       pass: "tlrapxuynjuboqiy" ,
+       user: config.defaultEmailId,
+       pass:  config.pass,
      },
      //debug: true
     //  tls: {
