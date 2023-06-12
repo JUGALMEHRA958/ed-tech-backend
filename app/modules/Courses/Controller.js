@@ -9,6 +9,8 @@ const { CourseSchema, CartSchema } = require("./Schema");
 const { CoursePurchases } = require("../CoursePurchase/Schema");
 const axios=require("axios")
 const config = require('../../../configs/configs');
+const { Mongoose } = require("mongoose");
+const mongoose = require("mongoose");
 
 class CourseController extends Controller {
   constructor() {
@@ -87,6 +89,16 @@ class CourseController extends Controller {
     if(isCourseStarted){return true}
     return false;
   };
+  // const mongoose = require('mongoose');
+
+  async  isAddedInCart(course, user) {
+    let userCart = await CartSchema.findOne({ userId: user._id }).lean();
+    const courseIdString = mongoose.Types.ObjectId(course._id).toString();
+     return userCart.courseIds.some(courseId => {
+      return mongoose.Types.ObjectId(courseId).equals(courseIdString);
+    });
+  }
+  
   async getCategoryWise() {
     try {
       let fieldsArray = ["category"];
@@ -107,7 +119,8 @@ class CourseController extends Controller {
       if (testbankData.length > 0) {
         for (let i = 0; i < testbankData.length; i++) {
           let isStarted = await this.getCourseStatus(testbankData[i], this.req.currentUser);
-          testbankData[i] = { ...testbankData[i], isStarted: isStarted };
+          let isAddedInCart = await this.isAddedInCart(testbankData[i], this.req.currentUser);
+          testbankData[i] = { ...testbankData[i], isStarted: isStarted ,isAddedInCart :isAddedInCart};
         }
         responseArray.push({ name: "testbank", data: testbankData });
       }
@@ -248,7 +261,7 @@ class CourseController extends Controller {
        // Check if the course exists
     const course = await CourseSchema.findById(data.courseId);
     if (!course) {
-      return res.status(404).json({ error: 'Course not found' });
+      return this.res.status(404).json({ error: 'Course not found' });
     }
     let cart = await CartSchema.findOne({userId:this.req.currentUser._id});
     if (!cart) {
