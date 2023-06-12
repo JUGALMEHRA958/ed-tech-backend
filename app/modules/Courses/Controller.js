@@ -93,6 +93,7 @@ class CourseController extends Controller {
 
   async  isAddedInCart(course, user) {
     let userCart = await CartSchema.findOne({ userId: user._id }).lean();
+    if(!course || !userCart ){return false}
     const courseIdString = mongoose.Types.ObjectId(course._id).toString();
      return userCart.courseIds.some(courseId => {
       return mongoose.Types.ObjectId(courseId).equals(courseIdString);
