@@ -113,7 +113,7 @@ class StudentsController extends Controller {
                 grade: [""],
                 schoolId: classDetailsRes.data.data.schoolId,
                 creator: classDetailsRes.data.data.schooladminlist[0].username,
-                emailToUser: true,
+                emailToUser: false,
                 districtId: 0,
               };
               const studentRes = await axios.post(
@@ -428,6 +428,9 @@ class StudentsController extends Controller {
       // let output =  _.omit(userExist, ['password', 'emailVerificationStatus', 'isDeleted', 'previouslyUsedPasswords', 'failedAttempts', 'createdAt', 'updatedAt', 'verificationToken', 'verificationTokenCreationTime', 'lastSeen'])
       let output = userExist._doc;
       delete output.password;
+      output.emailId = output.email;
+      delete output.email;
+      console.log("");
       return this.res.send({ status: 1, data: output });
     } catch (error) {
       console.log("error = ", error);

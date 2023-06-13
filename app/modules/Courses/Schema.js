@@ -46,7 +46,7 @@ const courseSchema = new Schema(
       enum: ["listening", "reading","speaking","writing"],
       default: "listening",
     },
-    price: { type: Number, require: true },
+    price: { type: Number, require: true , default:0},
     category: {
       type: String,
       require: true,
