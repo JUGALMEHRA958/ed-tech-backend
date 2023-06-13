@@ -138,5 +138,14 @@ module.exports = (app, express) => {
     }
   );
 
+  router.post(
+    "/students/createPaymentIntent",
+    Globals.isAuthorised,
+    (req, res, next) => {
+      const userObj = new StudentsController().boot(req, res);
+      return userObj.createIntent();
+    }
+  );
+
   app.use(config.baseApiUrl, router);
 };

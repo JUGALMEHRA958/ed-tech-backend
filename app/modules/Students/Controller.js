@@ -12,6 +12,7 @@ const Config = require("../../../configs/configs");
 const RequestBody = require("../../services/RequestBody");
 const Authentication = require("../Authentication/Schema").Authtokens;
 const CommonService = require("../../services/Common");
+const StripeService = require("../../services/Stripe");
 const Form = require("../../services/Form");
 const File = require("../../services/File");
 var FormData = require("form-data");
@@ -1396,6 +1397,46 @@ class StudentsController extends Controller {
       }
     } catch (e) {
       console.log("error in assignign course", e);
+      return this.res.send({
+        status: 0,
+        message: "Course assignment failed.",
+      });
+    }
+  }
+  async createIntent() {
+    try {
+      let user = this.req.currentUser ? this.req.currentUser : {};
+      let data = this.req.body;
+      let client = {
+        publishableKey:
+          "pk_test_51LXjFxSBikUvm25bl2OkGvB61st1mtMLH8pL9xt8lfkISz1R61n5EP0l1TkVFcKwXtsdMxkeh2J8gwLNNTFxlFd100BkKnK6Ks",
+        secretKey:
+          "sk_test_51LXjFxSBikUvm25bYDOk4SIXcYVKqO4uDtlXXxTom0BkD99P6layTugG8oeipmoWiaSWikm0RlhXp6y2ItyiGA0L00alGeLQIf",
+      };
+      //create payment intent
+      data.currency = "INR";
+      let paymentIntent = await new StripeService().createPaymentIntent(data);
+      if (paymentIntent.status) {
+        //created intent
+        return this.res.send({
+          status: 1,
+          message: "Payment intent created.",
+          data: { clientSecret: paymentIntent.data.client_secret, client },
+        });
+      } else {
+        //failed creation of payment intent
+        return this.res.send({
+          status: 0,
+          message: "Payment intiation failed.",
+          data: { clientSecret: paymentIntent.data, client },
+        });
+      }
+    } catch (e) {
+      console.log("error in stripe intent creation", e);
+      return this.res.send({
+        status: 0,
+        message: "Payment intiation failed.",
+      });
     }
   }
 }
