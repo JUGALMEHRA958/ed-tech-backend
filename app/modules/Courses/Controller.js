@@ -6,7 +6,7 @@ const Model = require("../Base/Model");
 const CommonService = require("../../services/Common");
 const RequestBody = require("../../services/RequestBody");
 const { CourseSchema, CartSchema } = require("./Schema");
-const { CoursePurchases } = require("../CoursePurchase/Schema");
+const { CoursePurchases, PaymentHistoryStripe } = require("../CoursePurchase/Schema");
 const axios=require("axios")
 const config = require('../../../configs/configs');
 const { Mongoose } = require("mongoose");
@@ -358,6 +358,67 @@ async assignCourse({ email, code, isbn }) {
   });
 }
 
+async buyCourseInternally(course,currentUser){
+  let newObject={
+    courseId:course.courseId,
+    studentId:this.req.currentUser,
+    price:course.price
+  }
+  let savedData = await new Model(CoursePurchases).store(newObject);
+  return;
+}
+
+  async buyCourseBulk (){
+    let fieldsArray = [
+      "paymentObject",
+      "courseDetails",
+      "paymentStatus",
+      "totalPrice"
+    ];
+    let data = await new RequestBody().processRequestBody(
+      this.req.body,
+      fieldsArray
+    );
+    let detailsToStoreInPaymentHistory = {
+      studentId: this.req.currentUser._id,
+      courseDetails: data.courseDetails,
+      paymentStatus: data.paymentStatus,
+      totalPrice: data.totalPrice,
+      paymentObject: data.paymentObject,
+    };
+    let paymentRecorder = await new Model(PaymentHistoryStripe).store(detailsToStoreInPaymentHistory);
+
+    if(data.paymentStatus==="success" && data.paymentObject.status=="succeeded"){
+
+      //buying internally
+      await Promise.all(
+        data.courseDetails.map(async (course) => {
+          await this.buyCourseInternally(course,this.req.currentUser._id );
+        })
+      );
+      //buying externally with magic
+
+      await Promise.all(
+        data.courseDetails.map(async (course) => {
+          let courseFromDatabase = await CourseSchema.findById(course.courseId)
+          let dataToSendToRegister = {
+            email: this.req.currentUser.email , 
+            code : "IDPCENTRE",
+            isbn : courseFromDatabase.isbnNumber
+     
+           }
+          await this.assignCourse(dataToSendToRegister);
+        })
+      );
+      
+    }
+
+      return this.res.send({
+        status: 1,
+        message:i18n.__('SAVED_DETAILS')
+      });
+  }
+
 
   async buyCourse(){
     try{
@@ -368,18 +429,22 @@ async assignCourse({ email, code, isbn }) {
         this.req.body,
         fieldsArray
       );
-      console.log(data.courseId);
       let checkIfDeleted = await CourseSchema.findById(data.courseId);
-      console.log(checkIfDeleted,"checkIfDeleted");
-      if(checkIfDeleted.isDeleted==true){
+      if(!checkIfDeleted || checkIfDeleted.isDeleted==true){
         return this.res.send({
-          status: 1,
+          status: 0,
           message:i18n.__('COURSE_DELETED_CANT_BUY')
+        });
+      }
+      if(checkIfDeleted.price>=1){
+        return this.res.send({
+          status: 0,
+          message:i18n.__('SORRY_CANT_BUY_PAID_COURSE')
         });
       }
       let newObject={
         courseId:data.courseId,
-        studentId:this.req.currentUser,
+        studentId:this.req.currentUser
       }
       let course = await CourseSchema.findById(data.courseId);
       let checkIfExist = await CoursePurchases.findOne(newObject).populate("courseId");

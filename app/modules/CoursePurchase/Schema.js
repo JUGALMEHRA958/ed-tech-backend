@@ -8,15 +8,36 @@ const purchaseSchema = new Schema(
     createdBy:{type: Schema.Types.ObjectId, ref: "admins" , default:null},
     updatedBy:{type: Schema.Types.ObjectId, ref: "admins",default:null},
     status:{type: Boolean, default: true },
-    isDeleted:{type: Boolean, default: false }
+    isDeleted:{type: Boolean, default: false },
+    price:{type: Number, default: 0 },
+    stripePaymentObj:{type: Object, default: {} }
+
   },
   {
     timestamps: true,
   }
 );
 
+const paymentHistoryStripeSchema = new Schema(
+  { 
+    studentId: { type: Schema.Types.ObjectId, ref: "Student" ,required: true},
+    courseDetails: { type: Object, ref: "courses" ,required: true},
+    paymentObject :{type: Object, require:true},
+    totalPrice:{type: Number, require:true},
+    paymentStatus:{type: String, require:true}
+  },
+  {
+    timestamps: true,
+  }
+);
+
+const PaymentHistoryStripe = mongoose.model("paymenthistorystripe", paymentHistoryStripeSchema);
+
+
+
 let CoursePurchases = mongoose.model("purchases", purchaseSchema);
 
 module.exports = {
     CoursePurchases,
+    PaymentHistoryStripe
 };
