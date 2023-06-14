@@ -116,7 +116,7 @@ class AdminController extends Controller {
     async editProfile() {
         try {
             const currentUser = this.req.currentUser && this.req.currentUser._id ? this.req.currentUser._id : "";
-            let fieldsArray = ['firstname', 'lastname', 'mobile', 'photo'];
+              let fieldsArray = ['firstname', 'lastname', 'mobile', 'photo','publishableKey','clientSecret'];
             let userData = await (new RequestBody()).processRequestBody(this.req.body, fieldsArray);
             if (userData.photo) {
                 userData.photo = _.last(userData.photo.split("/"));

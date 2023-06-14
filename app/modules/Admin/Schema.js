@@ -25,6 +25,8 @@ var admin = new schema({
     deviceToken: { type: String },
     device: { type: String },
     addedBy: { type: schema.Types.ObjectId, ref: 'Admin' },
+    publishableKey: { type: String, default:"" },
+    clientSecret: { type: String, default:"" },
     role: roleSchema
 }, {
     timestamps: true
