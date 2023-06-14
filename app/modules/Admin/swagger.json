@@ -512,33 +512,14 @@
         },
         "AdminUpdateProfile": {
             "required": [
-                "firstname",
-                "lastname",
-                "username",
-                "mobile",
-                "photo"
             ],
             "properties": {
-                "lastname": {
+                "clientSecret": {
                     "example": "Admin",
                     "type": "string"
                 },
-                "firstname": {
+                "publishableKey": {
                     "example": "Admin",
-                    "type": "string"
-                },
-                "username": {
-                    "example": "admin",
-                    "type": "string",
-                    "uniqueItems": true
-                },
-                "mobile": {
-                    "example": "0000000000",
-                    "type": "string",
-                    "uniqueItems": true
-                },
-                "photo": {
-                    "example": "image_1568120233570.png",
                     "type": "string"
                 }
             }
