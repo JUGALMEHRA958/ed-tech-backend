@@ -43,7 +43,7 @@ module.exports = (app, express) => {
         return adminObj.profile();
     });
 
-    router.post('/admin/editProfile', Globals.isAdminAuthorised(), Validators.updateAdminValidator(), Validators.validate, (req, res, next) => {
+    router.post('/admin/editProfile', Globals.isAdminAuthorised(),  Validators.validate, (req, res, next) => {
         const adminObj = new AdminController().boot(req, res);
         return adminObj.editProfile();
     });

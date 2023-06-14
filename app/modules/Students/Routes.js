@@ -129,10 +129,23 @@ module.exports = (app, express) => {
   //     return userObj.socialAccess();
   // });
   // validate toke from magixbox call
-  router.post("/students/assignCourse", (req, res, next) => {
-    const userObj = new StudentsController().boot(req, res);
-    return userObj.ssoValidate();
-  });
+  router.post(
+    "/students/assignCourse",
+    Globals.isAuthorised,
+    (req, res, next) => {
+      const userObj = new StudentsController().boot(req, res);
+      return userObj.addCourse();
+    }
+  );
+
+  router.post(
+    "/students/createPaymentIntent",
+    Globals.isAuthorised,
+    (req, res, next) => {
+      const userObj = new StudentsController().boot(req, res);
+      return userObj.createIntent();
+    }
+  );
 
   app.use(config.baseApiUrl, router);
 };
