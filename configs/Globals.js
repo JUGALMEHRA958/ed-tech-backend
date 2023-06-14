@@ -254,7 +254,7 @@ class Globals {
                 if (!decoded) { return resolve(false); }
                 let userId = decoded.id
 
-                const user = await Students.findOne({ _id: userId, isDeleted: false }).select('-password');
+                const user = await Students.findOne({ _id: userId, isDeleted: false }).select('-password').lean();
                 if (user) return resolve(user);
                 return resolve(false);
 

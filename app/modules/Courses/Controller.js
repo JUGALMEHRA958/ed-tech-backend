@@ -410,6 +410,8 @@ async buyCourseInternally(course,currentUser){
           await this.assignCourse(dataToSendToRegister);
         })
       );
+
+        await this.updateCartAfterPurchase(this.req.currentUser , data.courseDetails.map((course)=>course.courseId ));
       
     }
 
@@ -419,6 +421,31 @@ async buyCourseInternally(course,currentUser){
       });
   }
 
+
+  async  updateCartAfterPurchase(student, courseIds) {
+    try {
+      // Find the cart document for the student
+      const cart = await CartSchema.findOne({ userId: student });
+  
+      if (!cart) {
+        // Cart not found for the student
+        return;
+      }
+  
+      // Remove courseIds from the cart
+      cart.courseIds = cart.courseIds.filter(
+        (courseId) => !courseIds.includes(courseId)
+      );
+  
+      // Save the updated cart
+      await cart.save();
+  
+      console.log('Cart updated successfully');
+    } catch (error) {
+      console.error('Error updating cart:', error);
+    }
+  }
+  
 
   async buyCourse(){
     try{
