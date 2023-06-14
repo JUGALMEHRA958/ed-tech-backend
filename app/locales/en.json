@@ -91,9 +91,11 @@
 	"id": "id",
 	"COURSE_PURCHASE_SAVED": "Course purchased successfully",
 	"ALREADY_PURCHASED": "You have already purchased this course",
-	"COURSE_DELETED_CANT_BUY": "Course is deleted, Can not buy",
+	"COURSE_DELETED_CANT_BUY": "Course is deleted or removed, Can not buy",
 	"pageNumber": "pageNumber",
 	"pageSize": "pageSize",
 	"PAGENUMBER_PAGESIZE_MISSING": "In body, pageNumber & pageSize required",
-	"SOME_ERROR_OCCOURED_WHILE_FETCHING_COURSES": "SOME_ERROR_OCCOURED_WHILE_FETCHING_COURSES"
+	"SOME_ERROR_OCCOURED_WHILE_FETCHING_COURSES": "SOME_ERROR_OCCOURED_WHILE_FETCHING_COURSES",
+	"SORRY_CANT_BUY_PAID_COURSE": "This is a paid course. Please make payment to buy course",
+	"SAVED_DETAILS": "SAVED_DETAILS"
 }
