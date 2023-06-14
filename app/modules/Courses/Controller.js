@@ -82,10 +82,12 @@ class CourseController extends Controller {
     }
   }
   async getCourseStatus  (course,user) {
+    // console.log("Now going with course",course._id , "student", user._id);
     const isCourseStarted = await CoursePurchases.findOne({
-      studentId: user.id,
+      studentId: user._id,
       courseId: course._id
-    });
+    }).lean();
+    // console.log(isCourseStarted,"isCourseStarted");
     if(isCourseStarted){return true}
     return false;
   };
