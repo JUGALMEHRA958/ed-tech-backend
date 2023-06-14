@@ -97,5 +97,5 @@
 	"PAGENUMBER_PAGESIZE_MISSING": "In body, pageNumber & pageSize required",
 	"SOME_ERROR_OCCOURED_WHILE_FETCHING_COURSES": "SOME_ERROR_OCCOURED_WHILE_FETCHING_COURSES",
 	"SORRY_CANT_BUY_PAID_COURSE": "This is a paid course. Please make payment to buy course",
-	"SAVED_DETAILS": "SAVED_DETAILS"
+	"SAVED_DETAILS": "Saved your payment information."
 }
