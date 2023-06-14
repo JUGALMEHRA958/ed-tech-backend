@@ -411,7 +411,7 @@ async buyCourseInternally(course,currentUser){
         })
       );
 
-        await this.updateCartAfterPurchase(this.req.currentUser , data.courseDetails.map((course)=>course.courseId ));
+        await this.updateCartAfterPurchase(this.req.currentUser , data.courseDetails.map((course)=>mongoose.Types.ObjectId(course.courseId) ));
       
     }
 
@@ -424,27 +424,25 @@ async buyCourseInternally(course,currentUser){
 
   async  updateCartAfterPurchase(student, courseIds) {
     try {
-      // Find the cart document for the student
-      const cart = await CartSchema.findOne({ userId: student });
+      // Update the cart by pulling the courseIds
+      const updatedCart = await CartSchema.findOneAndUpdate(
+        { userId: student },
+        { $pull: { courseIds: { $in: courseIds } } },
+        { new: true }
+      );
   
-      if (!cart) {
+      if (!updatedCart) {
         // Cart not found for the student
         return;
       }
-  
-      // Remove courseIds from the cart
-      cart.courseIds = cart.courseIds.filter(
-        (courseId) => !courseIds.includes(courseId)
-      );
-  
-      // Save the updated cart
-      await cart.save();
   
       console.log('Cart updated successfully');
     } catch (error) {
       console.error('Error updating cart:', error);
     }
   }
+  
+  
   
 
   async buyCourse(){
