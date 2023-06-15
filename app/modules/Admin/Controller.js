@@ -357,11 +357,10 @@ class AdminController extends Controller {
           let checkIfDeleted = await GroupSchema.findOne({_id:groupId , isDeleted:false}) ;
           if(!checkIfDeleted){return this.res.send({ status: 0, message: i18n.__("GROUP_DELETED_BY_ADMIN") });}
 
-          // const group = await GroupSchema.findById(groupId).lean();
-          // if (!group) {
-          //   console.log(362);
-          //   return this.res.send({ status: 0, message: i18n.__('GROUP_NOT_FOUND') });
-          // }
+          const group = await GroupSchema.findById(groupId).lean();
+          if (!group) {
+            return this.res.send({ status: 0, message: "Group not found." });
+          }
           return this.res.send({ status: 1, message: "Group found.", group });
         } catch (error) {
           console.log("error - ", error);
@@ -395,9 +394,9 @@ async  updateGroupById(req, res) {
     let dataToUpdate  = {...data  , updatedBy : this.req.currentUser}
     const updatedGroup = await GroupSchema.findByIdAndUpdate(groupId, dataToUpdate, { new: true }).lean();
     if (!updatedGroup) {
-      return this.res.send({ status: 0, message: i18n.__("GROUP_NOT_FOUND") });
+      return this.res.send({ status: 0, message: "Group not found." });
     }
-    return this.res.send({ status: 1, group: updatedGroup });
+    return this.res.send({ status: 1, message: "Group updated.", group: updatedGroup });
   } catch (error) {
     console.log("error - ", error);
     return this.res.send({ status: 0, message: error });
@@ -418,9 +417,9 @@ async  deleteGroupById(req, res) {
     if(!checkIfDeleted){return this.res.send({ status: 0, message: i18n.__("CAN_NOT_DELETE_GROUP_NOT_FOUND") });}
     const deletedGroup = await GroupSchema.findByIdAndUpdate(groupId , {isDeleted:true, updatedBy:this.req.currentUser});
     if (!deletedGroup) {
-      return this.res.send({ status: 0, message:i18n.__("GROUP_NOT_FOUND") });
+      return this.res.send({ status: 0, message: "Group not found." });
     }
-    return this.res.send({ status: 1, message: i18n.__("GROUP_DELETED") });
+    return this.res.send({ status: 1, message: "Group deleted." });
   } catch (error) {
     console.log("error - ", error);
     return this.res.send({ status: 0, message: error });
