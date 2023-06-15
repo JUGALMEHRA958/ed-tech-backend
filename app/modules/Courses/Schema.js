@@ -34,12 +34,7 @@ const courseSchema = new Schema(
     productId: { type: String, require: true },
     isbnNumber: { type: String, require: true },
     picture: { type: String, require: true },
-    group: {
-      type: String,
-      require: true,
-      enum: ["testbank", "writeAndImprove","ieltsebook","praxis","printpractice"],
-      default: "testbank",
-    },
+    group: { type: Schema.Types.ObjectId, ref: "GroupSchema", require: true },
     moduleType:{
       type: String,
       require: true,

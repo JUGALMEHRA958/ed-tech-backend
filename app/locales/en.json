@@ -101,5 +101,6 @@
 	"SAVED_YOUR_GROUP": "Group saved successfully",
 	"GROUP_DELETED_BY_ADMIN": "This group is deleted by admin",
 	"CAN_NOT_UPDATE_DELETED_GROUP": "Sorry, Can not update because group is deleted",
-	"CAN_NOT_DELETE_GROUP_NOT_FOUND": "Group not found"
+	"CAN_NOT_DELETE_GROUP_NOT_FOUND": "Group not found",
+	"GROUP_DELETED": "Group deleted successfully"
 }
