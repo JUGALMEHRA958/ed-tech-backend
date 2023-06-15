@@ -75,6 +75,22 @@
         }
     }
 
+    static coursePurchaseBulkValidator() {
+        try {
+            return [
+                check('paymentObject').exists().withMessage(i18n.__("%s REQUIRED", 'paymentObject')),
+                check('courseDetails').exists().withMessage(i18n.__("%s REQUIRED", 'courseDetails')),
+                check('paymentStatus').exists().withMessage(i18n.__("%s REQUIRED", 'paymentStatus')),
+                check('totalPrice').exists().withMessage(i18n.__("%s REQUIRED", 'totalPrice')),
+
+
+
+            ];
+        } catch (error) {
+            return error;
+        }
+    }
+
 
 
 

@@ -254,7 +254,7 @@ class Globals {
                 if (!decoded) { return resolve(false); }
                 let userId = decoded.id
 
-                const user = await Students.findOne({ _id: userId, isDeleted: false }).select('-password');
+                const user = await Students.findOne({ _id: userId, isDeleted: false }).select('-password').lean();
                 if (user) return resolve(user);
                 return resolve(false);
 
@@ -353,7 +353,7 @@ class Globals {
     }
     static decodeUserForgotToken(token) {
         return new Promise(async (resolve, reject) => {
-            const user = await Students.findOne({ forgotToken: token });
+            const user = await Students.findOne({ forgotToken: token }).lean();
             if (user && user.forgotTokenCreationTime && parseInt(config.forgotTokenExpireTime)) {
                 let expiryDate = Moment(user.forgotTokenCreationTime).add(parseInt(config.forgotTokenExpireTime), 'minutes');
                 let now = Moment();
@@ -367,7 +367,7 @@ class Globals {
 
     static decodeUserVerificationToken(token) {
         return new Promise(async (resolve, reject) => {
-            const user = await Students.findOne({ verificationToken: token });
+            const user = await Students.findOne({ verificationToken: token }).lean();
             if (user && user.verificationTokenCreationTime && parseInt(config.verificationTokenExpireTime)) {
                 let expiryDate = Moment(user.verificationTokenCreationTime).add(parseInt(config.verificationTokenExpireTime), 'minutes');
                 let now = Moment();
