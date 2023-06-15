@@ -437,6 +437,158 @@
                     }
                 }
             }
+        },
+        "/admin/createGroup": {
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "description": "Create a new group",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Login",
+                        "schema": {
+                            "$ref": "#/definitions/CreateGroup"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Created successfully."
+                    }
+                }
+            }
+        },
+        "/admin/getAllGroups": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "description": "Get all groups",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Created successfully."
+                    }
+                }
+            }
+        },
+        "/admin/getGroupById": {
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "description": "Get group by id",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Login",
+                        "schema": {
+                            "$ref": "#/definitions/GetGroup"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/admin/updateGroup": {
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "description": "update group by id",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Login",
+                        "schema": {
+                            "$ref": "#/definitions/GetGroup"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/admin/deleteGroupById": {
+            "delete": {
+                "tags": [
+                    "Admin"
+                ],
+                "description": "Delete group by id",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Login",
+                        "schema": {
+                            "$ref": "#/definitions/GetGroup"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -455,6 +607,46 @@
                 "password": {
                     "type": "string",
                     "example": "Test1234",
+                    "uniqueItems": true,
+                    "required": true
+                }
+            }
+        },
+        "CreateGroup": {
+            "required": [
+                "title",
+                "description"
+            ],
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "example": "You can enter your title here",
+                    "uniqueItems": true,
+                    "required": true
+                },
+                "description": {
+                    "type": "string",
+                    "example": "You can enter your description here",
+                    "uniqueItems": true,
+                    "required": true
+                }
+            }
+        },
+        "GetGroup": {
+            "required": [
+                "title",
+                "description"
+            ],
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "example": "You can enter your title here",
+                    "uniqueItems": true,
+                    "required": true
+                },
+                "description": {
+                    "type": "string",
+                    "example": "You can enter your description here",
                     "uniqueItems": true,
                     "required": true
                 }
