@@ -25,5 +25,29 @@ class StripeService {
       return { status: 0, data: error };
     }
   }
+
+   
+  /**
+        @purpose create stripe user 
+        @params nzbn 
+        @response json
+    **/
+        async createStripeUser(email) {
+          try {
+            const customer = await stripe.customers.create({
+              email: email,
+            });
+            return {
+              status: 1,
+              data: customer,
+            };
+          } catch (error) {
+            console.error("Error creating Stripe user:", error);
+            return {
+              status: 0,
+              data: error,
+            };
+          }
+        }
 }
 module.exports = StripeService;

@@ -135,7 +135,12 @@ class StudentsController extends Controller {
             );
           }
           //magic registration ended
-
+          //STRIPE CUSTOMER REGISTERATION
+          let stripeObj = await new StripeService().createStripeUser(newUserId.email);
+          // console.log(stripeObj,"stripeObj");
+          if(stripeObj && stripeObj.status==1 && stripeObj.data.id){
+            await Students.findOneAndUpdate({_id:newUserId._id} , {stripeCustomerId:stripeObj.data.id })
+          }
           let { token, refreshToken } =
             await new Globals().getTokenWithRefreshToken({ id: newUserId._id });
           return this.res.send({
