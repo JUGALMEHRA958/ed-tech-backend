@@ -574,17 +574,18 @@ class Common {
                  // console.log(details);
                let newArray=[];
                for(let i=0;i<details.length;i++){
-                 let {amountBeforeTax , tax} = this.calculateGST(details[i].courseId.price) ;
+                //  let {amountBeforeTax , tax} = this.calculateGST(details[i].courseId.price) ;
                  // console.log(amountBeforeTax,"amountBeforeTax");
+                 let tax = (18/100)*details[i].courseId.price;
                  newArray.push({
                      studentId:details[i].studentId,
                      courseIsbn:details[i].courseId.isbnNumber,
                      courseName:details[i].courseId.title,
                      category:details[i].courseId.category,
                      purchaseDate:details[i].createdAt,
-                     amountBeforeTax : amountBeforeTax,
+                     amountBeforeTax : details[i].courseId.price,
                      tax:tax,
-                     total: details[i].price ? details[i].price : 0
+                     total: details[i].courseId.price+tax
      
                  })
                } 

@@ -60,10 +60,14 @@ class CourseController extends Controller {
         this.req.body,
         fieldsArray
       );
-        let courseData = await CourseSchema.find({
-          isDeleted:false,
-          status:true
-        }).limit(data.pageSize).skip((data.pageNumber-1)*data.pageSize);
+      let courseData = await CourseSchema.find({
+        isDeleted: false,
+        status: true
+      })
+        .sort({ createdAt: -1 }) // Sort by timestamp in descending order
+        .limit(data.pageSize)
+        .skip((data.pageNumber - 1) * data.pageSize);
+      
 
         return this.res.send({
             status: 1,
