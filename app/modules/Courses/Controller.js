@@ -60,7 +60,7 @@ class CourseController extends Controller {
         this.req.body,
         fieldsArray
       );
-      let totalCount = await CourseSchema.countDocuments({
+      let totalCount = await CourseSchema.count({
         isDeleted: false,
         status: true
       });
