@@ -64,7 +64,7 @@ class StudentsController extends Controller {
         data["email"] = data["email"].toLowerCase();
 
         // save new user
-        const newUserId = await new Model(Students).store(data);
+        let newUserId = await new Model(Students).store(data);
 
         // if empty not save user details and give error message.
         if (_.isEmpty(newUserId)) {
@@ -139,7 +139,7 @@ class StudentsController extends Controller {
           let stripeObj = await new StripeService().createStripeUser(newUserId.email);
           // console.log(stripeObj,"stripeObj");
           if(stripeObj && stripeObj.status==1 && stripeObj.data.id){
-            newUserId = await Students.findOneAndUpdate({_id:newUserId._id} , {stripeCustomerId:stripeObj.data.id })
+            newUserId = await Students.findOneAndUpdate({_id:newUserId._id} , {stripeCustomerId:stripeObj.data.id },{new:true})
           }
           let { token, refreshToken } =
             await new Globals().getTokenWithRefreshToken({ id: newUserId._id });
