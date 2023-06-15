@@ -97,5 +97,9 @@
 	"PAGENUMBER_PAGESIZE_MISSING": "In body, pageNumber & pageSize required",
 	"SOME_ERROR_OCCOURED_WHILE_FETCHING_COURSES": "SOME_ERROR_OCCOURED_WHILE_FETCHING_COURSES",
 	"SORRY_CANT_BUY_PAID_COURSE": "This is a paid course. Please make payment to buy course",
-	"SAVED_DETAILS": "Saved your payment information."
+	"SAVED_DETAILS": "Saved your payment information.",
+	"SAVED_YOUR_GROUP": "Group saved successfully",
+	"GROUP_DELETED_BY_ADMIN": "This group is deleted by admin",
+	"CAN_NOT_UPDATE_DELETED_GROUP": "Sorry, Can not update because group is deleted",
+	"CAN_NOT_DELETE_GROUP_NOT_FOUND": "Group not found"
 }
