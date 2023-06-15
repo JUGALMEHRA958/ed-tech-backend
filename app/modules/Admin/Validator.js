@@ -52,6 +52,25 @@ class Validators {
             return error;
         }
     }
+    static createGroupValidator() {
+        try {
+            return [
+                check('title').exists().isString().withMessage(i18n.__("%s REQUIRED", 'title')),
+                check('description').isString().exists().withMessage(i18n.__("%s REQUIRED", 'description'))
+            ];
+        } catch (error) {
+            return error;
+        }
+    }
+    static getGroupByIdValidator() {
+        try {
+            return [
+                check('groupId').exists().isString().withMessage(i18n.__("%s REQUIRED", 'GROUP_ID_REUQUIRE'))
+            ];
+        } catch (error) {
+            return error;
+        }
+    }
     /********************************************************
      Purpose:Function for password validator
      Parameter:
