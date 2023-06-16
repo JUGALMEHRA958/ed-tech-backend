@@ -64,7 +64,7 @@ class StudentsController extends Controller {
         data["email"] = data["email"].toLowerCase();
 
         // save new user
-        const newUserId = await new Model(Students).store(data);
+        let newUserId = await new Model(Students).store(data);
 
         // if empty not save user details and give error message.
         if (_.isEmpty(newUserId)) {
@@ -135,7 +135,12 @@ class StudentsController extends Controller {
             );
           }
           //magic registration ended
-
+          //STRIPE CUSTOMER REGISTERATION
+          // let stripeObj = await new StripeService().createStripeUser(newUserId.email);
+          // // console.log(stripeObj,"stripeObj");
+          // if(stripeObj && stripeObj.status==1 && stripeObj.data.id){
+          //   newUserId = await Students.findOneAndUpdate({_id:newUserId._id} , {stripeCustomerId:stripeObj.data.id },{new:true})
+          // }
           let { token, refreshToken } =
             await new Globals().getTokenWithRefreshToken({ id: newUserId._id });
           return this.res.send({
@@ -818,6 +823,13 @@ class StudentsController extends Controller {
           message: i18n.__("USER_NOT_EXIST_OR_DELETED"),
         });
       }
+      if(!user.stripeCustomerId){
+        let stripeObj = await new StripeService().createStripeUser(user.email);
+          // console.log(stripeObj,"stripeObj");
+          if(stripeObj && stripeObj.status==1 && stripeObj.data.id){
+            user = await Students.findOneAndUpdate({_id:user._id} , {stripeCustomerId:stripeObj.data.id },{new:true})
+          }
+      }
 
       const status = await new CommonService().verifyPassword({
         password: this.req.body.password,
@@ -834,6 +846,8 @@ class StudentsController extends Controller {
       let updatedUser = await Students.findByIdAndUpdate(user._id, data, {
         new: true,
       }).select(userProjection.user);
+
+      
 
       if (Config.useRefreshToken && Config.useRefreshToken == "true") {
         let { token, refreshToken } =

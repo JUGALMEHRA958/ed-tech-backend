@@ -60,6 +60,13 @@ class CourseController extends Controller {
         this.req.body,
         fieldsArray
       );
+      let totalCount = await CourseSchema.count({
+        isDeleted: false,
+        status: true
+      });
+      
+      let totalPages = Math.ceil(totalCount / data.pageSize);
+      
       let courseData = await CourseSchema.find({
         isDeleted: false,
         status: true
@@ -68,13 +75,14 @@ class CourseController extends Controller {
         .limit(data.pageSize)
         .skip((data.pageNumber - 1) * data.pageSize);
       
-
-        return this.res.send({
-            status: 1,
-            data : courseData ,
-            message:i18n.__('SUCCESS')
-          });
-
+      return this.res.send({
+        status: 1,
+        data: courseData,
+        totalEntries: totalCount,
+        totalPages: totalPages,
+        message: i18n.__('SUCCESS')
+      });
+      
 
     }catch(e){
     console.log(e);
