@@ -112,7 +112,7 @@ class StripeService {
           payment_intent_id: paymentIntent,
         }, //pi_3NIoWvSBikUvm25b1189EdwI
         custom_fields: [{ name: "IRN", value: "IRN NUMBER FROM GOVT" }],
-        default_tax_rates: ["txr_1NI8DvSBikUvm25bYYeU7y9K"],
+        default_tax_rates: ["txr_1NKyCISBikUvm25bmAO1wO1z"],
       });
 
       return { status: 1, data: paymentInvoice };
@@ -190,6 +190,15 @@ class StripeService {
         status: 0,
         data: e,
       };
+    }
+  }
+  async finaliseInvoice(invoiceId) {
+    try {
+      console.log(invoiceId,"invoiceId 197");
+      const invoice = await stripe.invoices.finalizeInvoice(invoiceId);
+      return invoice;
+    } catch (e) {
+      return e;
     }
   }
   async getInvoice(invoiceId) {
