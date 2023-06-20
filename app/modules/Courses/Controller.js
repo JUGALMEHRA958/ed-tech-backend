@@ -1,6 +1,6 @@
 const _ = require("lodash");
 const i18n = require("i18n");
-
+const StripeService = require("../../services/Stripe");
 const Controller = require("../Base/Controller");
 const Model = require("../Base/Model");
 const CommonService = require("../../services/Common");
@@ -428,6 +428,37 @@ async buyCourseInternally(course,currentUser){
         await this.updateCartAfterPurchase(this.req.currentUser , data.courseDetails.map((course)=>mongoose.Types.ObjectId(course.courseId) ));
       
     }
+
+    //step 1
+    //create invoice with following params:
+    // {
+    //   customer,
+    //   collection_method: "charge_automatically",
+    //   currency: "inr",
+    //   auto_advance: true,
+    //   description,
+    //   metadata: {
+    //     payment_intent_id: paymentIntent,
+    //   }, //pi_3NIoWvSBikUvm25b1189EdwI
+    //   custom_fields: [{ name: "IRN", value: "IRN NUMBER FROM GOVT" }],
+    //   default_tax_rates: ["txr_1NI8DvSBikUvm25bYYeU7y9K"],
+    // }
+    let objectToSendForInvoiceCreation = {
+      customer : this.req.currentUser.stripeCustomerId,
+      collection_method: "charge_automatically",
+      currency: "inr",
+      auto_advance: true,
+      description : "description",
+      metadata: {
+            payment_intent_id: this.req.body.paymentObject.id,
+          },
+      default_tax_rates: ["txr_1NKyCISBikUvm25bmAO1wO1z"],    
+    }
+    let paymentInvoice = await new StripeService().createPaymentInvoice(objectToSendForInvoiceCreation);
+    console.log(paymentInvoice);
+
+    //Step 2
+    //now we got payment invoice lets 
 
       return this.res.send({
         status: 1,
