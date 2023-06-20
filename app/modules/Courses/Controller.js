@@ -1,6 +1,6 @@
 const _ = require("lodash");
 const i18n = require("i18n");
-
+const StripeService = require("../../services/Stripe");
 const Controller = require("../Base/Controller");
 const Model = require("../Base/Model");
 const CommonService = require("../../services/Common");
@@ -393,6 +393,12 @@ async buyCourseInternally(course,currentUser){
       this.req.body,
       fieldsArray
     );
+    data['customer'] = this.req.currentUser.stripeCustomerId;
+    let result = [];
+    let pdf ;
+    let finaliseInvoice ={};
+
+
     let detailsToStoreInPaymentHistory = {
       studentId: this.req.currentUser._id,
       courseDetails: data.courseDetails,
@@ -429,10 +435,87 @@ async buyCourseInternally(course,currentUser){
       
     }
 
-      return this.res.send({
-        status: 1,
-        message:i18n.__('SAVED_DETAILS')
+    //step 1
+    //create invoice with following params:
+    // {
+    //   customer,
+    //   collection_method: "charge_automatically",
+    //   currency: "inr",
+    //   auto_advance: true,
+    //   description,
+    //   metadata: {
+    //     payment_intent_id: paymentIntent,
+    //   }, //pi_3NIoWvSBikUvm25b1189EdwI
+    //   custom_fields: [{ name: "IRN", value: "IRN NUMBER FROM GOVT" }],
+    //   default_tax_rates: ["txr_1NI8DvSBikUvm25bYYeU7y9K"],
+    // }
+    let objectToSendForInvoiceCreation = {
+      customer : this.req.currentUser.stripeCustomerId,
+      collection_method: "charge_automatically",
+      currency: "inr",
+      auto_advance: true,
+      description : "description",
+      metadata: {
+            payment_intent_id: this.req.body.paymentObject.id,
+          },
+      default_tax_rates: ["txr_1NKyCISBikUvm25bmAO1wO1z"],    
+    }
+    let paymentInvoice = await new StripeService().createPaymentInvoice(objectToSendForInvoiceCreation);
+    // console.log(paymentInvoice);
+
+    //Step 2
+    //now we got payment invoice lets get all our products
+    let products = this.req.body.courseDetails.map((course)=>course.courseId)
+    // console.log(products,"products463")
+    //step3 starts check if paymentInvoice status is 1 then go further else return 
+    if (paymentInvoice.status) {
+      //created invoice // add price and data
+      CourseController.asyncForEach(products, async (productId, index) => {
+        //create product // ignore if already exist
+        let productStatus = await this.createProduct({
+          productId,
+        });
+        let paymentItem = await new StripeService().createPaymentInvoiceItem({
+          invoice: paymentInvoice.data.id,
+          price: productStatus.data.metadata.priceId,
+          customer: data.customer,
+        });
+        //generate invoice
+        // console.log("480");
+        result.push(paymentItem);
+        // console.log("482" , paymentItem);
+        
+      }).then(async (e) => {
+         finaliseInvoice = await new StripeService().finaliseInvoice(
+          paymentInvoice.data.id
+        );
+        
+         pdf = finaliseInvoice.invoice_pdf;
+       
+        return this.res.send({
+          status: 1,
+          message:i18n.__('SAVED_DETAILS'),
+          data: pdf,
+        });
       });
+    } else {
+      // failed creation of payment invoice
+      return this.res.send({
+        status: 0,
+        message: "Payment Invoice generation failed",
+        data: paymentInvoice,
+      });
+    }
+
+    
+
+    //step3 ends
+    // console.log("globalpdf",finaliseInvoice);
+    //   return this.res.send({
+    //     status: 1,
+    //     message:i18n.__('SAVED_DETAILS'),
+    //     data: pdf,
+    //   });
   }
 
 
@@ -505,6 +588,71 @@ async buyCourseInternally(course,currentUser){
     }catch(e){
       console.log("Error ",e);
       return this.res.send({status:0, error:e})
+    }
+  }
+  static async asyncForEach(array, callback) {
+    for (let index = 0; index < array.length; index++) {
+      await callback(array[index], index, array);
+    }
+  }
+  async createProduct(product) {
+    try {
+      let body = product;
+      //create payment intent
+      let productInfo = await CourseSchema.findOne({
+        productId: body.productId,
+      });
+      let { productId, ...data } = body;
+      data.description = productInfo?.description;
+      data.metadata = {
+        productId: productInfo?.productId,
+        isbnNumber: productInfo?.isbnNumber,
+        price: productInfo?.price,
+        moduleType: productInfo?.moduleType,
+        group: productInfo?.group,
+      };
+      data.images = [productInfo?.picture];
+      data.name = productInfo?.title;
+      // data.currency = "INR";
+      //search product in stripe
+      let productSearch = await new StripeService().listProducts({
+        metadataKey: "productId",
+        metadataValue: body.productId,
+      });
+      if (!productSearch.status) {
+        let product = await new StripeService().createProduct(data);
+        if (product.status) {
+          //create price and attach
+          let price = await new StripeService().createPrice({
+            amount: productInfo.price,
+            product: product.data.id,
+          });
+          //created product
+          return {
+            status: 1,
+            message: "Product was created successfully.",
+            data: price.data,
+          };
+        } else {
+          //failed creation of payment intent
+          return {
+            status: 0,
+            message: "Product failed to create",
+            data: price.data,
+          };
+        }
+      }
+      return {
+        status: 1,
+        message: "already exist",
+        data: productSearch.data,
+      };
+    } catch (e) {
+      console.log("error in stripe product creation", e);
+      return this.res.send({
+        status: 0,
+        message: "Product creation failed",
+      });
     }
   }
 }
