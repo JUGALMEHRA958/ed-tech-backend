@@ -111,7 +111,7 @@ class StripeService {
         metadata: {
           payment_intent_id: paymentIntent,
         }, //pi_3NIoWvSBikUvm25b1189EdwI
-        custom_fields: [{ name: "IRN", value: "IRN NUMBER FROM GOVT" }],
+        // custom_fields: [{ name: "IRN", value: "IRN NUMBER FROM GOVT" }],
         default_tax_rates: ["txr_1NKyCISBikUvm25bmAO1wO1z"],
       });
 
