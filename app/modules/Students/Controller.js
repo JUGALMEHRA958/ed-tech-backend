@@ -1421,6 +1421,9 @@ class StudentsController extends Controller {
     try {
       let user = this.req.currentUser ? this.req.currentUser : {};
       let data = this.req.body;
+      let result = [];
+      let pdf ;
+      let finaliseInvoice ={};
       let client = {
         publishableKey:
           "pk_test_51LXjFxSBikUvm25bl2OkGvB61st1mtMLH8pL9xt8lfkISz1R61n5EP0l1TkVFcKwXtsdMxkeh2J8gwLNNTFxlFd100BkKnK6Ks",
@@ -1430,14 +1433,92 @@ class StudentsController extends Controller {
       //create payment intent
       data.currency = "INR";
       let paymentIntent = await new StripeService().createPaymentIntent(data);
+      // console.log(paymentIntent.data.id);
       if (paymentIntent.status) {
-        //created intent
+            //step 1
+    //create invoice with following params:
+    // {
+    //   customer,
+    //   collection_method: "charge_automatically",
+    //   currency: "inr",
+    //   auto_advance: true,
+    //   description,
+    //   metadata: {
+    //     payment_intent_id: paymentIntent,
+    //   }, //pi_3NIoWvSBikUvm25b1189EdwI
+    //   custom_fields: [{ name: "IRN", value: "IRN NUMBER FROM GOVT" }],
+    //   default_tax_rates: ["txr_1NI8DvSBikUvm25bYYeU7y9K"],
+    // }
+    console.log(this.req.currentUser.stripeCustomerId,"1452");
+    let objectToSendForInvoiceCreation = {
+      customer : this.req.currentUser.stripeCustomerId,
+      collection_method: "charge_automatically",
+      currency: "inr",
+      auto_advance: true,
+      description : "description",
+      metadata: {
+            payment_intent_id: paymentIntent.data.id,
+          },
+      default_tax_rates: ["txr_1NKyCISBikUvm25bmAO1wO1z"],    
+    }
+    let paymentInvoice = await new StripeService().createPaymentInvoice(objectToSendForInvoiceCreation);
+    // console.log(paymentInvoice);
+
+    //Step 2
+    //now we got payment invoice lets get all our products
+    let products = this.req.body.courseDetails.map((course)=>course.courseId)
+    //step3 starts check if paymentInvoice status is 1 then go further else return 
+    if (paymentInvoice.status) {
+      //created invoice // add price and data
+      StudentsController.asyncForEach(products, async (productId, index) => {
+        //create product // ignore if already exist
+        let productStatus = await this.createProduct({
+          productId,
+        });
+        let paymentItem = await new StripeService().createPaymentInvoiceItem({
+          invoice: paymentInvoice.data.id,
+          price: productStatus.data.metadata.priceId,
+          customer: this.req.currentUser.stripeCustomerId,
+        });
+        // console.log(1485);
+
+        //generate invoice
+        // console.log("480");
+        result.push(paymentItem);
+        // console.log("482" , paymentItem);
+        
+      }).then(async (e) => {
+         finaliseInvoice = await new StripeService().finaliseInvoice(
+          paymentInvoice.data.id
+        );
+        
+         pdf = finaliseInvoice.invoice_pdf;
+       
         return this.res.send({
           status: 1,
-          message: "Payment intent created.",
+          message:i18n.__('SAVED_DETAILS'),
           data: { clientSecret: paymentIntent.data.client_secret, client },
+          pdfLink: pdf,
         });
-      } else {
+      });
+    } else {
+      // failed creation of payment invoice
+      return this.res.send({
+        status: 0,
+        message: "Payment Invoice generation failed. Payment intent created.",
+        data: paymentInvoice,
+        data: { clientSecret: paymentIntent.data.client_secret, client },
+
+      });
+    }
+        //created intent
+        // return this.res.send({
+        //   status: 1,
+        //   message: "Payment intent created.",
+        //   data: { clientSecret: paymentIntent.data.client_secret, client },
+        // });
+      } 
+      else {
         //failed creation of payment intent
         return this.res.send({
           status: 0,
@@ -1453,7 +1534,71 @@ class StudentsController extends Controller {
       });
     }
   }
-
+  static async asyncForEach(array, callback) {
+    for (let index = 0; index < array.length; index++) {
+      await callback(array[index], index, array);
+    }
+  }
+  async createProduct(product) {
+    try {
+      let body = product;
+      //create payment intent
+      let productInfo = await CourseSchema.findOne({
+        productId: body.productId,
+      });
+      let { productId, ...data } = body;
+      data.description = productInfo?.description;
+      data.metadata = {
+        productId: productInfo?.productId,
+        isbnNumber: productInfo?.isbnNumber,
+        price: productInfo?.price,
+        moduleType: productInfo?.moduleType,
+        group: productInfo?.group,
+      };
+      data.images = [productInfo?.picture];
+      data.name = productInfo?.title;
+      // data.currency = "INR";
+      //search product in stripe
+      let productSearch = await new StripeService().listProducts({
+        metadataKey: "productId",
+        metadataValue: body.productId,
+      });
+      if (!productSearch.status) {
+        let product = await new StripeService().createProduct(data);
+        if (product.status) {
+          //create price and attach
+          let price = await new StripeService().createPrice({
+            amount: productInfo.price,
+            product: product.data.id,
+          });
+          //created product
+          return {
+            status: 1,
+            message: "Product was created successfully.",
+            data: price.data,
+          };
+        } else {
+          //failed creation of payment intent
+          return {
+            status: 0,
+            message: "Product failed to create",
+            data: price.data,
+          };
+        }
+      }
+      return {
+        status: 1,
+        message: "already exist",
+        data: productSearch.data,
+      };
+    } catch (e) {
+      console.log("error in stripe product creation", e);
+      return this.res.send({
+        status: 0,
+        message: "Product creation failed",
+      });
+    }
+  }
 
 }
 module.exports = StudentsController;

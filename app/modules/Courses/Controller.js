@@ -434,6 +434,7 @@ async buyCourseInternally(course,currentUser){
         await this.updateCartAfterPurchase(this.req.currentUser , data.courseDetails.map((course)=>mongoose.Types.ObjectId(course.courseId) ));
       
     }
+    return this.res.send({status:1 , message:"Saved"}) ; 
 
     //step 1
     //create invoice with following params:
@@ -449,63 +450,63 @@ async buyCourseInternally(course,currentUser){
     //   custom_fields: [{ name: "IRN", value: "IRN NUMBER FROM GOVT" }],
     //   default_tax_rates: ["txr_1NI8DvSBikUvm25bYYeU7y9K"],
     // }
-    let objectToSendForInvoiceCreation = {
-      customer : this.req.currentUser.stripeCustomerId,
-      collection_method: "charge_automatically",
-      currency: "inr",
-      auto_advance: true,
-      description : "description",
-      metadata: {
-            payment_intent_id: this.req.body.paymentObject.id,
-          },
-      default_tax_rates: ["txr_1NKyCISBikUvm25bmAO1wO1z"],    
-    }
-    let paymentInvoice = await new StripeService().createPaymentInvoice(objectToSendForInvoiceCreation);
-    // console.log(paymentInvoice);
+    // let objectToSendForInvoiceCreation = {
+    //   customer : this.req.currentUser.stripeCustomerId,
+    //   collection_method: "charge_automatically",
+    //   currency: "inr",
+    //   auto_advance: true,
+    //   description : "description",
+    //   metadata: {
+    //         payment_intent_id: this.req.body.paymentObject.id,
+    //       },
+    //   default_tax_rates: ["txr_1NKyCISBikUvm25bmAO1wO1z"],    
+    // }
+    // let paymentInvoice = await new StripeService().createPaymentInvoice(objectToSendForInvoiceCreation);
+    // // console.log(paymentInvoice);
 
-    //Step 2
-    //now we got payment invoice lets get all our products
-    let products = this.req.body.courseDetails.map((course)=>course.courseId)
-    // console.log(products,"products463")
-    //step3 starts check if paymentInvoice status is 1 then go further else return 
-    if (paymentInvoice.status) {
-      //created invoice // add price and data
-      CourseController.asyncForEach(products, async (productId, index) => {
-        //create product // ignore if already exist
-        let productStatus = await this.createProduct({
-          productId,
-        });
-        let paymentItem = await new StripeService().createPaymentInvoiceItem({
-          invoice: paymentInvoice.data.id,
-          price: productStatus.data.metadata.priceId,
-          customer: data.customer,
-        });
-        //generate invoice
-        // console.log("480");
-        result.push(paymentItem);
-        // console.log("482" , paymentItem);
+    // //Step 2
+    // //now we got payment invoice lets get all our products
+    // let products = this.req.body.courseDetails.map((course)=>course.courseId)
+    // // console.log(products,"products463")
+    // //step3 starts check if paymentInvoice status is 1 then go further else return 
+    // if (paymentInvoice.status) {
+    //   //created invoice // add price and data
+    //   CourseController.asyncForEach(products, async (productId, index) => {
+    //     //create product // ignore if already exist
+    //     let productStatus = await this.createProduct({
+    //       productId,
+    //     });
+    //     let paymentItem = await new StripeService().createPaymentInvoiceItem({
+    //       invoice: paymentInvoice.data.id,
+    //       price: productStatus.data.metadata.priceId,
+    //       customer: data.customer,
+    //     });
+    //     //generate invoice
+    //     // console.log("480");
+    //     result.push(paymentItem);
+    //     // console.log("482" , paymentItem);
         
-      }).then(async (e) => {
-         finaliseInvoice = await new StripeService().finaliseInvoice(
-          paymentInvoice.data.id
-        );
+    //   }).then(async (e) => {
+    //      finaliseInvoice = await new StripeService().finaliseInvoice(
+    //       paymentInvoice.data.id
+    //     );
         
-         pdf = finaliseInvoice.invoice_pdf;
+    //      pdf = finaliseInvoice.invoice_pdf;
        
-        return this.res.send({
-          status: 1,
-          message:i18n.__('SAVED_DETAILS'),
-          data: pdf,
-        });
-      });
-    } else {
-      // failed creation of payment invoice
-      return this.res.send({
-        status: 0,
-        message: "Payment Invoice generation failed",
-        data: paymentInvoice,
-      });
-    }
+    //     return this.res.send({
+    //       status: 1,
+    //       message:i18n.__('SAVED_DETAILS'),
+    //       data: pdf,
+    //     });
+    //   });
+    // } else {
+    //   // failed creation of payment invoice
+    //   return this.res.send({
+    //     status: 0,
+    //     message: "Payment Invoice generation failed",
+    //     data: paymentInvoice,
+    //   });
+    // }
 
     
 
