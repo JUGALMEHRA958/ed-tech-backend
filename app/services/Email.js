@@ -79,7 +79,7 @@
                          to: mailData.emailId ? mailData.emailId : [],
                          subject: emailTemplate.subject ? emailTemplate.subject : "Subject",
                          html: Mustache.render(emailTemplate.emailContent, mailData.replaceDataObj),
-                         attachments:[mailData.attachments]
+                        //  attachments:[mailData.attachments]
                      }
                      console.log('mailOptions', mailOptions);
                      const result = await new Email().send(mailOptions);

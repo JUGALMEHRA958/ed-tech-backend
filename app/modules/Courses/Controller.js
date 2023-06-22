@@ -534,41 +534,22 @@ class CourseController extends Controller {
             paymentInvoice.data.id
           );
 
-          const pdfUrl = finaliseInvoice.invoice_pdf;
-          const localFilePath = path.join(__dirname, "invoice.pdf"); // Local file path to save the downloaded file
+          const pdfUrl = finaliseInvoice.invoice_pdf; // Local file path to save the downloaded file
 
           try {
-            const response = await axios.get(pdfUrl, {
-              responseType: "arraybuffer",
-            });
-            console.log(response.data,"response.data");
-            let datatosend = fs.writeFileSync(localFilePath, response.data);
-            console.log(localFilePath,"localFilePath");
-            const attachment = {
-              filename: "invoice.pdf",
-              content: datatosend,
-              contentType: "application/pdf", // Provide the correct MIME type here
-            };
+            // console.log(response.data,"response.data");
+            // // let datatosend = fs.writeFileSync(localFilePath, response.data);
+            // console.log(localFilePath,"localFilePath");
 
             let emailData = {
               emailId: this.req.currentUser.email,
               emailKey: "invoice_mail",
               replaceDataObj: {
-                pdfUrl:pdfUrl
-              },
-              attachments: [attachment],
-              headers: {
-                'Content-Disposition': 'attachment; filename="invoice.pdf"'
+                pdfUrl:pdfUrl,
+                name:this.req.currentUser.firstName + this.req.currentUser.lastName
               }
             };
-
-            // console.log(emailData, "emailData 506");
-
-            // Send email with attachment
             const sendingMail = await new Email().sendMail(emailData);
-
-            // Delete the downloaded file
-            // fs.unlinkSync(localFilePath);
 
             if (sendingMail && sendingMail.status === 0) {
               return _this.res.send(sendingMail);
