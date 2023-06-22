@@ -26,6 +26,16 @@ class Seed {
     }
     async addEmailTemplate() {
         try {
+            let sendInvoiceMail = {
+                "emailTitle": "Invoice from cambridge connect",
+                'emailKey': "invoice_mail",
+                'subject': "Invoice mail",
+                'emailContent':`<p><span style="color: rgb(0,0,0);font-size: 13px;font-family: Arial;">Hi , {{{name}}},<br>Thanks for shopping with cambridge. <br> <a href="{{{pdfUrl}}}" target="_self"><span style="color: rgb(0,0,0);font-size: 13px;font-family: Arial;">Click link to download your invoice</span></a> </p>`
+            };
+            let isKeyExistOfsendInvoiceMail = await EmailTemplate.findOne({ emailKey: sendInvoiceMail['emailKey'] }).select({ "_id": 1 });
+            if (!isKeyExistOfsendInvoiceMail) {
+                await new Model(EmailTemplate).store(sendInvoiceMail);
+            }
             let registerMail = {
                 "emailTitle": "Signup mail",
                 'emailKey': "signup_mail",
