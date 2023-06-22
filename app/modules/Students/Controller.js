@@ -1436,12 +1436,12 @@ class StudentsController extends Controller {
       // console.log(paymentIntent.data.id);
       if (paymentIntent.status) {
 
-        //created intent
-        // return this.res.send({
-        //   status: 1,
-        //   message: "Payment intent created.",
-        //   data: { clientSecret: paymentIntent.data.client_secret, client },
-        // });
+        // created intent
+        return this.res.send({
+          status: 1,
+          message: "Payment intent created.",
+          data: { clientSecret: paymentIntent.data.client_secret, client },
+        });
       } 
       else {
         //failed creation of payment intent
