@@ -458,12 +458,14 @@ class CourseController extends Controller {
       await Promise.all(
         data.courseDetails.map(async (course) => {
           let courseFromDatabase = await CourseSchema.findById(course.courseId);
-          let dataToSendToRegister = {
-            email: this.req.currentUser.email,
-            code: "IDPCENTRE",
-            isbn: courseFromDatabase.isbnNumber,
-          };
-          await this.assignCourse(dataToSendToRegister);
+          if(courseFromDatabase){
+            let dataToSendToRegister = {
+              email: this.req.currentUser.email,
+              code: "IDPCENTRE",
+              isbn: courseFromDatabase.isbnNumber,
+            };
+            await this.assignCourse(dataToSendToRegister);
+          }
         })
       );
 
