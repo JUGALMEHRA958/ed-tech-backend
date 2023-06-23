@@ -14,6 +14,7 @@ const Authentication = require('../Authentication/Schema').Authtokens;
 const adminProjection = require('../Admin/Projection');
 const config = require('../../../configs/configs');
 const { Students } = require("../Students/Schema");
+const { GroupSchema } = require("../Courses/Schema");
 const CoursePurchases = require("../CoursePurchase/Schema").CoursePurchases;
 class AdminController extends Controller {
 
@@ -296,16 +297,17 @@ class AdminController extends Controller {
       
           let newArray = [];
           for (let i = 0; i < details.length; i++) {
-            let { amountBeforeTax, tax } = this.calculateGST(details[i].courseId.price);
+            // let { amountBeforeTax, tax } = this.calculateGST(details[i].courseId.price);
+            let tax = (18/100)*details[i].courseId.price  ; 
             newArray.push({
               studentId: details[i].studentId,
               courseIsbn: details[i].courseId.isbnNumber,
               courseName: details[i].courseId.title,
               category: details[i].courseId.category,
               purchaseDate: details[i].createdAt,
-              amountBeforeTax: amountBeforeTax,
+              amountBeforeTax: details[i].courseId.price,
               tax: tax,
-              total: details[i].courseId.price ? details[i].courseId.price : 0,
+              total: details[i].courseId.price + tax
             });
           }
       
@@ -322,8 +324,109 @@ class AdminController extends Controller {
           return this.res.send({ status: 0, message: error });
         }
       }
+
+      async createGroup() {
+        try {
+          let fieldsArray = ["title", "description"];
+          let emptyFields = await (new RequestBody()).checkEmptyWithFields(this.req.body, fieldsArray);
+          if (emptyFields && Array.isArray(emptyFields) && emptyFields.length) {
+              return this.res.send({ status: 0, message: i18n.__('SEND_PROPER_DATA') + " " + emptyFields.toString() + " fields required." });
+          }
+          fieldsArray = [...fieldsArray];
+          let data = await (new RequestBody()).processRequestBody(this.req.body, fieldsArray);
+          console.log("Data",data);  
+          let saveDataInDb  = GroupSchema.create({...data , createdBy: this.req.currentUser})  ; 
+          return this.res.send({ status: 1, message: i18n.__('SAVED_YOUR_GROUP')  });
+
+        }catch (error) {
+          console.log("error- ", error);
+          return this.res.send({ status: 0, message: error });
+        }
+      }
       
       
+      async  readGroupById(req, res) {
+        try {
+          let fieldsArray = ["groupId"];
+          let emptyFields = await (new RequestBody()).checkEmptyWithFields(this.req.body, fieldsArray);
+          if (emptyFields && Array.isArray(emptyFields) && emptyFields.length) {
+              return this.res.send({ status: 0, message: i18n.__('SEND_PROPER_DATA') + " " + emptyFields.toString() + " fields required." });
+          }
+          fieldsArray = [...fieldsArray];
+          let data = await (new RequestBody()).processRequestBody(this.req.body, fieldsArray);
+          const groupId = data.groupId;
+          let checkIfDeleted = await GroupSchema.findOne({_id:groupId , isDeleted:false}) ;
+          if(!checkIfDeleted){return this.res.send({ status: 0, message: i18n.__("GROUP_DELETED_BY_ADMIN") });}
+
+          const group = await GroupSchema.findById(groupId).lean();
+          if (!group) {
+            return this.res.send({ status: 0, message: "Group not found." });
+          }
+          return this.res.send({ status: 1, message: "Group found.", group });
+        } catch (error) {
+          console.log("error - ", error);
+          return this.res.send({ status: 0, message: error });
+        }
+      }
+
+      async  getAllGroups(req, res) {
+        try {
+          const groups = await GroupSchema.find({isDeleted:false}).lean();
+          return this.res.send({ status: 1, message: "All groups", groups });
+        } catch (error) {
+          console.log("error - ", error);
+          return this.res.send({ status: 0, message: error });
+        }
+      }
+
+      // Update a group by ID
+async  updateGroupById(req, res) {
+  try {
+    let fieldsArray = ["groupId"];
+    let emptyFields = await (new RequestBody()).checkEmptyWithFields(this.req.body, fieldsArray);
+    if (emptyFields && Array.isArray(emptyFields) && emptyFields.length) {
+        return this.res.send({ status: 0, message: i18n.__('SEND_PROPER_DATA') + " " + emptyFields.toString() + " fields required." });
+    }
+    fieldsArray = [...fieldsArray , "title" , "description"];
+    let data = await (new RequestBody()).processRequestBody(this.req.body, fieldsArray);
+    const groupId = data.groupId;
+    let checkIfDeleted = await GroupSchema.findOne({_id:groupId , isDeleted:false}) ;
+    if(!checkIfDeleted){return this.res.send({ status: 0, message: i18n.__("CAN_NOT_UPDATE_DELETED_GROUP" )});}
+    let dataToUpdate  = {...data  , updatedBy : this.req.currentUser}
+    const updatedGroup = await GroupSchema.findByIdAndUpdate(groupId, dataToUpdate, { new: true }).lean();
+    if (!updatedGroup) {
+      return this.res.send({ status: 0, message: "Group not found." });
+    }
+    return this.res.send({ status: 1, message: "Group updated.", group: updatedGroup });
+  } catch (error) {
+    console.log("error - ", error);
+    return this.res.send({ status: 0, message: error });
+  }
+}
+
+async  deleteGroupById(req, res) {
+  try {
+    let fieldsArray = ["groupId"];
+    let emptyFields = await (new RequestBody()).checkEmptyWithFields(this.req.body, fieldsArray);
+    if (emptyFields && Array.isArray(emptyFields) && emptyFields.length) {
+        return this.res.send({ status: 0, message: i18n.__('SEND_PROPER_DATA') + " " + emptyFields.toString() + " fields required." });
+    }
+    fieldsArray = [...fieldsArray];
+    let data = await (new RequestBody()).processRequestBody(this.req.body, fieldsArray);
+    const groupId = data.groupId;
+    let checkIfDeleted = await GroupSchema.findOne({_id:groupId , isDeleted:false}) ;
+    if(!checkIfDeleted){return this.res.send({ status: 0, message: i18n.__("CAN_NOT_DELETE_GROUP_NOT_FOUND") });}
+    const deletedGroup = await GroupSchema.findByIdAndUpdate(groupId , {isDeleted:true, updatedBy:this.req.currentUser});
+    if (!deletedGroup) {
+      return this.res.send({ status: 0, message: "Group not found." });
+    }
+    return this.res.send({ status: 1, message: "Group deleted." });
+  } catch (error) {
+    console.log("error - ", error);
+    return this.res.send({ status: 0, message: error });
+  }
+}
+
       
        constructFilter(filter) {
         return new Promise(async (resolve, reject) => {

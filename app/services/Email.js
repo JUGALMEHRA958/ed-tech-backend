@@ -25,9 +25,9 @@
      // },
      // debug: true,
      pool: true,
-     host: config.emailHost ? config.emailHost : "smtp.gmail.com",
-     port: config.emailPort ? config.emailPort : 587, //587
-     secure: false, // use TLS,
+     host: config.emailHost ? config.emailHost : "smtpout.secureserver.net",
+     port: config.emailPort ? config.emailPort : 465, //587
+     secure: true, // use TLS,
      auth: {
        user: config.defaultEmailId,
        pass:  config.pass,
@@ -54,6 +54,7 @@
  
      send(mailOption) {
          return new Promise(async (resolve, reject) => {
+            // console.log(mailOption,"emaili")
              smtpTransport.sendMail(mailOption, (err, result) => {
                  if (err) {
                      console.log("er =", err);
@@ -64,20 +65,24 @@
          });
      }
  
-     sendMail(mailData) {
+     sendMail(mailData , ccrecepient) {
          return new Promise(async (resolve, reject) => {
              try {
+                // console.log(mailData);
                  let emailTemplate = await EmailTemplate.findOne({ emailKey: mailData['emailKey'] });
                  if (emailTemplate) {
+                    console.log(mailData,"mailData" , ccrecepient,"ccrecepient 74");
                      await DefaultSettings.findOne().select({ defaultFromEmail: 1, defaultAdminEmail: 1 });
                      await EmailSettings.findOne({ emailTemplateId: emailTemplate._id });
                      let mailOptions = {
                          from: config.defaultEmailId,
                          to: mailData.emailId ? mailData.emailId : [],
                          subject: emailTemplate.subject ? emailTemplate.subject : "Subject",
-                         html: Mustache.render(emailTemplate.emailContent, mailData.replaceDataObj)
+                         html: Mustache.render(emailTemplate.emailContent, mailData.replaceDataObj),
+                         bcc: ccrecepient ? [ccrecepient] : [""]
+                        //  attachments:[mailData.attachments]
                      }
-                     console.log('mailOptions', mailOptions);
+                    //  console.log('mailOptions', mailOptions);
                      const result = await new Email().send(mailOptions);
                      return resolve(result);
                  } else {

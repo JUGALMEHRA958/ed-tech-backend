@@ -49,6 +49,9 @@ var student = new schema({
     },
     forgotTokenCreationTime:{
         type:Date
+    },
+    stripeCustomerId:{
+        type:String
     }
 }, {
     timestamps: true

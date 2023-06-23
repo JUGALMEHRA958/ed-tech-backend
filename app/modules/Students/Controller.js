@@ -64,7 +64,7 @@ class StudentsController extends Controller {
         data["email"] = data["email"].toLowerCase();
 
         // save new user
-        const newUserId = await new Model(Students).store(data);
+        let newUserId = await new Model(Students).store(data);
 
         // if empty not save user details and give error message.
         if (_.isEmpty(newUserId)) {
@@ -135,9 +135,28 @@ class StudentsController extends Controller {
             );
           }
           //magic registration ended
-
+          //STRIPE CUSTOMER REGISTERATION
+          let stripeObj = await new StripeService().createStripeUser(newUserId.email);
+          // console.log(stripeObj,"stripeObj");
+          if(stripeObj && stripeObj.status==1 && stripeObj.data.id){
+            newUserId = await Students.findOneAndUpdate({_id:newUserId._id} , {stripeCustomerId:stripeObj.data.id },{new:true})
+          }
           let { token, refreshToken } =
             await new Globals().getTokenWithRefreshToken({ id: newUserId._id });
+            let emailData = {
+              emailId: newUserId.email,
+              emailKey: 'signup_mail',
+              replaceDataObj: { fullName: newUserId.firstName + newUserId.lastName}
+          };
+
+          const sendingMail = await new Email().sendMail(emailData);
+          if (sendingMail) {
+              if (sendingMail.status == 0) {
+                  return _this.res.send(sendingMail);
+              } else if (!sendingMail.response) {
+                  return this.res.send({ status: 0, message: i18n.__("SERVER_ERROR") });
+              }
+          }
           return this.res.send({
             status: 1,
             message: i18n.__("REGISTRATION_SCUCCESS"),
@@ -702,7 +721,7 @@ class StudentsController extends Controller {
           resetPasswordLink: Config.setPassUrl + token,
         },
       };
-      console.log(Config.setPassUrl, "Config.setPassUrl");
+      // console.log(Config.setPassUrl, "Config.setPassUrl");
       const sendingMail = await new Email().sendMail(emailData);
       if (sendingMail && sendingMail.status == 0) {
         return _this.res.send(sendingMail);
@@ -818,6 +837,13 @@ class StudentsController extends Controller {
           message: i18n.__("USER_NOT_EXIST_OR_DELETED"),
         });
       }
+      if(!user.stripeCustomerId){
+        let stripeObj = await new StripeService().createStripeUser(user.email);
+          // console.log(stripeObj,"stripeObj");
+          if(stripeObj && stripeObj.status==1 && stripeObj.data.id){
+            user = await Students.findOneAndUpdate({_id:user._id} , {stripeCustomerId:stripeObj.data.id },{new:true})
+          }
+      }
 
       const status = await new CommonService().verifyPassword({
         password: this.req.body.password,
@@ -834,6 +860,8 @@ class StudentsController extends Controller {
       let updatedUser = await Students.findByIdAndUpdate(user._id, data, {
         new: true,
       }).select(userProjection.user);
+
+      
 
       if (Config.useRefreshToken && Config.useRefreshToken == "true") {
         let { token, refreshToken } =
@@ -1407,6 +1435,9 @@ class StudentsController extends Controller {
     try {
       let user = this.req.currentUser ? this.req.currentUser : {};
       let data = this.req.body;
+      let result = [];
+      let pdf ;
+      let finaliseInvoice ={};
       let client = {
         publishableKey:
           "pk_test_51LXjFxSBikUvm25bl2OkGvB61st1mtMLH8pL9xt8lfkISz1R61n5EP0l1TkVFcKwXtsdMxkeh2J8gwLNNTFxlFd100BkKnK6Ks",
@@ -1416,14 +1447,17 @@ class StudentsController extends Controller {
       //create payment intent
       data.currency = "INR";
       let paymentIntent = await new StripeService().createPaymentIntent(data);
+      // console.log(paymentIntent.data.id);
       if (paymentIntent.status) {
-        //created intent
+
+        // created intent
         return this.res.send({
           status: 1,
           message: "Payment intent created.",
           data: { clientSecret: paymentIntent.data.client_secret, client },
         });
-      } else {
+      } 
+      else {
         //failed creation of payment intent
         return this.res.send({
           status: 0,
@@ -1439,5 +1473,71 @@ class StudentsController extends Controller {
       });
     }
   }
+  static async asyncForEach(array, callback) {
+    for (let index = 0; index < array.length; index++) {
+      await callback(array[index], index, array);
+    }
+  }
+  async createProduct(product) {
+    try {
+      let body = product;
+      //create payment intent
+      let productInfo = await CourseSchema.findOne({
+        productId: body.productId,
+      });
+      let { productId, ...data } = body;
+      data.description = productInfo?.description;
+      data.metadata = {
+        productId: productInfo?.productId,
+        isbnNumber: productInfo?.isbnNumber,
+        price: productInfo?.price,
+        moduleType: productInfo?.moduleType,
+        group: productInfo?.group,
+      };
+      data.images = [productInfo?.picture];
+      data.name = productInfo?.title;
+      // data.currency = "INR";
+      //search product in stripe
+      let productSearch = await new StripeService().listProducts({
+        metadataKey: "productId",
+        metadataValue: body.productId,
+      });
+      if (!productSearch.status) {
+        let product = await new StripeService().createProduct(data);
+        if (product.status) {
+          //create price and attach
+          let price = await new StripeService().createPrice({
+            amount: productInfo.price,
+            product: product.data.id,
+          });
+          //created product
+          return {
+            status: 1,
+            message: "Product was created successfully.",
+            data: price.data,
+          };
+        } else {
+          //failed creation of payment intent
+          return {
+            status: 0,
+            message: "Product failed to create",
+            data: price.data,
+          };
+        }
+      }
+      return {
+        status: 1,
+        message: "already exist",
+        data: productSearch.data,
+      };
+    } catch (e) {
+      console.log("error in stripe product creation", e);
+      return this.res.send({
+        status: 0,
+        message: "Product creation failed",
+      });
+    }
+  }
+
 }
 module.exports = StudentsController;

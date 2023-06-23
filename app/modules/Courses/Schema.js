@@ -31,7 +31,7 @@ const courseSchema = new Schema(
   {
     title: { type: String, require: true },
     description: { type: String, require: true },
-    productId: { type: String, require: true , unique:true},
+    productId: { type: String, require: true },
     isbnNumber: { type: String, require: true },
     picture: { type: String, require: true },
     group: {
@@ -64,11 +64,27 @@ const courseSchema = new Schema(
 );
 
 
+const groupSchema = new Schema(
+  {
+    title: { type: String, require: true },
+    description: { type: String, require: true },
+    createdBy:{type: Schema.Types.ObjectId, ref: "admins" , default:null},
+    updatedBy:{type: Schema.Types.ObjectId, ref: "admins",default:null},
+    status:{type: Boolean, default: true },
+    isDeleted:{type: Boolean, default: false }
+  },
+  {
+    timestamps: true,
+  }
+);
+
+
 let CourseSchema = mongoose.model("courses", courseSchema);
 let CartSchema = mongoose.model("cart", cartSchema);
-
+let GroupSchema = mongoose.model("Groups",groupSchema)
 
 module.exports = {
   CourseSchema,
-  CartSchema
+  CartSchema,
+  GroupSchema
 };

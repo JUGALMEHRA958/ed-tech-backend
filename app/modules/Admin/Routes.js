@@ -77,5 +77,30 @@ module.exports = (app, express) => {
         return adminObj.getPurchaseHistory();
     });
 
+    router.post('/admin/createGroup', Globals.isAdminAuthorised(),Validators.createGroupValidator(), Validators.validate, (req, res, next) => {
+        const adminObj = (new AdminController()).boot(req, res);
+        return adminObj.createGroup();
+    });
+
+    router.post('/admin/getGroupById', Globals.isAdminAuthorised(),Validators.getGroupByIdValidator(), Validators.validate, (req, res, next) => {
+        const adminObj = (new AdminController()).boot(req, res);
+        return adminObj.readGroupById();
+    });
+
+    router.get('/admin/getAllGroups', Globals.isAdminAuthorised(),Validators.validate, (req, res, next) => {
+        const adminObj = (new AdminController()).boot(req, res);
+        return adminObj.getAllGroups();
+    });
+
+    router.post('/admin/updateGroup', Globals.isAdminAuthorised(),Validators.getGroupByIdValidator(), Validators.validate, (req, res, next) => {
+        const adminObj = (new AdminController()).boot(req, res);
+        return adminObj.updateGroupById();
+    });
+
+    router.delete('/admin/deleteGroupById', Globals.isAdminAuthorised(),Validators.getGroupByIdValidator(), Validators.validate, (req, res, next) => {
+        const adminObj = (new AdminController()).boot(req, res);
+        return adminObj.deleteGroupById();
+    });
+
     app.use(config.baseApiUrl, router);
 }

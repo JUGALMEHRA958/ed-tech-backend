@@ -70,6 +70,41 @@
                 }
             }
         },
+        "/courses/buyCourseBulk": {
+            "post": {
+                "tags": [
+                    "Courses Management"
+                ],
+                "description": "Buy course bulk",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Buy course bulk",
+                        "schema": {
+                            "$ref": "#/definitions/BuyCourseBulk"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "image": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Course added successfully.",
+                        "schema": {
+                            "$ref": "#/definitions/AddCourse"
+                        }
+                    }
+                }
+            }
+        },
         "/courses/addToCart": {
             "post": {
                 "tags": [
@@ -587,6 +622,72 @@
             "properties": {
                 "courseId": {
                     "example": "646ef7545f3002110c787df8",
+                    "image": "string"
+                }
+                
+            }
+        },
+        "BuyCourseBulk": {
+            "required": [
+                "paymentStatus",
+                "totalPrice",
+                "paymentObject",
+                "courseDetails"
+            ],
+            "properties": {
+                "paymentStatus": {
+                    "example": "success",
+                    "image": "string"
+                },
+                "totalPrice": {
+                    "example": 500,
+                    "image": "string"
+                },
+                "paymentObject": {
+                    "example": {
+                        "id": "pi_3NIU4BSBikUvm25b0vHoeVMi",
+                        "object": "payment_intent",
+                        "amount": 88500,
+                        "amount_details": {
+                            "tip": {}
+                        },
+                        "automatic_payment_methods": null,
+                        "canceled_at": null,
+                        "cancellation_reason": null,
+                        "capture_method": "automatic",
+                        "client_secret": "pi_3NIU4BSBikUvm25b0vHoeVMi_secret_BRSTIAHHskDG485lHqU0p5MYK",
+                        "confirmation_method": "automatic",
+                        "created": 1686650591,
+                        "currency": "inr",
+                        "description": null,
+                        "last_payment_error": null,
+                        "livemode": false,
+                        "next_action": null,
+                        "payment_method": "pm_1NIU4WSBikUvm25bGFSTGIlB",
+                        "payment_method_types": [
+                            "card"
+                        ],
+                        "processing": null,
+                        "receipt_email": null,
+                        "setup_future_usage": null,
+                        "shipping": null,
+                        "source": null,
+                        "status": "succeeded"
+                    },
+                    "image": "string"
+                },
+                "courseDetails": {
+                    "example": [
+                        {
+                            "courseId" :"648013b092a9360008673a83",
+                            "price":500
+                        },
+                        {
+                            "courseId" :"647f172d92a9360008673a5e",
+                            "price":110
+                        }
+                 
+                    ],
                     "image": "string"
                 }
                 
