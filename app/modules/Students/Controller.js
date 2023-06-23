@@ -143,6 +143,20 @@ class StudentsController extends Controller {
           }
           let { token, refreshToken } =
             await new Globals().getTokenWithRefreshToken({ id: newUserId._id });
+            let emailData = {
+              emailId: newUserId.email,
+              emailKey: 'signup_mail',
+              replaceDataObj: { fullName: newUserId.firstName + newUserId.lastName}
+          };
+
+          const sendingMail = await new Email().sendMail(emailData);
+          if (sendingMail) {
+              if (sendingMail.status == 0) {
+                  return _this.res.send(sendingMail);
+              } else if (!sendingMail.response) {
+                  return this.res.send({ status: 0, message: i18n.__("SERVER_ERROR") });
+              }
+          }
           return this.res.send({
             status: 1,
             message: i18n.__("REGISTRATION_SCUCCESS"),

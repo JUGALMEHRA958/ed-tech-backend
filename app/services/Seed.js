@@ -40,7 +40,7 @@ class Seed {
                 "emailTitle": "Signup mail",
                 'emailKey': "signup_mail",
                 'subject': "Welcome Message",
-                'emailContent': "<p><span style=\"color: rgb(0,0,0);font-size: 13px;font-family: Arial;\">Congratulations {{{fullName}}} for signing up with App. Your experience with us is the highest priority. We welcome you to get to know our company and its features. </span><br><br><a href=\"{{{verificationLink}}}\" target=\"_self\"><span style=\"color: rgb(0,0,0);font-size: 13px;font-family: Arial;\">Click link to verify your account</span></a><br><br></p>"
+                'emailContent': "<p><span style=\"color: rgb(0,0,0);font-size: 13px;font-family: Arial;\">Hello {{{fullName}}}, <br> Thank you for registering. We hope our official Cambridge preparation material  helps you reach your desired IELTS band score.<br>Happy learning!  <br><br>Cambridge University Press & Assessment</p>"
             };
             let isKeyExist = await EmailTemplate.findOne({ emailKey: registerMail['emailKey'] }).select({ "_id": 1 });
             if (!isKeyExist) {
