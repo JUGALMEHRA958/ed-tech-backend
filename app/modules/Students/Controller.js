@@ -446,16 +446,19 @@ class StudentsController extends Controller {
             .status(401)
             .json({ status: 0, message: i18n.__("USER_NOT_EXIST_OR_DELETED") });
       }
-      console.log(userExist,"userExist 499")
-      // let output =  _.omit(userExist, ['password', 'emailVerificationStatus', 'isDeleted', 'previouslyUsedPasswords', 'failedAttempts', 'createdAt', 'updatedAt', 'verificationToken', 'verificationTokenCreationTime', 'lastSeen'])
+      else{
+        // let output =  _.omit(userExist, ['password', 'emailVerificationStatus', 'isDeleted', 'previouslyUsedPasswords', 'failedAttempts', 'createdAt', 'updatedAt', 'verificationToken', 'verificationTokenCreationTime', 'lastSeen'])
       let output = userExist._doc;
-      if (output.hasOwnProperty('password')) {
+      // if (output.hasOwnProperty('password')) {
         delete output.password;
-      }
+      // }
       output.emailId = output.email;
       delete output.email;
       console.log("");
       return this.res.send({ status: 1, data: output });
+      }
+      console.log(userExist,"userExist 499")
+      
     } catch (error) {
       console.log("error = ", error);
       // transaction.rollback();
