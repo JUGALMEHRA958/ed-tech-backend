@@ -448,12 +448,16 @@ class StudentsController extends Controller {
       }
       else{
         // let output =  _.omit(userExist, ['password', 'emailVerificationStatus', 'isDeleted', 'previouslyUsedPasswords', 'failedAttempts', 'createdAt', 'updatedAt', 'verificationToken', 'verificationTokenCreationTime', 'lastSeen'])
-      let output = userExist._doc;
+      let output = {};
+      output = userExist._doc;
       if (output && output.hasOwnProperty('password')) {
         delete output.password;
       }
-      output.emailId = output.email;
-      delete output.email;
+      if (output && output.hasOwnProperty('emailId')) {
+        delete output.email;
+      }
+      // output.emailId = output.email;
+      // delete output.email;
       console.log("");
       return this.res.send({ status: 1, data: output });
       }
