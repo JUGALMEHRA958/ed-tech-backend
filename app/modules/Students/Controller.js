@@ -460,7 +460,7 @@ class StudentsController extends Controller {
       }
       console.log(output);
       output.emailId = output.email;
-      // delete output.email;
+      delete output.email;
       console.log("");
       return this.res.send({ status: 1, data: output });
       }
