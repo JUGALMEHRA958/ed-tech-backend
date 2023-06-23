@@ -157,6 +157,8 @@ class StudentsController extends Controller {
                   return this.res.send({ status: 0, message: i18n.__("SERVER_ERROR") });
               }
           }
+
+          
           return this.res.send({
             status: 1,
             message: i18n.__("REGISTRATION_SCUCCESS"),
