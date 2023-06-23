@@ -519,12 +519,16 @@ class CourseController extends Controller {
         //created invoice // add price and data
         CourseController.asyncForEach(products, async (productId, index) => {
           //create product // ignore if already exist
+          console.log(522);
+
           let productStatus = await this.createProduct({
             productId,
           });
+          console.log(productStatus.data.data.metadata.priceId , "productStatus 525");
+          console.log(525);
           let paymentItem = await new StripeService().createPaymentInvoiceItem({
             invoice: paymentInvoice.data.id,
-            price: productStatus.data.metadata.priceId,
+            price: productStatus.data.data.metadata.priceId,
             customer: data.customer,
           });
           //generate invoice

@@ -150,7 +150,7 @@ class StripeService {
   async createPrice({ product, amount }) {
     try {
       const price = await stripe.prices.create({
-        amount: amount * 100,
+        unit_amount: amount * 100,
         currency: "INR",
         product,
       });
