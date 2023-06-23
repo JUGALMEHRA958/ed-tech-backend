@@ -158,7 +158,7 @@ class StudentsController extends Controller {
               }
           }
 
-          
+
           return this.res.send({
             status: 1,
             message: i18n.__("REGISTRATION_SCUCCESS"),
@@ -446,7 +446,7 @@ class StudentsController extends Controller {
             .status(401)
             .json({ status: 0, message: i18n.__("USER_NOT_EXIST_OR_DELETED") });
       }
-
+      console.log(userExist,"userExist 499")
       // let output =  _.omit(userExist, ['password', 'emailVerificationStatus', 'isDeleted', 'previouslyUsedPasswords', 'failedAttempts', 'createdAt', 'updatedAt', 'verificationToken', 'verificationTokenCreationTime', 'lastSeen'])
       let output = userExist._doc;
       delete output.password;
