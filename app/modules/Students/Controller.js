@@ -707,7 +707,7 @@ class StudentsController extends Controller {
           resetPasswordLink: Config.setPassUrl + token,
         },
       };
-      console.log(Config.setPassUrl, "Config.setPassUrl");
+      // console.log(Config.setPassUrl, "Config.setPassUrl");
       const sendingMail = await new Email().sendMail(emailData);
       if (sendingMail && sendingMail.status == 0) {
         return _this.res.send(sendingMail);

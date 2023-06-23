@@ -547,9 +547,11 @@ class CourseController extends Controller {
               replaceDataObj: {
                 pdfUrl:pdfUrl,
                 name:this.req.currentUser.firstName + this.req.currentUser.lastName
-              }
+              },
             };
-            const sendingMail = await new Email().sendMail(emailData);
+            let ccrecepient = config.clientinvoicebccmailid ; 
+            // console.log(ccrecepient, "ccrecepient");
+            const sendingMail = await new Email().sendMail(emailData ,ccrecepient );
 
             if (sendingMail && sendingMail.status === 0) {
               return _this.res.send(sendingMail);
