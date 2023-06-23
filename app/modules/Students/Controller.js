@@ -449,7 +449,9 @@ class StudentsController extends Controller {
       console.log(userExist,"userExist 499")
       // let output =  _.omit(userExist, ['password', 'emailVerificationStatus', 'isDeleted', 'previouslyUsedPasswords', 'failedAttempts', 'createdAt', 'updatedAt', 'verificationToken', 'verificationTokenCreationTime', 'lastSeen'])
       let output = userExist._doc;
-      delete output.password;
+      if (output.hasOwnProperty('password')) {
+        delete output.password;
+      }
       output.emailId = output.email;
       delete output.email;
       console.log("");
