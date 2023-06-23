@@ -438,6 +438,7 @@ class StudentsController extends Controller {
 
       let userExist;
       userExist = await authenticate.checkUserInDB(token);
+      let output
       // console.log('117-userExistuserExist', userExist);
       if (!userExist) {
         // console.log('119-userExistuserExist', userExist);
@@ -448,15 +449,17 @@ class StudentsController extends Controller {
       }
       else{
         // let output =  _.omit(userExist, ['password', 'emailVerificationStatus', 'isDeleted', 'previouslyUsedPasswords', 'failedAttempts', 'createdAt', 'updatedAt', 'verificationToken', 'verificationTokenCreationTime', 'lastSeen'])
-      let output = {};
-      output = userExist._doc;
+      // output = {};
+      output = userExist;
+      console.log(userExist,"userExist 454");
       if (output && output.hasOwnProperty('password')) {
         delete output.password;
       }
       if (output && output.hasOwnProperty('emailId')) {
         delete output.email;
       }
-      // output.emailId = output.email;
+      console.log(output);
+      output.emailId = output.email;
       // delete output.email;
       console.log("");
       return this.res.send({ status: 1, data: output });
