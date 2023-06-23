@@ -676,10 +676,12 @@ class CourseController extends Controller {
   async createProduct(product) {
     try {
       let body = product;
+      // console.log(body,"body 679");
       //create payment intent
       let productInfo = await CourseSchema.findOne({
-        productId: body.productId,
-      });
+        _id: body.productId,
+      }).lean();
+      // console.log(productInfo , "productInfo");
       let { productId, ...data } = body;
       data.description = productInfo?.description;
       data.metadata = {
