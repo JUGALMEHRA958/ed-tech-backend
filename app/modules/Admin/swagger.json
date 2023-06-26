@@ -654,7 +654,7 @@
                 }
             }
         },        
-        "/admin/deleteDicountGroupById": {
+        "/admin/deleteDiscountGroupById": {
             "delete": {
                 "tags": [
                     "Admin"

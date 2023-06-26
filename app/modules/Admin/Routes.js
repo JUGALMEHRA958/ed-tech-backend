@@ -133,7 +133,7 @@ module.exports = (app, express) => {
         return adminObj.updateDiscountGroupById();
     });
 
-    router.delete('/admin/deleteDicountGroupById', Globals.isAdminAuthorised(),Validators.getDiscountGroupByIdValidator(), Validators.validate, (req, res, next) => {
+    router.delete('/admin/deleteDiscountGroupById', Globals.isAdminAuthorised(),Validators.getDiscountGroupByIdValidator(), Validators.validate, (req, res, next) => {
         const adminObj = (new AdminController()).boot(req, res);
         return adminObj.deleteDiscountGroupById();
     });
