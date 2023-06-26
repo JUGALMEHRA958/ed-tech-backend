@@ -45,7 +45,42 @@
                     {
                         "name": "body",
                         "in": "body",
-                        "description": "Add Blog",
+                        "description": "Buy course free",
+                        "schema": {
+                            "$ref": "#/definitions/BuyCourse"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "image": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Course added successfully.",
+                        "schema": {
+                            "$ref": "#/definitions/AddCourse"
+                        }
+                    }
+                }
+            }
+        },
+        "/courses/startCourse": {
+            "post": {
+                "tags": [
+                    "Courses Management"
+                ],
+                "description": "Add a course",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Buy course free",
                         "schema": {
                             "$ref": "#/definitions/BuyCourse"
                         }
