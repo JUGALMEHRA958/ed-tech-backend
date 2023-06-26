@@ -355,7 +355,7 @@ class AdminController extends Controller {
             newArray.push({
               id: details[i]._id,
               studentId: details[i].studentId._id,
-              studentEmail: details[i].studentEmail,
+              studentEmail: details[i].studentId.email,
               invoiceLink: details[i].invoiceLink,
               paymentId: details[i].paymentObject.id,
               amountBeforeTax: amountBeforeTax,
