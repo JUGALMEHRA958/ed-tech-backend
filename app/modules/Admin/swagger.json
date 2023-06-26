@@ -655,7 +655,7 @@
             }
         },        
         "/admin/deleteDicountGroupById": {
-            "post": {
+            "delete": {
                 "tags": [
                     "Admin"
                 ],
