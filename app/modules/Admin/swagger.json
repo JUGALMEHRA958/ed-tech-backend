@@ -842,7 +842,7 @@
                     "required": true
                 },
                 "maximumDiscount": {
-                    "type": "string",
+                    "type": "number",
                     "example": 500,
                     "required": true
                 },
