@@ -687,7 +687,7 @@
             }
         },
         "/admin/getAllDiscountGroups": {
-            "get": {
+            "post": {
                 "tags": [
                     "Admin"
                 ],
