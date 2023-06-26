@@ -100,7 +100,7 @@ class StripeService {
         @params not disclosed yet
         @response json
     **/
-  async createPaymentInvoice({ customer, description, paymentIntent }) {
+  async createPaymentInvoice({ customer, description, paymentIntent ,couponId='' }) {
     try {
       const paymentInvoice = await stripe.invoices.create({
         customer,
@@ -108,6 +108,11 @@ class StripeService {
         currency: "inr",
         auto_advance: true,
         description,
+        discounts: [
+          {
+            "coupon": couponId,
+          },
+        ],
         metadata: {
           payment_intent_id: paymentIntent,
         }, //pi_3NIoWvSBikUvm25b1189EdwI

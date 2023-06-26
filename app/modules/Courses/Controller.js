@@ -471,6 +471,7 @@ class CourseController extends Controller {
       "courseDetails",
       "paymentStatus",
       "totalPrice",
+      "coupon"
     ];
     let data = await new RequestBody().processRequestBody(
       this.req.body,
@@ -551,6 +552,7 @@ class CourseController extends Controller {
           payment_intent_id: this.req.body.paymentObject.id,
         },
         default_tax_rates: ["txr_1NKyCISBikUvm25bmAO1wO1z"],
+        couponId:data.coupon
       };
       let paymentInvoice = await new StripeService().createPaymentInvoice(
         objectToSendForInvoiceCreation
@@ -566,14 +568,16 @@ class CourseController extends Controller {
       //step3 starts check if paymentInvoice status is 1 then go further else return
       if (paymentInvoice.status) {
         //created invoice // add price and data
+        // console.log(products,572);
         CourseController.asyncForEach(products, async (productId, index) => {
           //create product // ignore if already exist
-          console.log(522);
+          // console.log(productId , 574);
 
           let productStatus = await this.createProduct({
             productId,
           });
-          console.log(productStatus.data.data.metadata.priceId , "productStatus 525");
+          // console.log(579);
+          // console.log("productStatus 578",productStatus.data.data.metadata.priceId, "productStatus 578");
           console.log(525);
           let paymentItem = await new StripeService().createPaymentInvoiceItem({
             invoice: paymentInvoice.data.id,
