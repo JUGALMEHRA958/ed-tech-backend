@@ -9,6 +9,7 @@ const { CourseSchema, CartSchema } = require("./Schema");
 const {
   CoursePurchases,
   PaymentHistoryStripe,
+  CourseStart,
 } = require("../CoursePurchase/Schema");
 const axios = require("axios");
 const config = require("../../../configs/configs");
@@ -99,17 +100,27 @@ class CourseController extends Controller {
   }
   async getCourseStatus(course, user) {
     // console.log("Now going with course",course._id , "student", user._id);
-    const isCourseStarted = await CoursePurchases.findOne({
+    const isCourseBuyed = await CoursePurchases.findOne({
       studentId: user._id,
       courseId: course._id,
     }).lean();
-    // console.log(isCourseStarted,"isCourseStarted");
+    if (isCourseBuyed) {
+      return true;
+    }
+    return false;
+  }
+
+  async getCourseStartStatus(course, user) {
+    // console.log("Now going with course",course._id , "student", user._id);
+    const isCourseStarted = await CourseStart.findOne({
+      studentId: user._id,
+      courseId: course._id,
+    }).lean();
     if (isCourseStarted) {
       return true;
     }
     return false;
   }
-  // const mongoose = require('mongoose');
 
   async isAddedInCart(course, user) {
     let userCart = await CartSchema.findOne({ userId: user._id }).lean();
@@ -141,7 +152,11 @@ class CourseController extends Controller {
       console.log(testbankData);
       if (testbankData.length > 0) {
         for (let i = 0; i < testbankData.length; i++) {
-          let isStarted = await this.getCourseStatus(
+          let isBuyed = await this.getCourseStatus(
+            testbankData[i],
+            this.req.currentUser
+          );
+          let isStarted = await this.getCourseStartStatus(
             testbankData[i],
             this.req.currentUser
           );
@@ -151,7 +166,8 @@ class CourseController extends Controller {
           );
           testbankData[i] = {
             ...testbankData[i],
-            isStarted: isStarted,
+            isBuyed: isBuyed,
+            isStarted:isStarted,
             isAddedInCart: isAddedInCart,
           };
         }
@@ -167,11 +183,20 @@ class CourseController extends Controller {
 
       if (writeAndImprove.length > 0) {
         for (let i = 0; i < writeAndImprove.length; i++) {
-          let isStarted = await this.getCourseStatus(
+          
+          let isBuyed = await this.getCourseStatus(
             writeAndImprove[i],
             this.req.currentUser
           );
-          writeAndImprove[i] = { ...writeAndImprove[i], isStarted: isStarted };
+          let isStarted = await this.getCourseStartStatus(
+            writeAndImprove[i],
+            this.req.currentUser
+          );
+          let isAddedInCart = await this.isAddedInCart(
+            writeAndImprove[i],
+            this.req.currentUser
+          );
+          writeAndImprove[i] = { ...writeAndImprove[i], isStarted: isStarted ,isBuyed:isBuyed ,isAddedInCart};
         }
         responseArray.push({ name: "writeAndImprove", data: writeAndImprove });
       }
@@ -185,11 +210,19 @@ class CourseController extends Controller {
 
       if (ieltsebook.length > 0) {
         for (let i = 0; i < ieltsebook.length; i++) {
-          let isStarted = await this.getCourseStatus(
+          let isBuyed = await this.getCourseStatus(
             ieltsebook[i],
             this.req.currentUser
           );
-          ieltsebook[i] = { ...ieltsebook[i], isStarted: isStarted };
+          let isStarted = await this.getCourseStartStatus(
+            ieltsebook[i],
+            this.req.currentUser
+          );
+          let isAddedInCart = await this.isAddedInCart(
+            ieltsebook[i],
+            this.req.currentUser
+          );
+          ieltsebook[i] = { ...ieltsebook[i], isStarted: isStarted, isBuyed,isAddedInCart};
         }
         responseArray.push({ name: "ieltsebook", data: ieltsebook });
       }
@@ -203,11 +236,19 @@ class CourseController extends Controller {
 
       if (praxis.length > 0) {
         for (let i = 0; i < praxis.length; i++) {
-          let isStarted = await this.getCourseStatus(
+          let isBuyed = await this.getCourseStatus(
             praxis[i],
             this.req.currentUser
           );
-          praxis[i] = { ...praxis[i], isStarted: isStarted };
+          let isStarted = await this.getCourseStartStatus(
+            praxis[i],
+            this.req.currentUser
+          );
+          let isAddedInCart = await this.isAddedInCart(
+            praxis[i],
+            this.req.currentUser
+          );
+          praxis[i] = { ...praxis[i], isStarted: isStarted  , isBuyed , isAddedInCart};
         }
         responseArray.push({ name: "praxis", data: praxis });
       }
@@ -221,11 +262,19 @@ class CourseController extends Controller {
 
       if (printpractice.length > 0) {
         for (let i = 0; i < printpractice.length; i++) {
-          let isStarted = await this.getCourseStatus(
+          let isBuyed = await this.getCourseStatus(
             printpractice[i],
             this.req.currentUser
           );
-          printpractice[i] = { ...printpractice[i], isStarted: isStarted };
+          let isStarted = await this.getCourseStartStatus(
+            printpractice[i],
+            this.req.currentUser
+          );
+          let isAddedInCart = await this.isAddedInCart(
+            printpractice[i],
+            this.req.currentUser
+          );
+          printpractice[i] = { ...printpractice[i], isStarted: isStarted ,isAddedInCart};
         }
         responseArray.push({ name: "printpractice", data: printpractice });
       }
@@ -568,7 +617,8 @@ class CourseController extends Controller {
                 message: i18n.__("SERVER_ERROR"),
               });
             }
-
+            //update invoice link in payment history table
+            let updatePaymentRecord =  await PaymentHistoryStripe.findOneAndUpdate({_id:paymentRecorder._id} , {invoiceLink:pdfUrl})
             return this.res.send({
               status: 1,
               message: i18n.__("SAVED_DETAILS"),
@@ -656,7 +706,11 @@ class CourseController extends Controller {
         });
       }
       let savedData = await new Model(CoursePurchases).store(newObject);
-      console.log(savedData, "savedData");
+      let saveStartData = await new Model(CourseStart).store({
+          courseId : mongoose.Types.ObjectId(data.courseId),
+          studentId:this.req.currentUser
+      });
+      // console.log(savedData, "savedData");
       let dataToSendToRegister = {
         email: this.req.currentUser.email,
         code: "IDPCENTRE",
@@ -670,6 +724,24 @@ class CourseController extends Controller {
     } catch (e) {
       console.log("Error ", e);
       return this.res.send({ status: 0, error: e });
+    }
+  }
+
+  async startCourse(){
+    try{
+      let fieldsArray = ["courseId"];
+      let data = await new RequestBody().processRequestBody(
+        this.req.body,
+        fieldsArray
+      );
+      let saveStartData = await new Model(CourseStart).store({
+        courseId : mongoose.Types.ObjectId(data.courseId),
+        studentId:this.req.currentUser
+    });
+    return this.res.send({status:1,  message:"SUCCESS"})
+
+    }catch(e){
+      return this.res.send({status:0, error:e , message:"Internal server error"})
     }
   }
   static async asyncForEach(array, callback) {

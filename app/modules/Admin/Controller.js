@@ -15,6 +15,7 @@ const adminProjection = require('../Admin/Projection');
 const config = require('../../../configs/configs');
 const { Students } = require("../Students/Schema");
 const { GroupSchema } = require("../Courses/Schema");
+const { PaymentHistoryStripe } = require("../CoursePurchase/Schema");
 const CoursePurchases = require("../CoursePurchase/Schema").CoursePurchases;
 class AdminController extends Controller {
 
@@ -310,6 +311,81 @@ class AdminController extends Controller {
               total: details[i].courseId.price + tax
             });
           }
+      
+          return this.res.send({
+            status: 1,
+            data: newArray,
+            pageNumber: pageNumber,
+            pageSize: pageSize,
+            totalPages: totalPages,
+            totalCount: totalCount,
+          });
+        } catch (error) {
+          console.log("error- ", error);
+          return this.res.send({ status: 0, message: error });
+        }
+      }
+      async getSales() {
+        try {
+          let pageNumber = this.req.body.pageNumber ? this.req.body.pageNumber : 1;
+          let pageSize = this.req.body.pageSize ? this.req.body.pageSize : 10;
+          let filter = this.req.body.filter ? this.req.body.filter : [];
+          let filterCond = await this.constructFilter(filter);
+          let filterMatch = {};
+          if (!_.isEmpty(filterCond.dateRange)) {
+            const startDate = new Date(filterCond.dateRange.startDate);
+            const endDate = new Date(filterCond.dateRange.endDate);
+            filterMatch['createdAt'] = { $gte: startDate, $lte: endDate };
+          }
+      
+          const totalCount = await PaymentHistoryStripe.count();
+          const totalPages = Math.ceil(totalCount / pageSize);
+          const skipCount = (pageNumber - 1) * pageSize;
+          console.log(filterMatch,344);
+          let details = await PaymentHistoryStripe.find(filterMatch).populate('studentId').lean();
+
+          let newArray = [];
+          for (let i = 0; i < details.length; i++) {
+            const taxRate = 0.18; // 18% tax rate
+            const total = (details[i].paymentObject.amount/100); // Total amount including tax
+
+            const amountBeforeTax = total / (1 + taxRate); // Calculate amount before tax
+            const taxAmount = total - amountBeforeTax; // Calculate tax amount
+          
+            newArray.push({
+              id: details[i]._id,
+              timeOfPurchase :details[i].createdAt ,
+              studentId: details[i].studentId._id,
+              studentEmail: details[i].studentId.email,
+              invoiceLink: details[i].invoiceLink,
+              paymentId: details[i].paymentObject.id,
+              amountBeforeTax: amountBeforeTax,
+              taxAmount: taxAmount,
+              total: total,
+            });
+          }
+          
+          
+          
+          
+          // for (let i = 0; i < details.length; i++) {
+          //   const taxRate = config.taxRate ? config.taxRate : 0.18; // 18% tax rate
+          //   const total = details[i].paymentObject.amount / 100; // Total amount including tax
+          
+          //   const amountBeforeTax = total / (1 + taxRate); // Calculate amount before tax
+          //   const taxAmount = total - amountBeforeTax; // Calculate tax amount
+          
+          //   newArray.push({
+          //     studentId: details[i].studentId._id,
+          //     studentEmail: details[i].studentId.email,
+          //     invoiceLink: details[i].invoiceLink,
+          //     paymentId: details[i].paymentObject.id,
+          //     amountBeforeTax: amountBeforeTax,
+          //     taxAmount: taxAmount,
+          //     total: total,
+          //   });
+          // }
+          
       
           return this.res.send({
             status: 1,

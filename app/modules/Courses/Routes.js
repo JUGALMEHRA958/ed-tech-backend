@@ -56,6 +56,11 @@ module.exports = (app, express) => {
         return courseObj.buyCourse();
     }); 
 
+    router.post('/courses/startCourse', Validators.purchaseValidator(),Globals.isAuthorised,Validators.validate, (req, res, next) => {
+        const courseObj = (new CourseController()).boot(req, res, next);
+        return courseObj.startCourse();
+    }); 
+
     router.post('/courses/buyCourseBulk', Validators.coursePurchaseBulkValidator(),Globals.isAuthorised,Validators.validate, (req, res, next) => {
         const courseObj = (new CourseController()).boot(req, res, next);
         return courseObj.buyCourseBulk();
