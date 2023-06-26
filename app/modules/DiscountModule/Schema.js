@@ -21,8 +21,12 @@ var discountCouponSchema = new Schema({
         type: Float,
         required: true
     },
-    maximumDiscount: {
-        type: Float,
+    // maximumDiscount: {
+    //     type: Float,
+    //     required: true
+    // },
+    stripeCouponCode: {
+        type: String,
         required: true
     },
     createdBy:{type: Schema.Types.ObjectId, ref: "admins" , default:null},

@@ -831,19 +831,13 @@
                 "discountCode",
                 "startAt",
                 "endsAt",
-                "discountPercentage",
-                "maximumDiscount"
+                "discountPercentage"
             ],
             "properties": {
                 "discountCode": {
                     "type": "string",
                     "example": "DISCOUNTCOUPON5454",
                     "uniqueItems": true,
-                    "required": true
-                },
-                "maximumDiscount": {
-                    "type": "number",
-                    "example": 500,
                     "required": true
                 },
                 "startAt": {

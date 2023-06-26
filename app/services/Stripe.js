@@ -210,6 +210,29 @@ class StripeService {
       return { status: 0, data: e };
     }
   }
+
+  async  createDiscountCoupon(name, percent) {
+    const coupon = {
+      name: name,
+      percent_off: percent,
+      currency: 'INR',
+    };
+  
+    const coupons = await stripe.coupons.list();
+    console.log(coupons,"coupons 222");
+    const existingCoupon = coupons.data.find(coupon => coupon.name === name && coupon.percent_off === percent);
+  
+    if (existingCoupon) {
+      // The coupon already exists, so do not create it.
+      return null;
+    } else {
+      // The coupon does not exist, so create it.
+      const createdCoupon = await stripe.coupons.create(coupon);
+  
+      return createdCoupon.id;
+    }
+  }
+  
       
 }
 
