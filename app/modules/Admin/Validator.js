@@ -55,8 +55,22 @@ class Validators {
     static createGroupValidator() {
         try {
             return [
-                check('title').exists().isString().withMessage(i18n.__("%s REQUIRED", 'title')),
-                check('description').isString().exists().withMessage(i18n.__("%s REQUIRED", 'description'))
+                check('title').exists().isString().withMessage(i18n.__("%s REQUIRED", 'title'))
+                // check('description').isString().exists().withMessage(i18n.__("%s REQUIRED", 'description'))
+            ];
+        } catch (error) {
+            return error;
+        }
+    }
+    static createDiscountGroupValidator() {
+        try {
+            return [
+                check('discountCode').exists().isString().withMessage(i18n.__("%s REQUIRED", 'discountCode')),
+                check('startAt').exists().isString().withMessage(i18n.__("%s REQUIRED", 'startAt')),
+                check('endsAt').exists().isString().withMessage(i18n.__("%s REQUIRED", 'endsAt')),
+                check('discountPercentage').exists().isNumeric().withMessage(i18n.__("%s REQUIRED", 'discountPercentage')),
+                check('maximumDiscount').exists().isNumeric().withMessage(i18n.__("%s REQUIRED", 'maximumDiscount')),
+
             ];
         } catch (error) {
             return error;
@@ -66,6 +80,15 @@ class Validators {
         try {
             return [
                 check('groupId').exists().isString().withMessage(i18n.__("%s REQUIRED", 'GROUP_ID_REUQUIRE'))
+            ];
+        } catch (error) {
+            return error;
+        }
+    }
+    static getDiscountGroupByIdValidator() {
+        try {
+            return [
+                check('id').exists().isString().withMessage(i18n.__("%s REQUIRED", 'id'))
             ];
         } catch (error) {
             return error;
