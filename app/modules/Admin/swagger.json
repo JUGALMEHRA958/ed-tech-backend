@@ -379,6 +379,38 @@
                 }
             }
         },
+        "/admin/getSales":{
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "description": "getPurchaseHistory",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Login",
+                        "schema": {
+                            "$ref": "#/definitions/PurchaseHistory"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "getPurchaseHistory"
+                    }
+                }
+            }
+        },
         "/admin/logout": {
             "get": {
                 "tags": [

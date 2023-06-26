@@ -15,6 +15,7 @@ const adminProjection = require('../Admin/Projection');
 const config = require('../../../configs/configs');
 const { Students } = require("../Students/Schema");
 const { GroupSchema } = require("../Courses/Schema");
+const { PaymentHistoryStripe } = require("../CoursePurchase/Schema");
 const CoursePurchases = require("../CoursePurchase/Schema").CoursePurchases;
 class AdminController extends Controller {
 
@@ -331,66 +332,59 @@ class AdminController extends Controller {
           let filter = this.req.body.filter ? this.req.body.filter : [];
           let filterCond = await this.constructFilter(filter);
           let filterMatch = {};
-      
-          if (!_.isEmpty(filterCond.categoryArray)) {
-            filterMatch['courseId.category'] = { $in: filterCond.categoryArray };
-          }
           if (!_.isEmpty(filterCond.dateRange)) {
             const startDate = new Date(filterCond.dateRange.startDate);
             const endDate = new Date(filterCond.dateRange.endDate);
             filterMatch['createdAt'] = { $gte: startDate, $lte: endDate };
           }
-          if (!_.isEmpty(filterCond.priceArray)) {
-            filterMatch['courseId.price'] = { $gte: filterCond.priceArray[0].$gt, $lte: filterCond.priceArray[0].$lt };
-          }
       
-          const totalCount = await CoursePurchases.count();
+          const totalCount = await PaymentHistoryStripe.count();
           const totalPages = Math.ceil(totalCount / pageSize);
           const skipCount = (pageNumber - 1) * pageSize;
-      
-          let details = await CoursePurchases.aggregate([
-            {
-              $lookup: {
-                from: "courses",
-                localField: "courseId",
-                foreignField: "_id",
-                as: "courseId",
-              },
-            },
-            {
-              $unwind: {
-                path: "$courseId",
-              },
-            },
-            {
-              $match: filterMatch,
-            },
-            {
-              $sort: { createdAt: 1 },
-            },
-            {
-              $skip: skipCount,
-            },
-            {
-              $limit: pageSize,
-            },
-          ]);
-      
+          console.log(filterMatch,344);
+          let details = await PaymentHistoryStripe.find(filterMatch).populate('studentId').lean();
+
           let newArray = [];
           for (let i = 0; i < details.length; i++) {
-            // let { amountBeforeTax, tax } = this.calculateGST(details[i].courseId.price);
-            let tax = (18/100)*details[i].courseId.price  ; 
+            const taxRate = 0.18; // 18% tax rate
+            const total = (details[i].paymentObject.amount/100); // Total amount including tax
+
+            const amountBeforeTax = total / (1 + taxRate); // Calculate amount before tax
+            const taxAmount = total - amountBeforeTax; // Calculate tax amount
+          
             newArray.push({
-              studentId: details[i].studentId,
-              courseIsbn: details[i].courseId.isbnNumber,
-              courseName: details[i].courseId.title,
-              category: details[i].courseId.category,
-              purchaseDate: details[i].createdAt,
-              amountBeforeTax: details[i].courseId.price,
-              tax: tax,
-              total: details[i].courseId.price + tax
+              id: details[i]._id,
+              studentId: details[i].studentId._id,
+              studentEmail: details[i].studentEmail,
+              invoiceLink: details[i].invoiceLink,
+              paymentId: details[i].paymentObject.id,
+              amountBeforeTax: amountBeforeTax,
+              taxAmount: taxAmount,
+              total: total,
             });
           }
+          
+          
+          
+          
+          // for (let i = 0; i < details.length; i++) {
+          //   const taxRate = config.taxRate ? config.taxRate : 0.18; // 18% tax rate
+          //   const total = details[i].paymentObject.amount / 100; // Total amount including tax
+          
+          //   const amountBeforeTax = total / (1 + taxRate); // Calculate amount before tax
+          //   const taxAmount = total - amountBeforeTax; // Calculate tax amount
+          
+          //   newArray.push({
+          //     studentId: details[i].studentId._id,
+          //     studentEmail: details[i].studentId.email,
+          //     invoiceLink: details[i].invoiceLink,
+          //     paymentId: details[i].paymentObject.id,
+          //     amountBeforeTax: amountBeforeTax,
+          //     taxAmount: taxAmount,
+          //     total: total,
+          //   });
+          // }
+          
       
           return this.res.send({
             status: 1,
