@@ -40,7 +40,7 @@ class Seed {
                 "emailTitle": "Signup mail",
                 'emailKey': "signup_mail",
                 'subject': "Welcome to IELTS Prep Programme",
-                'emailContent': "<p><span style=\"color: rgb(0,0,0);font-size: 13px;font-family: Arial;\">Hello {{{fullName}}},<br> <br> Thank you for registering. We hope our official Cambridge preparation material helps you reach your desired IELTS band score.<br><br>Happy learning!  <br><br><b>Cambridge University Press & Assessment</b></p>"
+                'emailContent': "<p><span style=\"color: rgb(0,0,0);font-size: 13px;font-family: Arial;\">Hello {{{fullName}}},<br> <br> Thank you for registering. We hope our official Cambridge preparation material helps you reach your desired IELTS band score.<br><br>Happy learning!  <br>Cambridge University Press & Assessment</b></p>"
             };
             let isKeyExist = await EmailTemplate.findOne({ emailKey: registerMail['emailKey'] }).select({ "_id": 1 });
             if (!isKeyExist) {
