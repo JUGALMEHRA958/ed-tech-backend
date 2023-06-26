@@ -381,6 +381,33 @@
                 }
             }
         },
+        "/admin/downloadCsvOfInvoices": {
+            "get": {
+                "tags": [
+                    "Admin User Management"
+                ],
+                "description": "Download CSV of invoices",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Download CSV.",
+                        "schema": {
+                            "$ref": "#/definitions/AdminDownloadFile"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/downloadExcel": {
             "post": {
                 "tags": [
