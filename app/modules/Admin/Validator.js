@@ -62,10 +62,32 @@ class Validators {
             return error;
         }
     }
+    static createDiscountGroupValidator() {
+        try {
+            return [
+                check('discountCode').exists().isString().withMessage(i18n.__("%s REQUIRED", 'discountCode')),
+                check('startAt').exists().isString().withMessage(i18n.__("%s REQUIRED", 'startAt')),
+                check('endsAt').exists().isString().withMessage(i18n.__("%s REQUIRED", 'endsAt')),
+                check('discountPercentage').exists().isNumeric().withMessage(i18n.__("%s REQUIRED", 'discountPercentage')),
+
+            ];
+        } catch (error) {
+            return error;
+        }
+    }
     static getGroupByIdValidator() {
         try {
             return [
                 check('groupId').exists().isString().withMessage(i18n.__("%s REQUIRED", 'GROUP_ID_REUQUIRE'))
+            ];
+        } catch (error) {
+            return error;
+        }
+    }
+    static getDiscountGroupByIdValidator() {
+        try {
+            return [
+                check('id').exists().isString().withMessage(i18n.__("%s REQUIRED", 'id'))
             ];
         } catch (error) {
             return error;

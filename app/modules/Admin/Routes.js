@@ -82,6 +82,10 @@ module.exports = (app, express) => {
         return adminObj.getSales();
     });
 
+
+    //GROUP CRUD starts
+
+    
     router.post('/admin/createGroup', Globals.isAdminAuthorised(),Validators.createGroupValidator(), Validators.validate, (req, res, next) => {
         const adminObj = (new AdminController()).boot(req, res);
         return adminObj.createGroup();
@@ -105,6 +109,33 @@ module.exports = (app, express) => {
     router.delete('/admin/deleteGroupById', Globals.isAdminAuthorised(),Validators.getGroupByIdValidator(), Validators.validate, (req, res, next) => {
         const adminObj = (new AdminController()).boot(req, res);
         return adminObj.deleteGroupById();
+    });
+
+
+    //apis for discount code start
+    router.post('/admin/createDiscountGroup', Globals.isAdminAuthorised(),Validators.createDiscountGroupValidator(), Validators.validate, (req, res, next) => {
+        const adminObj = (new AdminController()).boot(req, res);
+        return adminObj.createDiscountGroup();
+    });
+
+    router.post('/admin/getDiscountGroupById', Globals.isAdminAuthorised(),Validators.getDiscountGroupByIdValidator(), Validators.validate, (req, res, next) => {
+        const adminObj = (new AdminController()).boot(req, res);
+        return adminObj.readDiscountGroupById();
+    });
+
+    router.post('/admin/getAllDiscountGroups', Globals.isAdminAuthorised(),Validators.getValidator(),Validators.validate, (req, res, next) => {
+        const adminObj = (new AdminController()).boot(req, res);
+        return adminObj.getAllDiscountGroups();
+    });
+
+    router.post('/admin/updateDiscountGroup', Globals.isAdminAuthorised(),Validators.getDiscountGroupByIdValidator(), Validators.validate, (req, res, next) => {
+        const adminObj = (new AdminController()).boot(req, res);
+        return adminObj.updateDiscountGroupById();
+    });
+
+    router.delete('/admin/deleteDicountGroupById', Globals.isAdminAuthorised(),Validators.getDiscountGroupByIdValidator(), Validators.validate, (req, res, next) => {
+        const adminObj = (new AdminController()).boot(req, res);
+        return adminObj.deleteDiscountGroupById();
     });
 
     app.use(config.baseApiUrl, router);
