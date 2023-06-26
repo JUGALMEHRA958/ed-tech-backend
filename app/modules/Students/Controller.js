@@ -146,7 +146,7 @@ class StudentsController extends Controller {
             let emailData = {
               emailId: newUserId.email,
               emailKey: 'signup_mail',
-              replaceDataObj: { fullName: newUserId.firstName + newUserId.lastName}
+              replaceDataObj: { fullName: newUserId.firstName + " " + newUserId.lastName}
           };
 
           const sendingMail = await new Email().sendMail(emailData);
