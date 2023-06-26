@@ -264,7 +264,7 @@ class AdminController extends Controller {
             filterMatch['courseId.price'] = { $gte: filterCond.priceArray[0].$gt, $lte: filterCond.priceArray[0].$lt };
           }
       
-          const totalCount = await CoursePurchases.count();
+          const totalCount = await CoursePurchases.count(filterMatch);
           const totalPages = Math.ceil(totalCount / pageSize);
           const skipCount = (pageNumber - 1) * pageSize;
       
@@ -338,7 +338,7 @@ class AdminController extends Controller {
             filterMatch['createdAt'] = { $gte: startDate, $lte: endDate };
           }
       
-          const totalCount = await PaymentHistoryStripe.count();
+          const totalCount = await PaymentHistoryStripe.count(filterMatch);
           const totalPages = Math.ceil(totalCount / pageSize);
           const skipCount = (pageNumber - 1) * pageSize;
           console.log(filterMatch,344);
