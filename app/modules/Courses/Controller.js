@@ -192,7 +192,11 @@ class CourseController extends Controller {
             writeAndImprove[i],
             this.req.currentUser
           );
-          writeAndImprove[i] = { ...writeAndImprove[i], isStarted: isStarted ,isBuyed:isBuyed };
+          let isAddedInCart = await this.isAddedInCart(
+            writeAndImprove[i],
+            this.req.currentUser
+          );
+          writeAndImprove[i] = { ...writeAndImprove[i], isStarted: isStarted ,isBuyed:isBuyed ,isAddedInCart};
         }
         responseArray.push({ name: "writeAndImprove", data: writeAndImprove });
       }
@@ -214,7 +218,11 @@ class CourseController extends Controller {
             ieltsebook[i],
             this.req.currentUser
           );
-          ieltsebook[i] = { ...ieltsebook[i], isStarted: isStarted, isBuyed};
+          let isAddedInCart = await this.isAddedInCart(
+            ieltsebook[i],
+            this.req.currentUser
+          );
+          ieltsebook[i] = { ...ieltsebook[i], isStarted: isStarted, isBuyed,isAddedInCart};
         }
         responseArray.push({ name: "ieltsebook", data: ieltsebook });
       }
@@ -236,7 +244,11 @@ class CourseController extends Controller {
             praxis[i],
             this.req.currentUser
           );
-          praxis[i] = { ...praxis[i], isStarted: isStarted  , isBuyed};
+          let isAddedInCart = await this.isAddedInCart(
+            praxis[i],
+            this.req.currentUser
+          );
+          praxis[i] = { ...praxis[i], isStarted: isStarted  , isBuyed , isAddedInCart};
         }
         responseArray.push({ name: "praxis", data: praxis });
       }
@@ -258,7 +270,11 @@ class CourseController extends Controller {
             printpractice[i],
             this.req.currentUser
           );
-          printpractice[i] = { ...printpractice[i], isStarted: isStarted };
+          let isAddedInCart = await this.isAddedInCart(
+            printpractice[i],
+            this.req.currentUser
+          );
+          printpractice[i] = { ...printpractice[i], isStarted: isStarted ,isAddedInCart};
         }
         responseArray.push({ name: "printpractice", data: printpractice });
       }

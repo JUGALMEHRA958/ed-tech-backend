@@ -77,6 +77,11 @@ module.exports = (app, express) => {
         return adminObj.getPurchaseHistory();
     });
 
+    router.post('/admin/getSales', Validators.purchaseHistoryValidator(), Validators.validate, (req, res, next) => {
+        const adminObj = (new AdminController()).boot(req, res);
+        return adminObj.getSales();
+    });
+
     router.post('/admin/createGroup', Globals.isAdminAuthorised(),Validators.createGroupValidator(), Validators.validate, (req, res, next) => {
         const adminObj = (new AdminController()).boot(req, res);
         return adminObj.createGroup();

@@ -324,6 +324,87 @@ class AdminController extends Controller {
           return this.res.send({ status: 0, message: error });
         }
       }
+      async getSales() {
+        try {
+          let pageNumber = this.req.body.pageNumber ? this.req.body.pageNumber : 1;
+          let pageSize = this.req.body.pageSize ? this.req.body.pageSize : 10;
+          let filter = this.req.body.filter ? this.req.body.filter : [];
+          let filterCond = await this.constructFilter(filter);
+          let filterMatch = {};
+      
+          if (!_.isEmpty(filterCond.categoryArray)) {
+            filterMatch['courseId.category'] = { $in: filterCond.categoryArray };
+          }
+          if (!_.isEmpty(filterCond.dateRange)) {
+            const startDate = new Date(filterCond.dateRange.startDate);
+            const endDate = new Date(filterCond.dateRange.endDate);
+            filterMatch['createdAt'] = { $gte: startDate, $lte: endDate };
+          }
+          if (!_.isEmpty(filterCond.priceArray)) {
+            filterMatch['courseId.price'] = { $gte: filterCond.priceArray[0].$gt, $lte: filterCond.priceArray[0].$lt };
+          }
+      
+          const totalCount = await CoursePurchases.count();
+          const totalPages = Math.ceil(totalCount / pageSize);
+          const skipCount = (pageNumber - 1) * pageSize;
+      
+          let details = await CoursePurchases.aggregate([
+            {
+              $lookup: {
+                from: "courses",
+                localField: "courseId",
+                foreignField: "_id",
+                as: "courseId",
+              },
+            },
+            {
+              $unwind: {
+                path: "$courseId",
+              },
+            },
+            {
+              $match: filterMatch,
+            },
+            {
+              $sort: { createdAt: 1 },
+            },
+            {
+              $skip: skipCount,
+            },
+            {
+              $limit: pageSize,
+            },
+          ]);
+      
+          let newArray = [];
+          for (let i = 0; i < details.length; i++) {
+            // let { amountBeforeTax, tax } = this.calculateGST(details[i].courseId.price);
+            let tax = (18/100)*details[i].courseId.price  ; 
+            newArray.push({
+              studentId: details[i].studentId,
+              courseIsbn: details[i].courseId.isbnNumber,
+              courseName: details[i].courseId.title,
+              category: details[i].courseId.category,
+              purchaseDate: details[i].createdAt,
+              amountBeforeTax: details[i].courseId.price,
+              tax: tax,
+              total: details[i].courseId.price + tax
+            });
+          }
+      
+          return this.res.send({
+            status: 1,
+            data: newArray,
+            pageNumber: pageNumber,
+            pageSize: pageSize,
+            totalPages: totalPages,
+            totalCount: totalCount,
+          });
+        } catch (error) {
+          console.log("error- ", error);
+          return this.res.send({ status: 0, message: error });
+        }
+      }
 
       async createGroup() {
         try {
