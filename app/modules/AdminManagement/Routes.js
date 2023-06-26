@@ -81,6 +81,12 @@ module.exports = (app, express) => {
         return userObj.downloadCsvOfPurchases();
     });
 
+    router.get('/admin/downloadCsvOfInvoices', Globals.isAdminAuthorised() ,(req, res, next) => {
+        req.body = { ...req.body, ...obj };
+        const userObj = (new UserManagementController()).boot(req, res);
+        return userObj.downloadCsvOfInvoices();
+    });
+
     router.post('/admin/downloadExcel', Globals.isAdminAuthorised(['admin_user_download']), (req, res, next) => {
         req.body = { ...req.body, ...obj };
         const userObj = (new UserManagementController()).boot(req, res);

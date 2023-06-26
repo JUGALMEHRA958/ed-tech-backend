@@ -13,7 +13,7 @@ const Students = require('../modules/Students/Schema').Students;
 const RequestBody = require("./RequestBody");
 const File = require('./File');
 const Model = require("../modules/Base/Model");
-const { CoursePurchases } = require("../modules/CoursePurchase/Schema");
+const { CoursePurchases, PaymentHistoryStripe } = require("../modules/CoursePurchase/Schema");
 const ColumnSettings = require('../modules/UserManagement/Schema').ColumnSettings;
 const FilterSettings = require('../modules/UserManagement/Schema').FilterSettings;
 
@@ -591,6 +591,48 @@ class Common {
                } 
 
                 const file = await (new File()).convertJsonToCsv({ jsonData: newArray, columns, fileName: 'userList', ext: data.ext });
+                resolve({ status: 1, data: file });
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+
+    downloadInvoiceData(data) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let bodyData = data.bodyData;
+                let model = data.bodyData.model;
+                let columns = bodyData && bodyData.columns ? bodyData.columns : ['id', 'timeOfPurchase', 'studentId', 'studentEmail', 'invoiceLink','paymentId','amountBeforeTax','taxAmount','total'];
+                let filter = bodyData && bodyData.filter ? bodyData.filter : {  };
+                // filter = await this.constructFilter({ filter });
+                // const records = await Students.find(filter).lean();
+                //  filter = await this.constructFilter({ filter });
+
+        let details = await PaymentHistoryStripe.find().populate('studentId').lean();
+
+          let newArray = [];
+          for (let i = 0; i < details.length; i++) {
+            const taxRate = 0.18; // 18% tax rate
+            const total = (details[i].paymentObject.amount/100); // Total amount including tax
+
+            const amountBeforeTax = total / (1 + taxRate); // Calculate amount before tax
+            const taxAmount = total - amountBeforeTax; // Calculate tax amount
+          
+            newArray.push({
+              id: details[i]._id,
+              timeOfPurchase :details[i].createdAt ,
+              studentId: details[i].studentId._id,
+              studentEmail: details[i].studentId.email,
+              invoiceLink: details[i].invoiceLink,
+              paymentId: details[i].paymentObject.id,
+              amountBeforeTax: amountBeforeTax,
+              taxAmount: taxAmount,
+              total: total,
+            });
+          }
+
+                const file = await (new File()).convertJsonToCsv({ jsonData: newArray, columns, fileName: 'invoiceHistory', ext: data.ext });
                 resolve({ status: 1, data: file });
             } catch (error) {
                 reject(error);

@@ -257,6 +257,20 @@ class AdminManagementController extends Controller {
             this.res.send({ status: 0, message: error });
         }
     }
+    async downloadCsvOfInvoices() {
+        try {
+            let data = {
+                bodyData: this.req.body,
+                // selectObj: userProjection.csv,
+                ext: ".csv"
+            };
+            let result = await new CommonService().downloadInvoiceData(data);
+            return this.res.send(result);
+        } catch (error) {
+            console.log("error- ", error);
+            this.res.send({ status: 0, message: error });
+        }
+    }
     /********************************************************
      Purpose: download csv file (get Unique user data json form and create csv file )
      Parameter:
