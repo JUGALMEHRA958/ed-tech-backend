@@ -590,7 +590,7 @@ async  updateDiscountGroupById(req, res) {
     if (emptyFields && Array.isArray(emptyFields) && emptyFields.length) {
         return this.res.send({ status: 0, message: i18n.__('SEND_PROPER_DATA') + " " + emptyFields.toString() + " fields required." });
     }
-    fieldsArray = [...fieldsArray , "startAt" , "endsAt" , "discountPercentage" ];
+    fieldsArray = [...fieldsArray , "startAt" , "endsAt" ];
     let data = await (new RequestBody()).processRequestBody(this.req.body, fieldsArray);
     const groupId = data.id;
     let checkIfDeleted = await DiscountCoupon.findOne({_id:groupId , isDeleted:false}) ;
