@@ -49,8 +49,8 @@ class Seed {
             let forgotPasswordMail = {
                 "emailTitle": "Reset password",
                 'emailKey': "forgot_password_mail",
-                'subject': "Reset password",
-                'emailContent': "<p><span style=\"color: rgb(0,0,0);font-size: 13px;font-family: Arial;\">Dear {{{fullName}}}, click below link to reset password. </span><br><br><a href=\"{{{resetPasswordLink}}}\" target=\"_self\"><span style=\"color: rgb(0,0,0);font-size: 13px;font-family: Arial;\">Click link to reset password</span></a><br><br></p>"
+                'subject': "Password Reset | IELTS Prep Programme",
+                'emailContent': "<p><span style=\"color: rgb(0,0,0);font-size: 13px;font-family: Arial;\">Dear {{{fullName}}},<br><br> We have received your request for a reset password. </span><br><br><a href=\"{{{resetPasswordLink}}}\" target=\"_self\"><span style=\"color: rgb(0,0,0);font-size: 13px;font-family: Arial;\">Please click here to reset your password</span></a><br>Regards,<br><b>Cambridge University Press & Assessment<b></p>"
             };
             isKeyExist = await EmailTemplate.findOne({ emailKey: forgotPasswordMail['emailKey'] }).select({ "_id": 1 });
             if (!isKeyExist) {

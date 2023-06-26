@@ -738,7 +738,7 @@ class StudentsController extends Controller {
       // console.log(Config.setPassUrl, "Config.setPassUrl");
       const sendingMail = await new Email().sendMail(emailData);
       if (sendingMail && sendingMail.status == 0) {
-        return _this.res.send(sendingMail);
+        return this.res.send(sendingMail);
       }
       if (sendingMail && !sendingMail.response) {
         return this.res.send({ status: 0, message: i18n.__("SERVER_ERROR") });

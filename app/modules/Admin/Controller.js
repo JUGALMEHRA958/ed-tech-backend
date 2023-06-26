@@ -352,6 +352,7 @@ class AdminController extends Controller {
             const amountBeforeTax = total / (1 + taxRate); // Calculate amount before tax
             const taxAmount = total - amountBeforeTax; // Calculate tax amount
           
+            
             newArray.push({
               id: details[i]._id,
               timeOfPurchase :details[i].createdAt ,
