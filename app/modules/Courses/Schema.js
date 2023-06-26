@@ -67,7 +67,7 @@ const courseSchema = new Schema(
 const groupSchema = new Schema(
   {
     title: { type: String, require: true },
-    description: { type: String, require: true },
+    description: { type: String},
     createdBy:{type: Schema.Types.ObjectId, ref: "admins" , default:null},
     updatedBy:{type: Schema.Types.ObjectId, ref: "admins",default:null},
     status:{type: Boolean, default: true },
