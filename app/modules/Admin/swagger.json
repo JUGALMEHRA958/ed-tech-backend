@@ -687,7 +687,7 @@
             }
         },
 
-        
+
         "/admin/getAllDiscountGroups": {
             "post": {
                 "tags": [
@@ -831,13 +831,19 @@
                 "discountCode",
                 "startAt",
                 "endsAt",
-                "discountPercentage"
+                "discountPercentage",
+                "maximumDiscount"
             ],
             "properties": {
                 "discountCode": {
                     "type": "string",
                     "example": "DISCOUNTCOUPON5454",
                     "uniqueItems": true,
+                    "required": true
+                },
+                "maximumDiscount": {
+                    "type": "string",
+                    "example": 500,
                     "required": true
                 },
                 "startAt": {

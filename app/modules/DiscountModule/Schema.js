@@ -21,6 +21,10 @@ var discountCouponSchema = new Schema({
         type: Float,
         required: true
     },
+    maximumDiscount: {
+        type: Float,
+        required: true
+    },
     createdBy:{type: Schema.Types.ObjectId, ref: "admins" , default:null},
     updatedBy:{type: Schema.Types.ObjectId, ref: "admins",default:null},
     status:{type: Boolean, default: true },
