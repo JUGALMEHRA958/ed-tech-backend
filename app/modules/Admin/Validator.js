@@ -55,8 +55,8 @@ class Validators {
     static createGroupValidator() {
         try {
             return [
-                check('title').exists().isString().withMessage(i18n.__("%s REQUIRED", 'title')),
-                check('description').isString().exists().withMessage(i18n.__("%s REQUIRED", 'description'))
+                check('title').exists().isString().withMessage(i18n.__("%s REQUIRED", 'title'))
+                // check('description').isString().exists().withMessage(i18n.__("%s REQUIRED", 'description'))
             ];
         } catch (error) {
             return error;
