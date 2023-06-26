@@ -502,6 +502,38 @@
                 }
             }
         },
+        "/admin/createDiscountGroup": {
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "description": "Create a new discount coupon",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Body",
+                        "schema": {
+                            "$ref": "#/definitions/CreateDiscountGroup"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Created successfully."
+                    }
+                }
+            }
+        },
         "/admin/getAllGroups": {
             "get": {
                 "tags": [
@@ -554,6 +586,136 @@
                 "responses": {
                     "200": {
                         "description": "Success"
+                    }
+                }
+            }
+        },
+        "/admin/getDiscountGroupById": {
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "description": "Get group by id",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Login",
+                        "schema": {
+                            "$ref": "#/definitions/GetDiscountGroup"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/admin/updateDiscountGroup": {
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "description": "Get group by id",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Login",
+                        "schema": {
+                            "$ref": "#/definitions/GetDiscountGroup"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },        
+        "/admin/deleteDicountGroupById": {
+            "delete": {
+                "tags": [
+                    "Admin"
+                ],
+                "description": "Get group by id",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Login",
+                        "schema": {
+                            "$ref": "#/definitions/GetDiscountGroup"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+
+
+        "/admin/getAllDiscountGroups": {
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "description": "Get all discount groups",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Login",
+                        "schema": {
+                            "$ref": "#/definitions/GetAllStudents"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Created successfully."
                     }
                 }
             }
@@ -664,21 +826,64 @@
                 }
             }
         },
-        "GetGroup": {
+        "CreateDiscountGroup": {
             "required": [
-                "title",
-                "description"
+                "discountCode",
+                "startAt",
+                "endsAt",
+                "discountPercentage",
+                "maximumDiscount"
             ],
             "properties": {
-                "title": {
+                "discountCode": {
                     "type": "string",
-                    "example": "You can enter your title here",
+                    "example": "DISCOUNTCOUPON5454",
                     "uniqueItems": true,
                     "required": true
                 },
-                "description": {
+                "maximumDiscount": {
+                    "type": "number",
+                    "example": 500,
+                    "required": true
+                },
+                "startAt": {
                     "type": "string",
-                    "example": "You can enter your description here",
+                    "example": "2023-06-23T00:00:00.323+00:00",
+                    "required": true
+                },
+                "endsAt": {
+                    "type": "string",
+                    "example": "2023-06-30T00:00:00.323+00:00",
+                    "required": true
+                },
+                "discountPercentage": {
+                    "type": "number",
+                    "example": 50,
+                    "required": true
+                }
+            }
+        },
+        "GetGroup": {
+            "required": [
+                "groupId"
+            ],
+            "properties": {
+                "groupId": {
+                    "type": "string",
+                    "example": "groupId",
+                    "uniqueItems": true,
+                    "required": true
+                }
+            }
+        },
+        "GetDiscountGroup": {
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "id",
                     "uniqueItems": true,
                     "required": true
                 }

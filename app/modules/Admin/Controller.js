@@ -16,6 +16,7 @@ const config = require('../../../configs/configs');
 const { Students } = require("../Students/Schema");
 const { GroupSchema } = require("../Courses/Schema");
 const { PaymentHistoryStripe } = require("../CoursePurchase/Schema");
+const DiscountCoupon = require("../DiscountModule/Schema");
 const CoursePurchases = require("../CoursePurchase/Schema").CoursePurchases;
 class AdminController extends Controller {
 
@@ -264,7 +265,7 @@ class AdminController extends Controller {
             filterMatch['courseId.price'] = { $gte: filterCond.priceArray[0].$gt, $lte: filterCond.priceArray[0].$lt };
           }
       
-          const totalCount = await CoursePurchases.count();
+          const totalCount = await CoursePurchases.count(filterMatch);
           const totalPages = Math.ceil(totalCount / pageSize);
           const skipCount = (pageNumber - 1) * pageSize;
       
@@ -338,7 +339,7 @@ class AdminController extends Controller {
             filterMatch['createdAt'] = { $gte: startDate, $lte: endDate };
           }
       
-          const totalCount = await PaymentHistoryStripe.count();
+          const totalCount = await PaymentHistoryStripe.count(filterMatch);
           const totalPages = Math.ceil(totalCount / pageSize);
           const skipCount = (pageNumber - 1) * pageSize;
           console.log(filterMatch,344);
@@ -404,7 +405,7 @@ class AdminController extends Controller {
 
       async createGroup() {
         try {
-          let fieldsArray = ["title", "description"];
+          let fieldsArray = ["title"];
           let emptyFields = await (new RequestBody()).checkEmptyWithFields(this.req.body, fieldsArray);
           if (emptyFields && Array.isArray(emptyFields) && emptyFields.length) {
               return this.res.send({ status: 0, message: i18n.__('SEND_PROPER_DATA') + " " + emptyFields.toString() + " fields required." });
@@ -503,6 +504,128 @@ async  deleteGroupById(req, res) {
     return this.res.send({ status: 0, message: error });
   }
 }
+
+async createDiscountGroup() {
+  try {
+    let fieldsArray = ["discountCode" , "startAt" , "endsAt" , "discountPercentage","maximumDiscount"];
+    let emptyFields = await (new RequestBody()).checkEmptyWithFields(this.req.body, fieldsArray);
+    if (emptyFields && Array.isArray(emptyFields) && emptyFields.length) {
+        return this.res.send({ status: 0, message: i18n.__('SEND_PROPER_DATA') + " " + emptyFields.toString() + " fields required." });
+    }
+    fieldsArray = [...fieldsArray];
+    let data = await (new RequestBody()).processRequestBody(this.req.body, fieldsArray);
+    console.log("Data",data);  
+    let checkIfDiscountCodeExist = await DiscountCoupon.findOne({discountCode:data.discountCode});
+    if(checkIfDiscountCodeExist){return this.res.send({ status: 0, message: "Duplicate discount code" });}
+    let saveDataInDb  = await DiscountCoupon.create({...data , createdBy: this.req.currentUser})  ; 
+    return this.res.send({ status: 1, message: i18n.__('SAVED_YOUR_DISCOUNT_GROUP') , data:saveDataInDb  });
+
+  }catch (error) {
+    console.log("error- ", error);
+    return this.res.send({ status: 0, message: error });
+  }
+}
+
+
+async  readDiscountGroupById(req, res) {
+  try {
+    let fieldsArray = ["id"];
+    let emptyFields = await (new RequestBody()).checkEmptyWithFields(this.req.body, fieldsArray);
+    if (emptyFields && Array.isArray(emptyFields) && emptyFields.length) {
+        return this.res.send({ status: 0, message: i18n.__('SEND_PROPER_DATA') + " " + emptyFields.toString() + " fields required." });
+    }
+    fieldsArray = [...fieldsArray];
+    let data = await (new RequestBody()).processRequestBody(this.req.body, fieldsArray);
+    // const groupId = data.groupId;
+    let checkIfDeleted = await DiscountCoupon.findOne({_id:data.id , isDeleted:false}) ;
+    if(!checkIfDeleted){return this.res.send({ status: 0, message: i18n.__("GROUP_DELETED_BY_ADMIN") });}
+
+    const group = await DiscountCoupon.findById({_id:data.id}).lean();
+    if (!group) {
+      return this.res.send({ status: 0, message: "Discount Group not found." });
+    }
+    return this.res.send({ status: 1, message: "Discount Group found.", DiscountGroup : group });
+  } catch (error) {
+    console.log("error - ", error);
+    return this.res.send({ status: 0, message: error });
+  }
+}
+
+async getAllDiscountGroups(req, res) {
+  try {
+    let { pageNumber, pageSize } = this.req.body;
+    pageNumber = parseInt(pageNumber);
+    pageSize = parseInt(pageSize);
+
+    const totalGroups = await DiscountCoupon.count({ isDeleted: false });
+    const totalPages = Math.ceil(totalGroups / pageSize);
+
+    const groups = await DiscountCoupon.find({ isDeleted: false })
+      .skip((pageNumber - 1) * pageSize)
+      .limit(pageSize)
+      .lean();
+
+    return this.res.send({
+      status: 1,
+      message: "All groups",
+      groups,
+      pageNumber,
+      pageSize,
+      totalPages,
+    });
+  } catch (error) {
+    console.log("error - ", error);
+    return this.res.send({ status: 0, message: error });
+  }
+}
+
+async  updateDiscountGroupById(req, res) {
+  try {
+    let fieldsArray = ["id"];
+    let emptyFields = await (new RequestBody()).checkEmptyWithFields(this.req.body, fieldsArray);
+    if (emptyFields && Array.isArray(emptyFields) && emptyFields.length) {
+        return this.res.send({ status: 0, message: i18n.__('SEND_PROPER_DATA') + " " + emptyFields.toString() + " fields required." });
+    }
+    fieldsArray = [...fieldsArray , "startAt" , "endsAt" , "discountPercentage" , "maximumDiscount"];
+    let data = await (new RequestBody()).processRequestBody(this.req.body, fieldsArray);
+    const groupId = data.id;
+    let checkIfDeleted = await DiscountCoupon.findOne({_id:groupId , isDeleted:false}) ;
+    if(!checkIfDeleted){return this.res.send({ status: 0, message: i18n.__("CAN_NOT_UPDATE_DELETED_GROUP" )});}
+    let dataToUpdate  = {...data  , updatedBy : this.req.currentUser}
+    const updatedGroup = await DiscountCoupon.findByIdAndUpdate(groupId, dataToUpdate, { new: true }).lean();
+    if (!updatedGroup) {
+      return this.res.send({ status: 0, message: "Group not found." });
+    }
+    return this.res.send({ status: 1, message: "Group updated.", group: updatedGroup });
+  } catch (error) {
+    console.log("error - ", error);
+    return this.res.send({ status: 0, message: error });
+  }
+}
+
+async  deleteDiscountGroupById(req, res) {
+  try {
+    let fieldsArray = ["id"];
+    let emptyFields = await (new RequestBody()).checkEmptyWithFields(this.req.body, fieldsArray);
+    if (emptyFields && Array.isArray(emptyFields) && emptyFields.length) {
+        return this.res.send({ status: 0, message: i18n.__('SEND_PROPER_DATA') + " " + emptyFields.toString() + " fields required." });
+    }
+    fieldsArray = [...fieldsArray];
+    let data = await (new RequestBody()).processRequestBody(this.req.body, fieldsArray);
+    const groupId = data.id;
+    let checkIfDeleted = await DiscountCoupon.findOne({_id:groupId , isDeleted:false}) ;
+    if(!checkIfDeleted){return this.res.send({ status: 0, message: i18n.__("CAN_NOT_DELETE_GROUP_NOT_FOUND") });}
+    const deletedGroup = await DiscountCoupon.findByIdAndUpdate(groupId , {isDeleted:true, updatedBy:this.req.currentUser});
+    if (!deletedGroup) {
+      return this.res.send({ status: 0, message: "Discount Group not found." });
+    }
+    return this.res.send({ status: 1, message: "Discount Group deleted." });
+  } catch (error) {
+    console.log("error - ", error);
+    return this.res.send({ status: 0, message: error });
+  }
+}
+
 
       
        constructFilter(filter) {
