@@ -576,6 +576,7 @@ async getAllDiscountGroups(req, res) {
       pageNumber,
       pageSize,
       totalPages,
+      totalEnteries
     });
   } catch (error) {
     console.log("error - ", error);
