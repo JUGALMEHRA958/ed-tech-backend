@@ -1530,7 +1530,7 @@ class StudentsController extends Controller {
           console.log(productStatus,"productStatus 1527");
           let paymentItem = await new StripeService().createPaymentInvoiceItem({
             invoice: paymentInvoice.data.id,
-            price: productStatus.data.metadata.priceId,
+            price: productStatus.data.data.metadata.priceId,
             customer: this.req.currentUser.stripeCustomerId,
           });
           //generate invoice
@@ -1655,8 +1655,8 @@ class StudentsController extends Controller {
       let body = product;
       //create payment intent
       let productInfo = await CourseSchema.findOne({
-        productId: body.productId,
-      });
+        _id: body.productId,
+      }).lean();
       let { productId, ...data } = body;
       data.description = productInfo?.description;
       data.metadata = {
@@ -1666,8 +1666,8 @@ class StudentsController extends Controller {
         moduleType: productInfo?.moduleType,
         group: productInfo?.group,
       };
-      data.images = [productInfo?.picture];
-      data.name = productInfo?.title;
+      // data.images = [productInfo?.picture];
+      data.name = productInfo.title;
       // data.currency = "INR";
       //search product in stripe
       let productSearch = await new StripeService().listProducts({
