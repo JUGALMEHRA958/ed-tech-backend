@@ -1453,7 +1453,7 @@ class StudentsController extends Controller {
       let user = this.req.currentUser ? this.req.currentUser : {};
       let data = this.req.body;
       let result = [];
-      let pdf  = "";
+      let pdf  ;
       let finaliseInvoice ={};
       let client = {
         publishableKey:
@@ -1461,7 +1461,7 @@ class StudentsController extends Controller {
         secretKey:
           "sk_test_51LXjFxSBikUvm25bYDOk4SIXcYVKqO4uDtlXXxTom0BkD99P6layTugG8oeipmoWiaSWikm0RlhXp6y2ItyiGA0L00alGeLQIf",
       };
-      let coupon ;
+      // let coupon ;
       //create payment intent
       data.currency = "INR";
       let paymentIntent = await new StripeService().createPaymentIntent(data);
@@ -1470,7 +1470,7 @@ class StudentsController extends Controller {
 
         //start flow of stripe 
 
-        coupon = await DiscountCoupon.findOne({isDeleted:false,discountCode:data.coupon})  ;
+        let coupon = await DiscountCoupon.findOne({isDeleted:false,discountCode:data.coupon})  ;
         if(coupon && !coupon.stripeCouponCode){return this.res.send({status:0 , message:"Invalid discount code"}) }
         data.coupon =  coupon && coupon.stripeCouponCode ? coupon.stripeCouponCode : "";
 
