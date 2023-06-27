@@ -6,6 +6,8 @@ const Model = require("../Base/Model");
 const CommonService = require("../../services/Common");
 const RequestBody = require("../../services/RequestBody");
 const { CourseSchema, CartSchema } = require("./Schema");
+const DiscountCoupon = require("../DiscountModule/Schema");
+
 const {
   CoursePurchases,
   PaymentHistoryStripe,
@@ -481,7 +483,9 @@ class CourseController extends Controller {
     let result = [];
     let pdf;
     let finaliseInvoice = {};
-
+    let coupon = await DiscountCoupon.findOne({isDeleted:false,discountCode:data.coupon})  ;
+    if(!coupon.stripeCouponCode){return this.res.send({status:0 , message:"Invalid discount code"}) }
+    data.coupon = coupon.stripeCouponCode;
     let detailsToStoreInPaymentHistory = {
       studentId: this.req.currentUser._id,
       courseDetails: data.courseDetails,
@@ -497,6 +501,7 @@ class CourseController extends Controller {
       data.paymentStatus === "success" &&
       data.paymentObject.status == "succeeded"
     ) {
+      console.log(data.coupon,"data.coupon");
       //buying internally
       await Promise.all(
         data.courseDetails.map(async (course) => {
