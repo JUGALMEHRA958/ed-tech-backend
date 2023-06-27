@@ -147,5 +147,14 @@ module.exports = (app, express) => {
     }
   );
 
+  router.post(
+    "/students/validateDiscountCoupon",
+    Globals.isAuthorised,
+    (req, res, next) => {
+      const userObj = new StudentsController().boot(req, res);
+      return userObj.validateDiscountCoupon();
+    }
+  );
+
   app.use(config.baseApiUrl, router);
 };

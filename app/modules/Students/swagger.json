@@ -237,6 +237,80 @@
                 }
             }
         },
+        "/students/validateDiscountCoupon": {
+            "post": {
+                "tags": [
+                    "students"
+                ],
+                "description": "Validate discount coupon",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "required": true,
+                        "in": "body",
+                        "description": "Discount voucher",
+                        "schema": {
+                            "$ref": "#/definitions/ValidateDiscountVoucher"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "required": true,
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User details update successfully.",
+                        "schema": {
+                            "$ref": "#/definitions/UpdateProfile"
+                        }
+                    }
+                }
+            }
+        },
+        "/students/createPaymentIntent": {
+            "post": {
+                "tags": [
+                    "students"
+                ],
+                "description": "Create payment intent",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "required": true,
+                        "in": "body",
+                        "description": "Discount voucher",
+                        "schema": {
+                            "$ref": "#/definitions/CreateIntent"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "required": true,
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User details update successfully.",
+                        "schema": {
+                            "$ref": "#/definitions/UpdateProfile"
+                        }
+                    }
+                }
+            }
+        },
         "/students/profile": {
             "get": {
                 "tags": [
@@ -551,6 +625,48 @@
                 },
                 "photo": {
                     "example": "5cbead5921ccde05e5cca7b8",
+                    "type": "string"
+                }
+            }
+        },
+        "ValidateDiscountVoucher": {
+            "required": [
+                "discountCode"
+            ],
+            "properties": {
+                "discountCode": {
+                    "example": "ABC4545",
+                    "type": "string"
+                }
+            }
+        },
+        "CreateIntent": {
+            "required": [
+                "amount",
+                "coupon",
+                "courseDetails"
+            ],
+            "properties": {
+                "courseDetails": {
+                    "example": [
+                        {
+                            "courseId" :"648013b092a9360008673a83",
+                            "price":500
+                        },
+                        {
+                            "courseId" :"6489901041f5e7000938fbb5",
+                            "price":250
+                        }
+                 
+                    ],
+                    "type": "string"
+                },
+                "coupon": {
+                    "example": "ABC4545",
+                    "type": "string"
+                },
+                "amount": {
+                    "example": 500,
                     "type": "string"
                 }
             }

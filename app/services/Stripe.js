@@ -100,9 +100,9 @@ class StripeService {
         @params not disclosed yet
         @response json
     **/
-  async createPaymentInvoice({ customer, description, paymentIntent }) {
+  async createPaymentInvoice({ customer, description, paymentIntent ,couponId='' }) {
     try {
-      const paymentInvoice = await stripe.invoices.create({
+      let invoiceCreationObject={
         customer,
         collection_method: "charge_automatically",
         currency: "inr",
@@ -110,10 +110,18 @@ class StripeService {
         description,
         metadata: {
           payment_intent_id: paymentIntent,
-        }, //pi_3NIoWvSBikUvm25b1189EdwI
+        },
         // custom_fields: [{ name: "IRN", value: "IRN NUMBER FROM GOVT" }],
         default_tax_rates: ["txr_1NKyCISBikUvm25bmAO1wO1z"],
-      });
+      }
+      if (couponId) {
+        invoiceCreationObject.discounts = [
+          {
+            coupon: couponId
+          }
+        ];
+      }  
+      const paymentInvoice = await stripe.invoices.create(invoiceCreationObject);
 
       return { status: 1, data: paymentInvoice };
     } catch (error) {
@@ -128,6 +136,7 @@ class StripeService {
     **/
   async createPaymentInvoiceItem({ customer, invoice, price }) {
     try {
+      console.log({ customer, invoice, price },"{ customer, invoice, price }139");
       const paymentInvoice = await stripe.invoiceItems.create({
         customer,
         price,
@@ -210,6 +219,29 @@ class StripeService {
       return { status: 0, data: e };
     }
   }
+
+  async  createDiscountCoupon(name, percent) {
+    const coupon = {
+      name: name,
+      percent_off: percent,
+      currency: 'INR',
+    };
+  
+    const coupons = await stripe.coupons.list();
+    console.log(coupons,"coupons 222");
+    const existingCoupon = coupons.data.find(coupon => coupon.name === name && coupon.percent_off === percent);
+  
+    if (existingCoupon) {
+      // The coupon already exists, so do not create it.
+      return null;
+    } else {
+      // The coupon does not exist, so create it.
+      const createdCoupon = await stripe.coupons.create(coupon);
+  
+      return createdCoupon.id;
+    }
+  }
+  
       
 }
 
