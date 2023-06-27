@@ -487,7 +487,8 @@ class CourseController extends Controller {
       "courseDetails",
       "paymentStatus",
       "totalPrice",
-      "coupon"
+      "coupon",
+      "pdfUrl"
     ];
     let data = await new RequestBody().processRequestBody(
       this.req.body,
@@ -547,7 +548,12 @@ class CourseController extends Controller {
           mongoose.Types.ObjectId(course.courseId)
         )
       );
-
+      let updatePaymentRecord =  await PaymentHistoryStripe.findOneAndUpdate({_id:paymentRecorder._id} , {invoiceLink:data.pdfUrl})
+      return this.res.send({
+        status: 1,
+        message: i18n.__("SAVED_DETAILS"),
+        // data: pdfUrl,
+      });
       // return this.res.send({status:1 , message:"Saved"}) ;
 
       //step 1
@@ -564,109 +570,104 @@ class CourseController extends Controller {
       //   custom_fields: [{ name: "IRN", value: "IRN NUMBER FROM GOVT" }],
       //   default_tax_rates: ["txr_1NI8DvSBikUvm25bYYeU7y9K"],
       // }
-      let objectToSendForInvoiceCreation = {
-        customer: this.req.currentUser.stripeCustomerId,
-        collection_method: "charge_automatically",
-        currency: "inr",
-        auto_advance: true,
-        description: "description",
-        metadata: {
-          payment_intent_id: this.req.body.paymentObject.id,
-        },
-        default_tax_rates: ["txr_1NKyCISBikUvm25bmAO1wO1z"],
-        couponId:data.coupon
-      };
-      let paymentInvoice = await new StripeService().createPaymentInvoice(
-        objectToSendForInvoiceCreation
-      );
-      // console.log(paymentInvoice);
+      // let objectToSendForInvoiceCreation = {
+      //   customer: this.req.currentUser.stripeCustomerId,
+      //   collection_method: "charge_automatically",
+      //   currency: "inr",
+      //   auto_advance: true,
+      //   description: "description",
+      //   metadata: {
+      //     payment_intent_id: this.req.body.paymentObject.id,
+      //   },
+      //   default_tax_rates: ["txr_1NKyCISBikUvm25bmAO1wO1z"],
+      //   couponId:data.coupon
+      // };
+      // let paymentInvoice = await new StripeService().createPaymentInvoice(
+      //   objectToSendForInvoiceCreation
+      // );
+      // // console.log(paymentInvoice);
 
-      //Step 2
-      //now we got payment invoice lets get all our products
-      let products = this.req.body.courseDetails.map(
-        (course) => course.courseId
-      );
-      // console.log(products,"products463")
-      //step3 starts check if paymentInvoice status is 1 then go further else return
-      if (paymentInvoice.status) {
-        //created invoice // add price and data
-        // console.log(products,572);
-        CourseController.asyncForEach(products, async (productId, index) => {
-          //create product // ignore if already exist
-          // console.log(productId , 574);
+      // //Step 2
+      // //now we got payment invoice lets get all our products
+      // let products = this.req.body.courseDetails.map(
+      //   (course) => course.courseId
+      // );
+      // // console.log(products,"products463")
+      // //step3 starts check if paymentInvoice status is 1 then go further else return
+      // if (paymentInvoice.status) {
+      //   //created invoice // add price and data
+      //   // console.log(products,572);
+      //   CourseController.asyncForEach(products, async (productId, index) => {
+      //     //create product // ignore if already exist
+      //     // console.log(productId , 574);
 
-          let productStatus = await this.createProduct({
-            productId,
-          });
-          // console.log(579);
-          // console.log("productStatus 578",productStatus.data.data.metadata.priceId, "productStatus 578");
-          console.log(525);
-          let paymentItem = await new StripeService().createPaymentInvoiceItem({
-            invoice: paymentInvoice.data.id,
-            price: productStatus.data.data.metadata.priceId,
-            customer: data.customer,
-          });
-          //generate invoice
-          // console.log("480");
-          result.push(paymentItem);
-          // console.log("482" , paymentItem);
-        }).then(async (e) => {
-          finaliseInvoice = await new StripeService().finaliseInvoice(
-            paymentInvoice.data.id
-          );
+      //     let productStatus = await this.createProduct({
+      //       productId,
+      //     });
+      //     // console.log(579);
+      //     // console.log("productStatus 578",productStatus.data.data.metadata.priceId, "productStatus 578");
+      //     console.log(525);
+      //     let paymentItem = await new StripeService().createPaymentInvoiceItem({
+      //       invoice: paymentInvoice.data.id,
+      //       price: productStatus.data.data.metadata.priceId,
+      //       customer: data.customer,
+      //     });
+      //     //generate invoice
+      //     // console.log("480");
+      //     result.push(paymentItem);
+      //     // console.log("482" , paymentItem);
+      //   }).then(async (e) => {
+      //     finaliseInvoice = await new StripeService().finaliseInvoice(
+      //       paymentInvoice.data.id
+      //     );
 
-          const pdfUrl = finaliseInvoice.invoice_pdf; // Local file path to save the downloaded file
+      //     const pdfUrl = finaliseInvoice.invoice_pdf; // Local file path to save the downloaded file
 
-          try {
-            // console.log(response.data,"response.data");
-            // // let datatosend = fs.writeFileSync(localFilePath, response.data);
-            // console.log(localFilePath,"localFilePath");
+      //     try {
+      //       // console.log(response.data,"response.data");
+      //       // // let datatosend = fs.writeFileSync(localFilePath, response.data);
+      //       // console.log(localFilePath,"localFilePath");
 
-            let emailData = {
-              emailId: this.req.currentUser.email,
-              emailKey: "invoice_mail",
-              replaceDataObj: {
-                pdfUrl:pdfUrl,
-                name:this.req.currentUser.firstName + this.req.currentUser.lastName
-              },
-            };
-            let ccrecepient = config.clientinvoicebccmailid ; 
-            // console.log(ccrecepient, "ccrecepient");
-            const sendingMail = await new Email().sendMail(emailData ,ccrecepient );
+      //       let emailData = {
+      //         emailId: this.req.currentUser.email,
+      //         emailKey: "invoice_mail",
+      //         replaceDataObj: {
+      //           pdfUrl:pdfUrl,
+      //           name:this.req.currentUser.firstName + this.req.currentUser.lastName
+      //         },
+      //       };
+      //       let ccrecepient = config.clientinvoicebccmailid ; 
+      //       // console.log(ccrecepient, "ccrecepient");
+      //       const sendingMail = await new Email().sendMail(emailData ,ccrecepient );
 
-            if (sendingMail && sendingMail.status === 0) {
-              return _this.res.send(sendingMail);
-            }
-            if (sendingMail && !sendingMail.response) {
-              return this.res.send({
-                status: 0,
-                message: i18n.__("SERVER_ERROR"),
-              });
-            }
+      //       if (sendingMail && sendingMail.status === 0) {
+      //         return _this.res.send(sendingMail);
+      //       }
+      //       if (sendingMail && !sendingMail.response) {
+      //         return this.res.send({
+      //           status: 0,
+      //           message: i18n.__("SERVER_ERROR"),
+      //         });
+      //       }
             //update invoice link in payment history table
-            let updatePaymentRecord =  await PaymentHistoryStripe.findOneAndUpdate({_id:paymentRecorder._id} , {invoiceLink:pdfUrl})
-            return this.res.send({
-              status: 1,
-              message: i18n.__("SAVED_DETAILS"),
-              data: pdfUrl,
-            });
-          } catch (error) {
-            console.error("Error:", error);
-            return this.res.send({
-              status: 0,
-              message: i18n.__("SERVER_ERROR"),
-            });
-          }
-        });
-      } else {
-        // failed creation of payment invoice
-        return this.res.send({
-          status: 0,
-          message: "Payment Invoice generation failed",
-          data: paymentInvoice,
-        });
-      }
-    }
+
+    //       } catch (error) {
+    //         console.error("Error:", error);
+    //         return this.res.send({
+    //           status: 0,
+    //           message: i18n.__("SERVER_ERROR"),
+    //         });
+    //       }
+    //     });
+    //   } else {
+    //     // failed creation of payment invoice
+    //     return this.res.send({
+    //       status: 0,
+    //       message: "Payment Invoice generation failed",
+    //       data: paymentInvoice,
+    //     });
+    //   }
+    // }
 
     //step3 ends
     // console.log("globalpdf",finaliseInvoice);
@@ -675,7 +676,7 @@ class CourseController extends Controller {
     //     message:i18n.__('SAVED_DETAILS'),
     //     data: pdf,
     //   });
-  }
+  }}
 
   async updateCartAfterPurchase(student, courseIds) {
     try {

@@ -136,6 +136,7 @@ class StripeService {
     **/
   async createPaymentInvoiceItem({ customer, invoice, price }) {
     try {
+      console.log({ customer, invoice, price },"{ customer, invoice, price }139");
       const paymentInvoice = await stripe.invoiceItems.create({
         customer,
         price,
