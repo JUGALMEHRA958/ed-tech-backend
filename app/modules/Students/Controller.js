@@ -1470,7 +1470,7 @@ class StudentsController extends Controller {
 
         //start flow of stripe 
 
-         coupon = await DiscountCoupon.findOne({isDeleted:false,discountCode:data.coupon})  ;
+        coupon = await DiscountCoupon.findOne({isDeleted:false,discountCode:data.coupon})  ;
         if(coupon && !coupon.stripeCouponCode){return this.res.send({status:0 , message:"Invalid discount code"}) }
         data.coupon =  coupon && coupon.stripeCouponCode ? coupon.stripeCouponCode : "";
 
