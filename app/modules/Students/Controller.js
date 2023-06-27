@@ -16,6 +16,9 @@ const StripeService = require("../../services/Stripe");
 const Form = require("../../services/Form");
 const File = require("../../services/File");
 var FormData = require("form-data");
+const DiscountCoupon = require("../DiscountModule/Schema");
+const { config } = require("custom-env");
+const { PaymentHistoryStripe } = require("../CoursePurchase/Schema");
 const axios = require("axios").default;
 const CourseSchema = require("../Courses/Schema").CourseSchema;
 class StudentsController extends Controller {
@@ -1450,7 +1453,7 @@ class StudentsController extends Controller {
       let user = this.req.currentUser ? this.req.currentUser : {};
       let data = this.req.body;
       let result = [];
-      let pdf ;
+      let pdf  ;
       let finaliseInvoice ={};
       let client = {
         publishableKey:
@@ -1458,18 +1461,141 @@ class StudentsController extends Controller {
         secretKey:
           "sk_test_51LXjFxSBikUvm25bYDOk4SIXcYVKqO4uDtlXXxTom0BkD99P6layTugG8oeipmoWiaSWikm0RlhXp6y2ItyiGA0L00alGeLQIf",
       };
+      // let coupon ;
       //create payment intent
       data.currency = "INR";
       let paymentIntent = await new StripeService().createPaymentIntent(data);
       // console.log(paymentIntent.data.id);
       if (paymentIntent.status) {
 
-        // created intent
-        return this.res.send({
-          status: 1,
-          message: "Payment intent created.",
-          data: { clientSecret: paymentIntent.data.client_secret, client },
+        //start flow of stripe 
+
+        let coupon = await DiscountCoupon.findOne({isDeleted:false,discountCode:data.coupon})  ;
+        if(coupon && !coupon.stripeCouponCode){return this.res.send({status:0 , message:"Invalid discount code"}) }
+        data.coupon =  coupon && coupon.stripeCouponCode ? coupon.stripeCouponCode : "";
+
+
+              //step 1
+      //create invoice with following params:
+      // {
+      //   customer,
+      //   collection_method: "charge_automatically",
+      //   currency: "inr",
+      //   auto_advance: true,
+      //   description,
+      //   metadata: {
+      //     payment_intent_id: paymentIntent,
+      //   }, //pi_3NIoWvSBikUvm25b1189EdwI
+      //   custom_fields: [{ name: "IRN", value: "IRN NUMBER FROM GOVT" }],
+      //   default_tax_rates: ["txr_1NI8DvSBikUvm25bYYeU7y9K"],
+      // }
+      console.log(this.req.currentUser.stripeCustomerId,"this.req.currentUser.stripeCustomerId 1491");
+      let objectToSendForInvoiceCreation = {
+        customer: this.req.currentUser.stripeCustomerId,
+        collection_method: "charge_automatically",
+        currency: "inr",
+        auto_advance: true,
+        description: "description",
+        metadata: {
+          payment_intent_id: paymentIntent.data.id,
+        },
+        default_tax_rates: ["txr_1NKyCISBikUvm25bmAO1wO1z"],
+        couponId:data.coupon
+      };
+      let paymentInvoice = await new StripeService().createPaymentInvoice(
+        objectToSendForInvoiceCreation
+      );
+      // console.log(paymentInvoice);
+
+      //Step 2
+      //now we got payment invoice lets get all our products
+      let products = this.req.body.courseDetails.map(
+        (course) => course.courseId
+      );
+      // console.log(products,"products463")
+      //step3 starts check if paymentInvoice status is 1 then go further else return
+      if (paymentInvoice.status) {
+        //created invoice // add price and data
+        // console.log(products,572);
+        StudentsController.asyncForEach(products, async (productId, index) => {
+          //create product // ignore if already exist
+          // console.log(productId , 574);
+
+          let productStatus = await this.createProduct({
+            productId,
+          });
+          // console.log(579);
+          // console.log(this.req.currentUser.stripeCouponCode,"this.req.currentUser.stripeCouponCode 1527");
+          // console.log("productStatus 578",productStatus.data.data.metadata.priceId, "productStatus 578");
+          console.log(productStatus,"productStatus 1527");
+          let paymentItem = await new StripeService().createPaymentInvoiceItem({
+            invoice: paymentInvoice.data.id,
+            price: productStatus.data.data.metadata.priceId,
+            customer: this.req.currentUser.stripeCustomerId,
+          });
+          //generate invoice
+          // console.log("480");
+          result.push(paymentItem);
+          // console.log("482" , paymentItem);
+        }).then(async (e) => {
+          finaliseInvoice = await new StripeService().finaliseInvoice(
+            paymentInvoice.data.id
+          );
+
+          pdf = finaliseInvoice.invoice_pdf; // Local file path to save the downloaded file
+            console.log(pdf,"pdf 1546");
+          // try {
+            // console.log(response.data,"response.data");
+            // // let datatosend = fs.writeFileSync(localFilePath, response.data);
+            // console.log(localFilePath,"localFilePath");
+
+            let emailData = {
+              emailId: this.req.currentUser.email,
+              emailKey: "invoice_mail",
+              replaceDataObj: {
+                pdfUrl:pdf,
+                name:this.req.currentUser.firstName + this.req.currentUser.lastName
+              },
+            };
+            let ccrecepient = config.clientinvoicebccmailid ; 
+            // console.log(ccrecepient, "ccrecepient");
+            const sendingMail = await new Email().sendMail(emailData ,ccrecepient );
+
+            if (sendingMail && sendingMail.status === 0) {
+              return this.res.send({status:0, message:"failure"});
+            }
+            if (sendingMail && !sendingMail.response) {
+              return this.res.send({
+                status: 0,
+                message: i18n.__("SERVER_ERROR"),
+              });
+            }
+            //update invoice link in payment history table
+            return this.res.send({
+              status: 1,
+              message: i18n.__("SUCCESS"),
+              data: { clientSecret: paymentIntent.data.client_secret, client ,pdfUrl:pdf},
+              // data: ,
+            });
+         
         });
+      } else {
+        // failed creation of payment invoice
+        return this.res.send({
+          status: 0,
+          message: "Payment Invoice generation failed",
+          message: "Payment intent created.",
+          data: { clientSecret: paymentIntent.data.client_secret, client ,paymentInvoice:paymentInvoice,pdfUrl:pdf},
+          // data: ,
+        });
+      }
+      // console.log(pdf,"pdf 1599");
+      //   // created intent
+      //   return this.res.send({
+      //     status: 1,
+      //     message: "Payment intent created.",
+      //     data: { clientSecret: paymentIntent.data.client_secret, client ,pdfUrl:pdf},
+      //   });
       } 
       else {
         //failed creation of payment intent
@@ -1487,6 +1613,38 @@ class StudentsController extends Controller {
       });
     }
   }
+
+  async validateDiscountCoupon(){
+    try {
+      const { discountCode } = this.req.body;
+      if(!discountCode){
+        return this.res.send({status:0, error:"Please send discount code"})
+      }
+      // Check if the discount code exists
+      const coupon = await DiscountCoupon.findOne({ discountCode });
+      if (!coupon) {
+        return this.res.json({ status:0,valid: false, message: 'Invalid discount code' });
+      }
+  
+      // Check if the coupon is active
+      if (!coupon.status) {
+        return this.res.json({ status:0,valid: false, message: 'Coupon is not active' });
+      }
+  
+      // Check if the coupon is within the valid date range
+      const currentDate = new Date();
+      if (currentDate < coupon.startAt || currentDate > coupon.endsAt) {
+        return this.res.json({ status:0,valid: false, message: 'Coupon is not valid at this time' });
+      }
+  
+      // Return the discount percentage
+      return this.res.json({ status:1,valid: true, discountPercentage: coupon.discountPercentage });
+    } catch (error) {
+      console.error(error);
+      return this.res.status(500).json({ status:0,error: 'Internal server error' });
+    }
+  }
+
   static async asyncForEach(array, callback) {
     for (let index = 0; index < array.length; index++) {
       await callback(array[index], index, array);
@@ -1497,8 +1655,8 @@ class StudentsController extends Controller {
       let body = product;
       //create payment intent
       let productInfo = await CourseSchema.findOne({
-        productId: body.productId,
-      });
+        _id: body.productId,
+      }).lean();
       let { productId, ...data } = body;
       data.description = productInfo?.description;
       data.metadata = {
@@ -1508,8 +1666,8 @@ class StudentsController extends Controller {
         moduleType: productInfo?.moduleType,
         group: productInfo?.group,
       };
-      data.images = [productInfo?.picture];
-      data.name = productInfo?.title;
+      // data.images = [productInfo?.picture];
+      data.name = productInfo.title;
       // data.currency = "INR";
       //search product in stripe
       let productSearch = await new StripeService().listProducts({

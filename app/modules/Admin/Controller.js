@@ -17,6 +17,7 @@ const { Students } = require("../Students/Schema");
 const { GroupSchema } = require("../Courses/Schema");
 const { PaymentHistoryStripe } = require("../CoursePurchase/Schema");
 const DiscountCoupon = require("../DiscountModule/Schema");
+const StripeService = require("../../services/Stripe");
 const CoursePurchases = require("../CoursePurchase/Schema").CoursePurchases;
 class AdminController extends Controller {
 
@@ -507,7 +508,7 @@ async  deleteGroupById(req, res) {
 
 async createDiscountGroup() {
   try {
-    let fieldsArray = ["discountCode" , "startAt" , "endsAt" , "discountPercentage","maximumDiscount"];
+    let fieldsArray = ["discountCode" , "startAt" , "endsAt" , "discountPercentage"];
     let emptyFields = await (new RequestBody()).checkEmptyWithFields(this.req.body, fieldsArray);
     if (emptyFields && Array.isArray(emptyFields) && emptyFields.length) {
         return this.res.send({ status: 0, message: i18n.__('SEND_PROPER_DATA') + " " + emptyFields.toString() + " fields required." });
@@ -517,7 +518,10 @@ async createDiscountGroup() {
     console.log("Data",data);  
     let checkIfDiscountCodeExist = await DiscountCoupon.findOne({discountCode:data.discountCode});
     if(checkIfDiscountCodeExist){return this.res.send({ status: 0, message: "Duplicate discount code" });}
-    let saveDataInDb  = await DiscountCoupon.create({...data , createdBy: this.req.currentUser})  ; 
+    let couponCodeFromStripe = await new StripeService().createDiscountCoupon(data.discountCode , data.discountPercentage);
+    console.log(couponCodeFromStripe);
+    let saveDataInDb  = await DiscountCoupon.create({...data , createdBy: this.req.currentUser, stripeCouponCode:couponCodeFromStripe})  ; 
+
     return this.res.send({ status: 1, message: i18n.__('SAVED_YOUR_DISCOUNT_GROUP') , data:saveDataInDb  });
 
   }catch (error) {
@@ -564,7 +568,7 @@ async getAllDiscountGroups(req, res) {
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize)
       .lean();
-
+    const totalEnteries = await DiscountCoupon.count();
     return this.res.send({
       status: 1,
       message: "All groups",
@@ -572,6 +576,7 @@ async getAllDiscountGroups(req, res) {
       pageNumber,
       pageSize,
       totalPages,
+      totalEnteries
     });
   } catch (error) {
     console.log("error - ", error);
@@ -586,7 +591,7 @@ async  updateDiscountGroupById(req, res) {
     if (emptyFields && Array.isArray(emptyFields) && emptyFields.length) {
         return this.res.send({ status: 0, message: i18n.__('SEND_PROPER_DATA') + " " + emptyFields.toString() + " fields required." });
     }
-    fieldsArray = [...fieldsArray , "startAt" , "endsAt" , "discountPercentage" , "maximumDiscount"];
+    fieldsArray = [...fieldsArray , "startAt" , "endsAt" ];
     let data = await (new RequestBody()).processRequestBody(this.req.body, fieldsArray);
     const groupId = data.id;
     let checkIfDeleted = await DiscountCoupon.findOne({_id:groupId , isDeleted:false}) ;
