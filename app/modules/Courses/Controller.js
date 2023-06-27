@@ -463,9 +463,23 @@ class CourseController extends Controller {
       studentId: this.req.currentUser,
       price: course.price,
     };
+  
+    // Check if a matching entry already exists
+    let existingEntry = await CoursePurchases.findOne({
+      courseId: course.courseId,
+      studentId: this.req.currentUser,
+    });
+  
+    if (existingEntry) {
+      // Entry already exists, do nothing and return
+      return;
+    }
+  
+    // Entry does not exist, store the new object
     let savedData = await new Model(CoursePurchases).store(newObject);
     return;
   }
+  
 
   async buyCourseBulk() {
     let fieldsArray = [
@@ -496,16 +510,19 @@ class CourseController extends Controller {
     let paymentRecorder = await new Model(PaymentHistoryStripe).store(
       detailsToStoreInPaymentHistory
     );
-
     if (
       data.paymentStatus === "success" &&
       data.paymentObject.status == "succeeded"
     ) {
-      console.log(data.coupon,"data.coupon");
       //buying internally
       await Promise.all(
         data.courseDetails.map(async (course) => {
-          await this.buyCourseInternally(course, this.req.currentUser._id);
+          // Subtract the discount percentage from the course price
+          const discountedPrice = course.price - (course.price * coupon.discountPercentage) / 100;
+      
+          // Update the course object with the discounted price
+          const updatedCourse = { ...course, price: discountedPrice };
+          await this.buyCourseInternally(updatedCourse, this.req.currentUser._id);
         })
       );
       //buying externally with magic
