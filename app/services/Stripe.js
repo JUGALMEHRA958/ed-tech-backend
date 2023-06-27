@@ -102,23 +102,26 @@ class StripeService {
     **/
   async createPaymentInvoice({ customer, description, paymentIntent ,couponId='' }) {
     try {
-      const paymentInvoice = await stripe.invoices.create({
+      let invoiceCreationObject={
         customer,
         collection_method: "charge_automatically",
         currency: "inr",
         auto_advance: true,
         description,
-        discounts: [
-          {
-            "coupon": couponId,
-          },
-        ],
         metadata: {
           payment_intent_id: paymentIntent,
-        }, //pi_3NIoWvSBikUvm25b1189EdwI
+        },
         // custom_fields: [{ name: "IRN", value: "IRN NUMBER FROM GOVT" }],
         default_tax_rates: ["txr_1NKyCISBikUvm25bmAO1wO1z"],
-      });
+      }
+      if (couponId) {
+        invoiceCreationObject.discounts = [
+          {
+            coupon: couponId
+          }
+        ];
+      }  
+      const paymentInvoice = await stripe.invoices.create(invoiceCreationObject);
 
       return { status: 1, data: paymentInvoice };
     } catch (error) {

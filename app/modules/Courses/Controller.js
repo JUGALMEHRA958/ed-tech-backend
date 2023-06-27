@@ -498,8 +498,8 @@ class CourseController extends Controller {
     let pdf;
     let finaliseInvoice = {};
     let coupon = await DiscountCoupon.findOne({isDeleted:false,discountCode:data.coupon})  ;
-    if(!coupon.stripeCouponCode){return this.res.send({status:0 , message:"Invalid discount code"}) }
-    data.coupon = coupon.stripeCouponCode;
+    if(coupon && !coupon.stripeCouponCode){return this.res.send({status:0 , message:"Invalid discount code"}) }
+    data.coupon =  coupon && coupon.stripeCouponCode ? coupon.stripeCouponCode : "";
     let detailsToStoreInPaymentHistory = {
       studentId: this.req.currentUser._id,
       courseDetails: data.courseDetails,
@@ -518,7 +518,7 @@ class CourseController extends Controller {
       await Promise.all(
         data.courseDetails.map(async (course) => {
           // Subtract the discount percentage from the course price
-          const discountedPrice = course.price - (course.price * coupon.discountPercentage) / 100;
+          const discountedPrice = (coupon && coupon.discountPercentage) ? course.price - (course.price * coupon.discountPercentage) / 100 : 0;
       
           // Update the course object with the discounted price
           const updatedCourse = { ...course, price: discountedPrice };
