@@ -16,6 +16,7 @@ const StripeService = require("../../services/Stripe");
 const Form = require("../../services/Form");
 const File = require("../../services/File");
 var FormData = require("form-data");
+const DiscountCoupon = require("../DiscountModule/Schema");
 const axios = require("axios").default;
 const CourseSchema = require("../Courses/Schema").CourseSchema;
 class StudentsController extends Controller {
@@ -1487,6 +1488,38 @@ class StudentsController extends Controller {
       });
     }
   }
+
+  async validateDiscountCoupon(){
+    try {
+      const { discountCode } = this.req.body;
+      if(!discountCode){
+        return this.res.send({status:0, error:"Please send discount code"})
+      }
+      // Check if the discount code exists
+      const coupon = await DiscountCoupon.findOne({ discountCode });
+      if (!coupon) {
+        return res.json({ valid: false, message: 'Invalid discount code' });
+      }
+  
+      // Check if the coupon is active
+      if (!coupon.status) {
+        return res.json({ valid: false, message: 'Coupon is not active' });
+      }
+  
+      // Check if the coupon is within the valid date range
+      const currentDate = new Date();
+      if (currentDate < coupon.startAt || currentDate > coupon.endsAt) {
+        return res.json({ valid: false, message: 'Coupon is not valid at this time' });
+      }
+  
+      // Return the discount percentage
+      return this.res.json({ valid: true, discountPercentage: coupon.discountPercentage });
+    } catch (error) {
+      console.error(error);
+      return this.res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+
   static async asyncForEach(array, callback) {
     for (let index = 0; index < array.length; index++) {
       await callback(array[index], index, array);
