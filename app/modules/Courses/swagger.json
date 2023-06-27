@@ -667,11 +667,16 @@
                 "paymentStatus",
                 "totalPrice",
                 "paymentObject",
-                "courseDetails"
+                "courseDetails",
+                "coupon"
             ],
             "properties": {
                 "paymentStatus": {
                     "example": "success",
+                    "image": "string"
+                },
+                "coupon": {
+                    "example": "coupon",
                     "image": "string"
                 },
                 "totalPrice": {
