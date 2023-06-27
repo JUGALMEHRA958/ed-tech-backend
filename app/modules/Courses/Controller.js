@@ -38,6 +38,7 @@ class CourseController extends Controller {
         "group",
         "moduleType",
         "isbnNumber",
+        "mrp"
       ];
       let data = await new RequestBody().processRequestBody(
         this.req.body,

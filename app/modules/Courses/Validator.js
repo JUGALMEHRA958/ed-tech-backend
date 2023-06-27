@@ -21,6 +21,8 @@
                 check('group').exists().withMessage(i18n.__("%s REQUIRED", 'group')),
                 check('description').exists().withMessage(i18n.__("%s REQUIRED", 'description')),
                 check('moduleType').exists().withMessage(i18n.__("%s REQUIRED", 'moduleType')),
+                check('mrp').exists().withMessage(i18n.__("%s REQUIRED", 'mrp')),
+
 
 
             ];
