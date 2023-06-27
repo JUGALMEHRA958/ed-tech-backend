@@ -568,7 +568,7 @@ async getAllDiscountGroups(req, res) {
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize)
       .lean();
-
+    const totalEnteries = await DiscountCoupon.count();
     return this.res.send({
       status: 1,
       message: "All groups",
