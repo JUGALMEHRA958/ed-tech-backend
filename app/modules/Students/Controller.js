@@ -1498,25 +1498,25 @@ class StudentsController extends Controller {
       // Check if the discount code exists
       const coupon = await DiscountCoupon.findOne({ discountCode });
       if (!coupon) {
-        return this.res.json({ valid: false, message: 'Invalid discount code' });
+        return this.res.json({ status:0,valid: false, message: 'Invalid discount code' });
       }
   
       // Check if the coupon is active
       if (!coupon.status) {
-        return this.res.json({ valid: false, message: 'Coupon is not active' });
+        return this.res.json({ status:0,valid: false, message: 'Coupon is not active' });
       }
   
       // Check if the coupon is within the valid date range
       const currentDate = new Date();
       if (currentDate < coupon.startAt || currentDate > coupon.endsAt) {
-        return this.res.json({ valid: false, message: 'Coupon is not valid at this time' });
+        return this.res.json({ status:0,valid: false, message: 'Coupon is not valid at this time' });
       }
   
       // Return the discount percentage
-      return this.res.json({ valid: true, discountPercentage: coupon.discountPercentage });
+      return this.res.json({ status:1,valid: true, discountPercentage: coupon.discountPercentage });
     } catch (error) {
       console.error(error);
-      return this.res.status(500).json({ error: 'Internal server error' });
+      return this.res.status(500).json({ status:0,error: 'Internal server error' });
     }
   }
 
