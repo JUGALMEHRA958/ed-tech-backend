@@ -6,7 +6,7 @@ const Model = require("../Base/Model");
 const CommonService = require("../../services/Common");
 const RequestBody = require("../../services/RequestBody");
 const { CourseSchema, CartSchema } = require("./Schema");
-const DiscountCoupon = require("../DiscountModule/Schema");
+const DiscountCoupon = require("../DiscountModule/Schema").DiscountCoupon;
 
 const {
   CoursePurchases,
