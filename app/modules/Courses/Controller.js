@@ -480,6 +480,38 @@ class CourseController extends Controller {
   
     // Entry does not exist, store the new object
     let savedData = await new Model(CoursePurchases).store(newObject);
+    try{
+          // course = await CourseSchema.findById().lean();
+    course = await CourseSchema.findById(course.courseId).lean();
+    console.log(course,485);
+    if(course.group=="writeAndImprove"){
+      let voucherCode = await VoucherCode.findOne({isDeleted:false}).limit(1).lean();
+      console.log(voucherCode.voucherCode,"voucherCode 751");
+      let emailData = {
+        emailId: this.req.currentUser.email,
+        emailKey: 'write_and_improve_special',
+        replaceDataObj: { voucherCode  : voucherCode.voucherCode }
+    };
+
+    if(voucherCode.voucherCode){
+      const sendingMail = await new Email().sendMail(emailData);
+    if (sendingMail) {
+      //delete the sent voucher from DB
+      await VoucherCode.findOneAndUpdate({_id:voucherCode._id},{isDeleted:true})
+        if (sendingMail.status == 0) {
+            return _this.res.send(sendingMail);
+        } else if (!sendingMail.response) {
+            return this.res.send({ status: 0, message: i18n.__("SERVER_ERROR") });
+        }
+    }
+    }
+    }
+    }catch(e){
+      console.log(e,"e");
+      return e;
+    }
+
+
     return;
   }
   
