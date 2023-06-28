@@ -748,7 +748,7 @@ class CourseController extends Controller {
       };
       await this.assignCourse(dataToSendToRegister);
       if(course.group=="writeAndImprove"){
-      let voucherCode = await VoucherCode.findOne().limit(1).lean();
+      let voucherCode = await VoucherCode.findOne({isDeleted:false}).limit(1).lean();
       console.log(voucherCode.voucherCode,"voucherCode 751");
       let emailData = {
         emailId: this.req.currentUser.email,
