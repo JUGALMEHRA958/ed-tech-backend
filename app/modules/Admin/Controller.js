@@ -784,31 +784,39 @@ async  deleteDiscountGroupById(req, res) {
 
     async readVoucherData() {
       try {
-        if(!this.req.file){return this.res.send({status:0, message:"File not found"})}
+        if (!this.req.file) {
+          return this.res.send({ status: 0, message: "File not found" });
+        }
+    
+        const allowedMimeTypes = ["text/csv"];
+        const { mimetype, buffer } = this.req.file;
+    
+        if (!allowedMimeTypes.includes(mimetype)) {
+          return this.res.send({ status: 0, message: "Invalid file type" });
+        }
+    
         const results = [];
+        const fileData = buffer.toString(); // Convert buffer to string
     
-        const csvData = this.req.file.buffer.toString(); // Convert buffer to string
-    
-        const voucherCodes = csvData.split('\n'); // Split by newline characters
+        const voucherCodes = fileData.split("\n"); // Split by newline characters
     
         for (const voucherCode of voucherCodes) {
-          // console.log(voucherCode, "voucherCode"); // Debugging line
-          
-          const trimmedCode = voucherCode.trim();
-          if (trimmedCode.length === 7 && !trimmedCode.includes(',')) {
+          const trimmedCode = voucherCode.trim().replace(/"/g, ''); // Remove double quotation marks
+          if (trimmedCode.length === 7 && !trimmedCode.includes(",")) {
             const voucher = await new Model(VoucherCode).store({ voucherCode: trimmedCode });
             await voucher.save();
-            // console.log(voucher);
             results.push(voucher);
           }
         }
-        
-        return this.res.send({ status: 1, message: 'Saved' });
+    
+        return this.res.send({ status: 1, message: "Saved" });
       } catch (e) {
-        console.log(e, 'e');
-        return this.res.send({ status: 0, message: 'Internal server error' });
+        console.log(e);
+        return this.res.send({ status: 0, message: "Internal server error" });
       }
     }
+    
+    
      
     async fetchVoucherData() {
       try {
