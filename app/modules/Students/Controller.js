@@ -166,8 +166,9 @@ class StudentsController extends Controller {
                   return this.res.send({ status: 0, message: i18n.__("SERVER_ERROR") });
               }
           }
-
-
+          let lastSeen = new Date();
+          let updateLastSeen  = await Students.findOneAndUpdate({_id:newUserId._id},{lastSeen:lastSeen})
+          console.log(updateLastSeen);
           return this.res.send({
             status: 1,
             message: i18n.__("REGISTRATION_SCUCCESS"),
@@ -889,8 +890,8 @@ class StudentsController extends Controller {
       data["lastSeen"] = new Date();
       let updatedUser = await Students.findByIdAndUpdate(user._id, data, {
         new: true,
-      }).select(userProjection.user);
-
+      }).select(userProjection.user).lean();
+      console.log(updatedUser,"updatedUser 893");
       
 
       if (Config.useRefreshToken && Config.useRefreshToken == "true") {
