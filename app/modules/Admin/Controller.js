@@ -1,6 +1,8 @@
 const i18n = require("i18n");
 const _ = require('lodash');
-
+const multer = require('multer');
+const csv = require('csv-parser');
+const Model = require("../Base/Model");
 const Controller = require('../Base/Controller');
 const Globals = require('../../../configs/Globals');
 const Admin = require('./Schema').Admin;
@@ -16,9 +18,12 @@ const config = require('../../../configs/configs');
 const { Students } = require("../Students/Schema");
 const { GroupSchema } = require("../Courses/Schema");
 const { PaymentHistoryStripe } = require("../CoursePurchase/Schema");
-const DiscountCoupon = require("../DiscountModule/Schema");
+const DiscountCoupon = require("../DiscountModule/Schema").DiscountCoupon;
+const VoucherCode = require("../DiscountModule/Schema").VoucherCode;
 const StripeService = require("../../services/Stripe");
 const CoursePurchases = require("../CoursePurchase/Schema").CoursePurchases;
+const fs = require('fs');
+const { log } = require("console");
 class AdminController extends Controller {
 
     constructor() {
@@ -777,7 +782,67 @@ async  deleteDiscountGroupById(req, res) {
         }
     }
 
-   async readVoucherData(){}
+    async readVoucherData() {
+      try {
+        if(!this.req.file){return this.res.send({status:0, message:"File not found"})}
+        const results = [];
+    
+        const csvData = this.req.file.buffer.toString(); // Convert buffer to string
+    
+        const voucherCodes = csvData.split('\n'); // Split by newline characters
+    
+        for (const voucherCode of voucherCodes) {
+          // console.log(voucherCode, "voucherCode"); // Debugging line
+          
+          const trimmedCode = voucherCode.trim();
+          if (trimmedCode.length === 7 && !trimmedCode.includes(',')) {
+            const voucher = await new Model(VoucherCode).store({ voucherCode: trimmedCode });
+            await voucher.save();
+            // console.log(voucher);
+            results.push(voucher);
+          }
+        }
+        
+        return this.res.send({ status: 1, message: 'Saved' });
+      } catch (e) {
+        console.log(e, 'e');
+        return this.res.send({ status: 0, message: 'Internal server error' });
+      }
+    }
+     
+    async fetchVoucherData() {
+      try {
+        const { pageNumber, pageSize } = this.req.body;
+        const parsedPageNumber = parseInt(pageNumber) || 1;
+        const parsedPageSize = parseInt(pageSize) || 10;
+    
+        const count = await VoucherCode.count();
+        const totalPages = Math.ceil(count / parsedPageSize);
+    
+        const skip = (parsedPageNumber - 1) * parsedPageSize;
+    
+        let data = await VoucherCode.find({isDeleted:false , status:true})
+          .skip(skip)
+          .limit(parsedPageSize)
+          .lean();
+    
+        return this.res.send({
+          status: 1,
+          totalEntries: count,
+          totalPages: totalPages,
+          currentPage: parsedPageNumber,
+          pageSize: parsedPageSize,
+          data: data
+        });
+      } catch (e) {
+        console.log(e, "error");
+        return this.res.send({ status: 0, error: e });
+      }
+    }
+    
+    
+    
+
     
     async getMetaText() {
         let data = [

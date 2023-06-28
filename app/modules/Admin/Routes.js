@@ -1,5 +1,6 @@
 module.exports = (app, express) => {
-
+    const multer = require('multer');
+    const csv = require('csv-parser');
     const router = express.Router();
     const rateLimit = require("express-rate-limit");
 
@@ -7,6 +8,14 @@ module.exports = (app, express) => {
     const Validators = require("./Validator");
     const AdminController = require('./Controller');
     const config = require('../../../configs/configs');
+    const upload = multer(multer.diskStorage({
+        destination: (req, file, cb) => {
+          cb(null, 'uploads/');
+        },
+        filename: (req, file, cb) => {
+          cb(null, file.originalname);
+        },
+      }));
 
     const apiRequestLimiter = rateLimit({
         windowMs: 15 * 60 * 1000, // 15 minute window
@@ -60,6 +69,16 @@ module.exports = (app, express) => {
     router.post('/admin/fileUpload', (req, res, next) => {
         const adminObj = new AdminController().boot(req, res);
         return adminObj.fileUpload();
+    });
+
+    router.post('/admin/voucherCsvUpload', upload.single('file'),(req, res, next) => {
+        const adminObj = new AdminController().boot(req, res);
+        return adminObj.readVoucherData();
+    });
+
+    router.post('/admin/getAllVouchers',Validators.getVoucherValidator(), (req, res, next) => {
+        const adminObj = new AdminController().boot(req, res);
+        return adminObj.fetchVoucherData();
     });
 
     router.get('/admin/getMetaText', Globals.isAdminAuthorised(), (req, res, next) => {

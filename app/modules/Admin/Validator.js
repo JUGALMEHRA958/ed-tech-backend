@@ -52,6 +52,16 @@ class Validators {
             return error;
         }
     }
+    static getVoucherValidator() {
+        try {console.log("getVoucherValidator");
+            return [
+                check('pageNumber').exists().isNumeric().withMessage(i18n.__("%s REQUIRED", 'pageNumber')),
+                check('pageSize').isNumeric().exists().withMessage(i18n.__("%s REQUIRED", 'pageSize'))
+            ];
+        } catch (error) {
+            return error;
+        }
+    }
     static createGroupValidator() {
         try {
             return [
