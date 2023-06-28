@@ -34,6 +34,7 @@ const courseSchema = new Schema(
     productId: { type: String, require: true },
     isbnNumber: { type: String, require: true },
     picture: { type: String, require: true },
+    mrp:{type: Number,},
     group: {
       type: String,
       require: true,
