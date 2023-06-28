@@ -40,7 +40,7 @@ class StudentsController extends Controller {
   async register() {
     const transaction = new Transaction();
     try {
-      let client = {
+      let stripeDetail = {
         publishableKey:
           "pk_test_51LXjFxSBikUvm25bl2OkGvB61st1mtMLH8pL9xt8lfkISz1R61n5EP0l1TkVFcKwXtsdMxkeh2J8gwLNNTFxlFd100BkKnK6Ks",
         secretKey:
@@ -174,7 +174,7 @@ class StudentsController extends Controller {
             data: newUserId,
             token: token,
             refreshToken: refreshToken,
-            client
+            stripeDetail
           });
         }
       }
@@ -830,7 +830,7 @@ class StudentsController extends Controller {
    ********************************************************/
   async login() {
     try {
-      let client = {
+      let stripeDetail = {
         publishableKey:
           "pk_test_51LXjFxSBikUvm25bl2OkGvB61st1mtMLH8pL9xt8lfkISz1R61n5EP0l1TkVFcKwXtsdMxkeh2J8gwLNNTFxlFd100BkKnK6Ks",
         secretKey:
@@ -902,7 +902,7 @@ class StudentsController extends Controller {
           token: token,
           refreshToken: refreshToken,
           data: updatedUser,
-          client
+          stripeDetail
         });
       } else {
         let token = await new Globals().getToken({ id: user._id });
@@ -911,6 +911,7 @@ class StudentsController extends Controller {
           message: i18n.__("LOGIN_SUCCESS"),
           token: token,
           data: updatedUser,
+          stripeDetail
         });
       }
     } catch (error) {
