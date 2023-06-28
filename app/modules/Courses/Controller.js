@@ -20,6 +20,7 @@ const mongoose = require("mongoose");
 const Email = require("../../services/Email");
 const fs = require("fs");
 const path = require("path");
+const { VoucherCode } = require("../DiscountModule/Schema");
 
 class CourseController extends Controller {
   constructor() {
@@ -746,6 +747,28 @@ class CourseController extends Controller {
         isbn: course.isbnNumber,
       };
       await this.assignCourse(dataToSendToRegister);
+      if(course.group=="writeAndImprove"){
+      let voucherCode = await VoucherCode.findOne().limit(1).lean();
+      console.log(voucherCode.voucherCode,"voucherCode 751");
+      let emailData = {
+        emailId: this.req.currentUser.email,
+        emailKey: 'write_and_improve_special',
+        replaceDataObj: { voucherCode  : voucherCode.voucherCode }
+    };
+
+    const sendingMail = await new Email().sendMail(emailData);
+    if (sendingMail) {
+      //delete the sent voucher from DB
+      await VoucherCode.findOneAndUpdate({_id:voucherCode._id},{isDeleted:true})
+        if (sendingMail.status == 0) {
+            return _this.res.send(sendingMail);
+        } else if (!sendingMail.response) {
+            return this.res.send({ status: 0, message: i18n.__("SERVER_ERROR") });
+        }
+    }
+      }
+
+
       return this.res.send({
         status: 1,
         message: i18n.__("COURSE_PURCHASE_SAVED"),
