@@ -809,9 +809,8 @@ async  deleteDiscountGroupById(req, res) {
         const voucherCodes = fileData.split("\n"); // Split by newline characters
     
         for (const voucherCode of voucherCodes) {
-          const trimmedCode = voucherCode.trim().replace(/"/g, ''); // Remove double quotation marks
-    
-          if (trimmedCode.length === 7 && !trimmedCode.includes(",")) {
+          const trimmedCode = voucherCode.trim().replace(/"/g, ''); 
+          if (trimmedCode && !/[a-z]/.test(trimmedCode)) {
             const existingVoucher = await VoucherCode.findOne({
               voucherCode: trimmedCode,
               isDeleted: false,
