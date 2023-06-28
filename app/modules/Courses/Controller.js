@@ -748,7 +748,7 @@ class CourseController extends Controller {
       };
       await this.assignCourse(dataToSendToRegister);
       if(course.group=="writeAndImprove"){
-      let voucherCode = await VoucherCode.findOne().limit(1).lean();
+      let voucherCode = await VoucherCode.findOne({isDeleted:false}).limit(1).lean();
       console.log(voucherCode.voucherCode,"voucherCode 751");
       let emailData = {
         emailId: this.req.currentUser.email,
@@ -756,7 +756,8 @@ class CourseController extends Controller {
         replaceDataObj: { voucherCode  : voucherCode.voucherCode }
     };
 
-    const sendingMail = await new Email().sendMail(emailData);
+    if(voucherCode.voucherCode){
+      const sendingMail = await new Email().sendMail(emailData);
     if (sendingMail) {
       //delete the sent voucher from DB
       await VoucherCode.findOneAndUpdate({_id:voucherCode._id},{isDeleted:true})
@@ -765,6 +766,7 @@ class CourseController extends Controller {
         } else if (!sendingMail.response) {
             return this.res.send({ status: 0, message: i18n.__("SERVER_ERROR") });
         }
+    }
     }
       }
 
