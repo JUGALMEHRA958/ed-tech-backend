@@ -82,17 +82,17 @@ class Seed {
                    </head>
                    <body align="center" style="text-align: center; margin: 0; padding-top: 10px; padding-bottom: 10px; padding-left: 0; padding-right: 0; -webkit-text-size-adjust: 100%;background-color: #f2f4f6; color: #000000">
                     <div style="text-align: center; ;margin: 0 auto; max-width: 600px;width: 100%;">
-                       <table align="center" style="text-align: center;vertical-align: top;width: 600px;max-width: 600px;background: #ffebc2;" width="100%">
+                       <table align="center" style="text-align: center;vertical-align: top;background: #ffebc2;" width="100%">
                           <tbody>
                              <tr>
                                 <td style="width: 596px;vertical-align: top;padding-left: 0;padding-right: 0;padding-top: 15px;padding-bottom: 15px;background: #ffebc2;" width="596">
-                                   <img style="width: 180px; max-width: 180px; height: 50px; max-height: 85px; text-align: center; color: #ffffff;" alt="Logo" src="https://d3h4xx6ax0fekr.cloudfront.net/ZKQN5" align="center" width="180" height="85">
+                                   <img style="width: 180px; max-width: 180px; height: 85px; max-height: 85px; text-align: center; color: #ffffff;" alt="Logo" src="logo.svg" align="center" width="180" height="85">
                                 </td>
                              </tr>
                           </tbody>
                        </table>
-                       <div style="background-color: #ffffff;">
-                          <table align="center" style="text-align: center; vertical-align: top;  " width="100%">
+                       <div style=" background-color: #ffffff;">
+                          <table align="center" style="text-align: center; vertical-align: top; " width="100%">
                              <tbody>
                                 <tr>
                                    <td style="width: 596px; vertical-align: top; padding-left: 20px; padding-right: 20px; padding-top: 20px; padding-bottom: 30px;" width="596">
@@ -100,23 +100,12 @@ class Seed {
                                          <span id="" style="font-family: 'Roboto', sans-serif;text-align: left;">
                                             <h1 style="color:#000000;"><span style="font-size: 16px;font-weight:600;background-color: transparent;  vertical-align: baseline; white-space-collapse: preserve;">Hello,</span></h1>
                                             <br>
-                                            <p style="margin:0px;">Thank you for buying the Write &amp;amp; Improve pack! Here is your voucher code: XXXXXX</p>
-                                            <p style="margin:0px;">Please follow these simple steps to access the product:</p>
+                                            <p style="margin:0px;">Thank you for buying this Cambridge resource for your IELTS preparation! Please follow these steps to access the same:</p>
                                             <ul>
-                                               <li>Go to Write&amp;amp;Improve.com</li>
-                                               <li>Click on ‘Create profile’ on the top right-hand corner of the page</li>
-                                               <li>Fill in the form with the required details including your email ID</li>
-                                               <li>Click ‘Continue’</li>
-                                               <li>You will receive an email to confirm your subscription</li>
-                                               <li>Click on ‘Click here’ within the email and you will be taken to the workbook page</li>
-                                               <li>After you have signed in, click on ‘+Test Zone’ in the menu on the left</li>
-                                               <li>Click on the exam you want to practice for</li>
-                                               <li>Then click on the blue ‘Subscribe’ button on the top of the screen</li>
-                                               <li>Read all the information and click on ‘Subscribe to +Test Zone’</li>
-                                               <li>Click on ‘Do you have a voucher code’</li>
-                                               <li>Enter the voucher code in the box provided and click ‘Confirm’</li>
-                                               <li>You will receive an email from Write &amp;amp; Improve which tells you when your subscriptio</li>
-                                               <li>Now you are ready to start practicing for your exam!</li>
+                                               <li>Please login to ielts.cambridgeconnect.org with your registered credentials</li>
+                                               <li>Go to the ‘Buy it’ section</li>
+                                               <li>Click on the ‘START’ button against the product</li>
+                                               <li>You will now be able to access the online component.</li>
                                             </ul>
                                             <p style="margin-top: 26px;"><span style="font-size: 16px;font-weight:600;background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; vertical-align: baseline; white-space-collapse: preserve;">Good luck with your IELTS Test Practice!</span></p>
                                             <p style="margin:0px;"><span style="font-size: 16px;font-weight:600;background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; vertical-align: baseline; white-space-collapse: preserve;"><a href="{{{pdfUrl}}}"target="_self" style="">Click here to generate your invoice</a></span></p>
