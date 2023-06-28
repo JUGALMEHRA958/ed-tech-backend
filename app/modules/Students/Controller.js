@@ -40,6 +40,12 @@ class StudentsController extends Controller {
   async register() {
     const transaction = new Transaction();
     try {
+      let stripeDetail = {
+        publishableKey:
+          "pk_test_51LXjFxSBikUvm25bl2OkGvB61st1mtMLH8pL9xt8lfkISz1R61n5EP0l1TkVFcKwXtsdMxkeh2J8gwLNNTFxlFd100BkKnK6Ks",
+        secretKey:
+          "sk_test_51LXjFxSBikUvm25bYDOk4SIXcYVKqO4uDtlXXxTom0BkD99P6layTugG8oeipmoWiaSWikm0RlhXp6y2ItyiGA0L00alGeLQIf",
+      };
       // check email is exist or not
       let filter = {
         $or: [{ email: this.req.body.email.toLowerCase() }],
@@ -160,14 +166,16 @@ class StudentsController extends Controller {
                   return this.res.send({ status: 0, message: i18n.__("SERVER_ERROR") });
               }
           }
-
-
+          let lastSeen = new Date();
+          let updateLastSeen  = await Students.findOneAndUpdate({_id:newUserId._id},{lastSeen:lastSeen})
+          console.log(updateLastSeen);
           return this.res.send({
             status: 1,
             message: i18n.__("REGISTRATION_SCUCCESS"),
             data: newUserId,
             token: token,
             refreshToken: refreshToken,
+            stripeDetail
           });
         }
       }
@@ -823,6 +831,12 @@ class StudentsController extends Controller {
    ********************************************************/
   async login() {
     try {
+      let stripeDetail = {
+        publishableKey:
+          "pk_test_51LXjFxSBikUvm25bl2OkGvB61st1mtMLH8pL9xt8lfkISz1R61n5EP0l1TkVFcKwXtsdMxkeh2J8gwLNNTFxlFd100BkKnK6Ks",
+        secretKey:
+          "sk_test_51LXjFxSBikUvm25bYDOk4SIXcYVKqO4uDtlXXxTom0BkD99P6layTugG8oeipmoWiaSWikm0RlhXp6y2ItyiGA0L00alGeLQIf",
+      };
       let fieldsArray = ["email", "password"];
       let emptyFields = await new RequestBody().checkEmptyWithFields(
         this.req.body,
@@ -876,8 +890,8 @@ class StudentsController extends Controller {
       data["lastSeen"] = new Date();
       let updatedUser = await Students.findByIdAndUpdate(user._id, data, {
         new: true,
-      }).select(userProjection.user);
-
+      }).select(userProjection.user).lean();
+      console.log(updatedUser,"updatedUser 893");
       
 
       if (Config.useRefreshToken && Config.useRefreshToken == "true") {
@@ -889,6 +903,7 @@ class StudentsController extends Controller {
           token: token,
           refreshToken: refreshToken,
           data: updatedUser,
+          stripeDetail
         });
       } else {
         let token = await new Globals().getToken({ id: user._id });
@@ -897,6 +912,7 @@ class StudentsController extends Controller {
           message: i18n.__("LOGIN_SUCCESS"),
           token: token,
           data: updatedUser,
+          stripeDetail
         });
       }
     } catch (error) {

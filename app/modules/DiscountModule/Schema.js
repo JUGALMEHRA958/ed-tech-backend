@@ -37,5 +37,19 @@ var discountCouponSchema = new Schema({
     timestamps: true
 });
 
+var vourcher = new Schema({
+    voucherCode: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    isDeleted:{type: Boolean , default:false},
+    status:{type: Boolean , default:true}
+
+}, {
+    timestamps: true
+})
+
+let VoucherCode = mongoose.model("Vouchers", vourcher);
 let DiscountCoupon = mongoose.model('DiscountCoupon', discountCouponSchema);
 module.exports = DiscountCoupon;

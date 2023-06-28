@@ -38,6 +38,7 @@ class CourseController extends Controller {
         "group",
         "moduleType",
         "isbnNumber",
+        "mrp"
       ];
       let data = await new RequestBody().processRequestBody(
         this.req.body,
@@ -300,6 +301,7 @@ class CourseController extends Controller {
     try {
       const courseId = this.req.body.id;
       const courseData = this.req.body;
+      console.log(courseData);
       const updatedCourse = await CourseSchema.findOneAndUpdate(
         { _id: courseId, status: true, isDeleted: false },
         courseData,
