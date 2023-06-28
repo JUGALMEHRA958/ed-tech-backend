@@ -1,6 +1,7 @@
 const i18n = require("i18n");
 const _ = require('lodash');
 const multer = require('multer');
+const xlsx = require("xlsx");
 const csv = require('csv-parser');
 const Model = require("../Base/Model");
 const Controller = require('../Base/Controller');
@@ -782,30 +783,46 @@ async  deleteDiscountGroupById(req, res) {
         }
     }
 
+
     async readVoucherData() {
       try {
         if (!this.req.file) {
           return this.res.send({ status: 0, message: "File not found" });
         }
     
-        const allowedMimeTypes = ["text/csv"];
+        const allowedMimeTypes = ["text/csv", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"];
         const { mimetype, buffer } = this.req.file;
     
         if (!allowedMimeTypes.includes(mimetype)) {
           return this.res.send({ status: 0, message: "Invalid file type" });
         }
     
-        const results = [];
-        const fileData = buffer.toString(); // Convert buffer to string
+        let fileData = buffer.toString(); // Convert buffer to string
     
+        if (mimetype !== "text/csv") {
+          const workbook = xlsx.read(buffer, { type: "buffer" });
+          const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+          fileData = xlsx.utils.sheet_to_csv(worksheet);
+        }
+    
+        const results = [];
         const voucherCodes = fileData.split("\n"); // Split by newline characters
     
         for (const voucherCode of voucherCodes) {
           const trimmedCode = voucherCode.trim().replace(/"/g, ''); // Remove double quotation marks
+    
           if (trimmedCode.length === 7 && !trimmedCode.includes(",")) {
-            const voucher = await new Model(VoucherCode).store({ voucherCode: trimmedCode });
-            await voucher.save();
-            results.push(voucher);
+            const existingVoucher = await VoucherCode.findOne({
+              voucherCode: trimmedCode,
+              isDeleted: false,
+              status: true
+            });
+    
+            if (!existingVoucher) {
+              const voucher = await new Model(VoucherCode).store({ voucherCode: trimmedCode });
+              await voucher.save();
+              results.push(voucher);
+            }
           }
         }
     
@@ -815,6 +832,9 @@ async  deleteDiscountGroupById(req, res) {
         return this.res.send({ status: 0, message: "Internal server error" });
       }
     }
+    
+    
+    
     
     
      
