@@ -52,4 +52,7 @@ var vourcher = new Schema({
 
 let VoucherCode = mongoose.model("Vouchers", vourcher);
 let DiscountCoupon = mongoose.model('DiscountCoupon', discountCouponSchema);
-module.exports = DiscountCoupon;
+module.exports = {
+    DiscountCoupon,
+    VoucherCode
+};

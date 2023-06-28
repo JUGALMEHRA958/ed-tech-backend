@@ -21,6 +21,7 @@
     "compression": "1.7.4",
     "connect-timeout": "1.9.0",
     "cors": "2.8.5",
+    "csv-parser": "^3.0.0",
     "csvjson": "5.1.0",
     "custom-env": "^2.0.1",
     "express": "4.17.3",

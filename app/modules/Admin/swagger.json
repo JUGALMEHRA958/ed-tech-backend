@@ -470,6 +470,41 @@
                 }
             }
         },
+        "/admin/voucherCsvUpload": {
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "description": "Upload file",
+                "parameters": [
+                    {
+                        "name": "file",
+                        "required": true,
+                        "in": "formData",
+                        "type": "file",
+                        "description": "Upload file"
+                    },
+                    {
+                        "name": "Authorization",
+                        "required": true,
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "multipart/form-data"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "File uploaded",
+                        "schema": {
+                            "$ref": "#/definitions/AdminUploadfile"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/createGroup": {
             "post": {
                 "tags": [
@@ -541,6 +576,38 @@
                 ],
                 "description": "Get all groups",
                 "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Created successfully."
+                    }
+                }
+            }
+        },
+        "/admin/getAllVouchers": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "description": "Get all groups",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Login",
+                        "schema": {
+                            "$ref": "#/definitions/GetAllStudents"
+                        }
+                    },
                     {
                         "name": "Authorization",
                         "in": "header",
