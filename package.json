@@ -54,6 +54,7 @@
     "node-fetch": "^3.2.10",
     "nodemailer": "6.7.2",
     "stripe": "^12.9.0",
-    "swagger-ui-express": "4.3.0"
+    "swagger-ui-express": "4.3.0",
+    "xlsx": "^0.18.5"
   }
 }
