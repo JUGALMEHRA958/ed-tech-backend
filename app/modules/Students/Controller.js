@@ -19,11 +19,14 @@ var FormData = require("form-data");
 const DiscountCoupon = require("../DiscountModule/Schema").DiscountCoupon;
 const { config } = require("custom-env");
 const { PaymentHistoryStripe } = require("../CoursePurchase/Schema");
+const { Admin } = require("../Admin/Schema");
+const Invoice = require("../../services/Invoice");
 const axios = require("axios").default;
 const CourseSchema = require("../Courses/Schema").CourseSchema;
 class StudentsController extends Controller {
   constructor() {
     super();
+    this.invoice = new Invoice();
   }
 
   /********************************************************
@@ -40,11 +43,10 @@ class StudentsController extends Controller {
   async register() {
     const transaction = new Transaction();
     try {
+      let {publishableKey , clientSecret} = await Admin.findOne();
       let stripeDetail = {
-        publishableKey:
-          "pk_test_51LXjFxSBikUvm25bl2OkGvB61st1mtMLH8pL9xt8lfkISz1R61n5EP0l1TkVFcKwXtsdMxkeh2J8gwLNNTFxlFd100BkKnK6Ks",
-        secretKey:
-          "sk_test_51LXjFxSBikUvm25bYDOk4SIXcYVKqO4uDtlXXxTom0BkD99P6layTugG8oeipmoWiaSWikm0RlhXp6y2ItyiGA0L00alGeLQIf",
+        publishableKey:publishableKey,
+        secretKey:clientSecret,
       };
       // check email is exist or not
       let filter = {
@@ -831,11 +833,10 @@ class StudentsController extends Controller {
    ********************************************************/
   async login() {
     try {
+      let {publishableKey , clientSecret} = await Admin.findOne();
       let stripeDetail = {
-        publishableKey:
-          "pk_test_51LXjFxSBikUvm25bl2OkGvB61st1mtMLH8pL9xt8lfkISz1R61n5EP0l1TkVFcKwXtsdMxkeh2J8gwLNNTFxlFd100BkKnK6Ks",
-        secretKey:
-          "sk_test_51LXjFxSBikUvm25bYDOk4SIXcYVKqO4uDtlXXxTom0BkD99P6layTugG8oeipmoWiaSWikm0RlhXp6y2ItyiGA0L00alGeLQIf",
+        publishableKey:publishableKey,
+        secretKey:clientSecret,
       };
       let fieldsArray = ["email", "password"];
       let emptyFields = await new RequestBody().checkEmptyWithFields(
@@ -1466,167 +1467,123 @@ class StudentsController extends Controller {
   }
   async createIntent() {
     try {
+      let products=[]
       let user = this.req.currentUser ? this.req.currentUser : {};
       let data = this.req.body;
       let result = [];
       let pdf  ;
       let finaliseInvoice ={};
+      let {publishableKey , clientSecret} = await Admin.findOne();
       let client = {
-        publishableKey:
-          "pk_test_51LXjFxSBikUvm25bl2OkGvB61st1mtMLH8pL9xt8lfkISz1R61n5EP0l1TkVFcKwXtsdMxkeh2J8gwLNNTFxlFd100BkKnK6Ks",
-        secretKey:
-          "sk_test_51LXjFxSBikUvm25bYDOk4SIXcYVKqO4uDtlXXxTom0BkD99P6layTugG8oeipmoWiaSWikm0RlhXp6y2ItyiGA0L00alGeLQIf",
+        publishableKey:publishableKey,
+        secretKey:clientSecret,
       };
       // let coupon ;
       //create payment intent
       data.currency = "INR";
       let paymentIntent = await new StripeService().createPaymentIntent(data);
-      // console.log(paymentIntent.data.id);
-      if (paymentIntent.status) {
-
-        //start flow of stripe 
-
-        let coupon = await DiscountCoupon.findOne({isDeleted:false,discountCode:data.coupon})  ;
-        if(coupon && !coupon.stripeCouponCode){return this.res.send({status:0 , message:"Invalid discount code"}) }
-        data.coupon =  coupon && coupon.stripeCouponCode ? coupon.stripeCouponCode : "";
+      if(paymentIntent && paymentIntent.status){
+        const customer = this.req.currentUser;
+        //get products 
+        const courseIds = data.courseDetails.map(courseDetail => courseDetail.courseId);
 
 
-              //step 1
-      //create invoice with following params:
-      // {
-      //   customer,
-      //   collection_method: "charge_automatically",
-      //   currency: "inr",
-      //   auto_advance: true,
-      //   description,
-      //   metadata: {
-      //     payment_intent_id: paymentIntent,
-      //   }, //pi_3NIoWvSBikUvm25b1189EdwI
-      //   custom_fields: [{ name: "IRN", value: "IRN NUMBER FROM GOVT" }],
-      //   default_tax_rates: ["txr_1NI8DvSBikUvm25bYYeU7y9K"],
-      // }
-      console.log(this.req.currentUser.stripeCustomerId,"this.req.currentUser.stripeCustomerId 1491");
-      let objectToSendForInvoiceCreation = {
-        customer: this.req.currentUser.stripeCustomerId,
-        collection_method: "charge_automatically",
-        currency: "inr",
-        auto_advance: true,
-        description: "description",
-        metadata: {
-          payment_intent_id: paymentIntent.data.id,
-        },
-        default_tax_rates: ["txr_1NKyCISBikUvm25bmAO1wO1z"],
-        couponId:data.coupon
-      };
-      let paymentInvoice = await new StripeService().createPaymentInvoice(
-        objectToSendForInvoiceCreation
-      );
-      // console.log(paymentInvoice);
+        let discountCoupon = await DiscountCoupon.findOne({
+          isDeleted: false,
+          discountCode: data.coupon,
+          // startsAt: { $lte: new Date() }, // Check if the coupon starts before or at the current date and time
+          // endsAt: { $gte: new Date() } // Check if the coupon ends on or after the current date and time
+        }).lean();
 
-      //Step 2
-      //now we got payment invoice lets get all our products
-      let products = this.req.body.courseDetails.map(
-        (course) => course.courseId
-      );
-      // console.log(products,"products463")
-      //step3 starts check if paymentInvoice status is 1 then go further else return
-      if (paymentInvoice.status) {
-        //created invoice // add price and data
-        // console.log(products,572);
-        StudentsController.asyncForEach(products, async (productId, index) => {
-          //create product // ignore if already exist
-          // console.log(productId , 574);
+        // console.log(discountCoupon,1498);
+        let courses = await CourseSchema.find({ _id: { $in: courseIds } }).lean();
+        for(let i=0 ; i<courses.length;i++){
 
-          let productStatus = await this.createProduct({
-            productId,
-          });
-          // console.log(579);
-          // console.log(this.req.currentUser.stripeCouponCode,"this.req.currentUser.stripeCouponCode 1527");
-          // console.log("productStatus 578",productStatus.data.data.metadata.priceId, "productStatus 578");
-          console.log(productStatus,"productStatus 1527");
-          let paymentItem = await new StripeService().createPaymentInvoiceItem({
-            invoice: paymentInvoice.data.id,
-            price: productStatus.data.data.metadata.priceId,
-            customer: this.req.currentUser.stripeCustomerId,
-          });
-          //generate invoice
-          // console.log("480");
-          result.push(paymentItem);
-          // console.log("482" , paymentItem);
-        }).then(async (e) => {
-          finaliseInvoice = await new StripeService().finaliseInvoice(
-            paymentInvoice.data.id
-          );
+          //discount flow left
+          products.push({
+            name: courses[i].title,
+            qty: 1,//buying only once allowed because its course
+            price: courses[i].price,
+          })
+        }      //invoice creation flow
+        const invoiceData = {
+          creationDate: new Date(),
+          // invoiceNumber: "18R1",
+          customerDetails: {
+            name: customer.firstName + customer.lastName,
+            email: customer.email,
+            phone: customer.phone,
+          },
+          sellerDetails: {
+            name: config.COMPANY_NAME ? config.COMPANY_NAME : "Cambridge University Press & Assessment India Pvt Ltd.",
+            address: config.COMPANY_ADDRESS ? config.COMPANY_ADDRESS :"Splendor Forum Jasola",
+            CIN: config.COMPANY_CIN ? config.COMPANY_CIN :"U22122DL2004PTC124758",
+            logo: config.COMPANY_LOGO_URL ? config.COMPANY_LOGO_URL :"https://d3h4xx6ax0fekr.cloudfront.net/ZKQN5",
+            city: config.COMPANY_CITY ? config.COMPANY_CITY :"New Delhi",
+            state: config.COMPANY_STATE ? config.COMPANY_STATE :"Delhi",
+            country:config.COMPANY_COUNTRY ? config.COMPANY_COUNTRY : "India",
+            contactNumber:config.COMPANY_CONTACT_NUMBER ? config.COMPANY_CONTACT_NUMBER : "9156254896",
+            email:config.COMPANY_EMAIL ? config.COMPANY_EMAIL : "support@cambridgeconnect.org",
+            GST: config.COMPANY_GST ? config.COMPANY_GST :"07AAGFF2194N1Z1",
+          },
+          products: products,
+          discount: (discountCoupon && discountCoupon.discountPercentage) ? discountCoupon.discountPercentage : 0,
+          sgst: config.sgstrate ? config.sgstrate : 9 ,
+          cgst: config.cgst ? config.cgst : 9 ,
+        };
+        const invoiceLink = await this.invoice.generateInvoice(invoiceData);
 
-          pdf = finaliseInvoice.invoice_pdf; // Local file path to save the downloaded file
-            console.log(pdf,"pdf 1546");
-          // try {
-            // console.log(response.data,"response.data");
-            // // let datatosend = fs.writeFileSync(localFilePath, response.data);
-            // console.log(localFilePath,"localFilePath");
-
-            let emailData = {
-              emailId: this.req.currentUser.email,
-              emailKey: "invoice_mail",
-              replaceDataObj: {
-                pdfUrl:pdf,
-                name:this.req.currentUser.firstName + this.req.currentUser.lastName
-              },
-            };
-            let ccrecepient = config.clientinvoicebccmailid ; 
-            // console.log(ccrecepient, "ccrecepient");
-            const sendingMail = await new Email().sendMail(emailData ,ccrecepient );
-
-            if (sendingMail && sendingMail.status === 0) {
-              return this.res.send({status:0, message:"failure"});
-            }
-            if (sendingMail && !sendingMail.response) {
-              return this.res.send({
-                status: 0,
-                message: i18n.__("SERVER_ERROR"),
-              });
-            }
-            //update invoice link in payment history table
-            return this.res.send({
-              status: 1,
-              message: i18n.__("SUCCESS"),
-              data: { clientSecret: paymentIntent.data.client_secret, client ,pdfUrl:pdf},
-              // data: ,
-            });
-         
-        });
-      } else {
-        // failed creation of payment invoice
-        return this.res.send({
-          status: 0,
-          message: "Payment Invoice generation failed",
-          message: "Payment intent created.",
-          data: { clientSecret: paymentIntent.data.client_secret, client ,paymentInvoice:paymentInvoice,pdfUrl:pdf},
-          // data: ,
-        });
+        // console.log(1545,invoiceLink);
+        const response = {
+          status: 1,
+          message: "SUCCESS",
+          data: {
+            clientSecret: paymentIntent.data.client_secret, // Add the value of paymentIntent.data.client_secret here
+            client:client,
+            pdfUrl: invoiceLink
+          }
+        };
+        return this.res.send(response)
+       }
+      else{
+        return this.res.send({status:0 , message:"Intent creation failed"})
       }
-      // console.log(pdf,"pdf 1599");
-      //   // created intent
-      //   return this.res.send({
-      //     status: 1,
-      //     message: "Payment intent created.",
-      //     data: { clientSecret: paymentIntent.data.client_secret, client ,pdfUrl:pdf},
-      //   });
       } 
-      else {
-        //failed creation of payment intent
-        return this.res.send({
-          status: 0,
-          message: "Payment intiation failed.",
-          data: { clientSecret: paymentIntent.data, client },
-        });
-      }
-    } catch (e) {
+      
+    catch (e) {
       console.log("error in stripe intent creation", e);
       return this.res.send({
         status: 0,
         message: "Payment intiation failed.",
       });
+    }
+  }
+
+  invoiceData (){
+    return {
+      creationDate: new Date(),
+      // invoiceNumber: "18R1",
+      customerDetails: {
+        name: customer.firstName + customer.lastName,
+        email: customer.email,
+        phone: customer.phone,
+      },
+      sellerDetails: {
+        name: config.COMPANY_NAME ? config.COMPANY_NAME : "Cambridge University Press & Assessment India Pvt Ltd.",
+        address: config.COMPANY_ADDRESS ? config.COMPANY_ADDRESS :"Splendor Forum Jasola",
+        CIN: config.COMPANY_CIN ? config.COMPANY_CIN :"U22122DL2004PTC124758",
+        logo: config.COMPANY_LOGO_URL ? config.COMPANY_LOGO_URL :"https://d3h4xx6ax0fekr.cloudfront.net/ZKQN5",
+        city: config.COMPANY_CITY ? config.COMPANY_CITY :"New Delhi",
+        state: config.COMPANY_STATE ? config.COMPANY_STATE :"Delhi",
+        country:config.COMPANY_COUNTRY ? config.COMPANY_COUNTRY : "India",
+        contactNumber:config.COMPANY_CONTACT_NUMBER ? config.COMPANY_CONTACT_NUMBER : "9156254896",
+        email:config.COMPANY_EMAIL ? config.COMPANY_EMAIL : "support@cambridgeconnect.org",
+        GST: config.COMPANY_GST ? config.COMPANY_GST :"07AAGFF2194N1Z1",
+      },
+      products: products,
+      discount: (discountCoupon && discountCoupon.discountPercentage) ? discountCoupon.discountPercentage : 0,
+      sgst: config.sgstrate ? config.sgstrate : 9 ,
+      cgst: config.cgst ? config.cgst : 9 ,
     }
   }
 
