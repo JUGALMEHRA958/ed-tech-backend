@@ -760,23 +760,26 @@ async  deleteDiscountGroupById(req, res) {
             if (_.isEmpty(formObject.files)) {
                 return this.res.send({ status: 0, message: i18n.__("%s REQUIRED", 'File') });
             }
-            const file = new File(formObject.files);
+            const file = new File();
             let filePath = "";
             let imagePath = config.s3ImagePath;
             if (config.s3upload && config.s3upload == 'true') {
                 console.log(formObject.files);
                 filePath = await file.uploadFileOnS3(formObject.files.file[0]);
+                console.log(filePath,"filePath 769");
             } else {
                 let fileObject = await file.store();
                 /***** uncommit this line to do manipulations in image like compression and resizing ****/
                 // let fileObject = await file.saveImage();
                 filePath = fileObject.filePath;
+                console.log(filePath,"filePath 775");
+
             }
-            console.log(filePath,"filePath");
-            let extension = this.getFileExtension(formObject.files.file[0].originalFilename);
-            console.log(extension);
-            let path = config.s3ImagePath + "/" + filePath.key ;
-            return this.res.send({ status: 1, data: path});
+            // console.log(filePath,"filePath");
+            // let extension = this.getFileExtension(formObject.files.file[0].originalFilename);
+            // console.log(extension);
+            // let path = config.s3ImagePath + "/" + filePath.key ;
+            return this.res.send({ status: 1, data: filePath});
         } catch (error) {
             console.log("error- ", error);
             this.res.send({ status: 0, message: error });
