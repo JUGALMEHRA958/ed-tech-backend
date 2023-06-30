@@ -303,20 +303,20 @@ class AdminController extends Controller {
               $limit: pageSize,
             },
           ]);
-      
+          console.log(details,306);
           let newArray = [];
           for (let i = 0; i < details.length; i++) {
             // let { amountBeforeTax, tax } = this.calculateGST(details[i].courseId.price);
-            let tax = (18/100)*details[i].courseId.price  ; 
+            let tax = (18/100)*details[i].price  ; 
             newArray.push({
               studentId: details[i].studentId,
               courseIsbn: details[i].courseId.isbnNumber,
               courseName: details[i].courseId.title,
               category: details[i].courseId.category,
               purchaseDate: details[i].createdAt,
-              amountBeforeTax: details[i].courseId.price,
+              amountBeforeTax: details[i].price,
               tax: tax,
-              total: details[i].courseId.price + tax
+              total: details[i].price + tax
             });
           }
       

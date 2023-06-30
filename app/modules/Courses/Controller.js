@@ -466,7 +466,7 @@ class CourseController extends Controller {
       studentId: this.req.currentUser,
       price: course.price,
     };
-  
+  console.log(469,newObject,469);
     // Check if a matching entry already exists
     let existingEntry = await CoursePurchases.findOne({
       courseId: course.courseId,
