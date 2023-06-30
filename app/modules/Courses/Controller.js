@@ -485,7 +485,7 @@ class CourseController extends Controller {
     let savedData = await CoursePurchases.create({      courseId: course.courseId,
       studentId: this.req.currentUser._id,
       price: course.price,});
-    console.log("savedData 484" , savedData,"savedData 484");
+    // console.log("savedData 484" , savedData,"savedData 484");
     try{
           // course = await CourseSchema.findById().lean();
     course = await CourseSchema.findById(course.courseId).lean();
@@ -505,10 +505,10 @@ class CourseController extends Controller {
     };
     let ccrecepient = config.clientinvoicebccmailid ; 
 
-    if(voucherCode && voucherCode.voucherCode && !isDeleting){
+    if(voucherCode && voucherCode.voucherCode ){
       const sendingMail = await new Email().sendMail(emailData,ccrecepient);
     if (sendingMail) {
-      isDeleting = true; // Set the flag to indicate deletion is in progress
+      // isDeleting = true; // Set the flag to indicate deletion is in progress
 
       // ...
   
