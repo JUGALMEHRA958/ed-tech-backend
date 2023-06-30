@@ -540,7 +540,6 @@ class CourseController extends Controller {
         },
       };
       let ccrecepient = config.clientinvoicebccmailid ; 
-      // console.log(ccrecepient, "ccrecepient");
       const sendingMail = await new Email().sendMail(emailData ,ccrecepient );
 
       if (sendingMail && sendingMail.status === 0) {
