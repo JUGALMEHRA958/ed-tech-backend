@@ -487,7 +487,7 @@ class CourseController extends Controller {
     try{
           // course = await CourseSchema.findById().lean();
     course = await CourseSchema.findById(course.courseId).lean();
-    console.log("Created this 488" ,course,"Created this 488");
+    // console.log("Created this 488" ,course,"Created this 488");
     if(course.group=="writeAndImprove"){
       let voucherCode = await VoucherCode.findOne({isDeleted:false}).limit(1).lean();
       console.log(voucherCode.voucherCode,"voucherCode 751");
@@ -558,10 +558,11 @@ class CourseController extends Controller {
       await Promise.all(
         data.courseDetails.map(async (course) => {
           // Subtract the discount percentage from the course price
+          console.log(coupon);
           const discountedPrice = (coupon && coupon.discountPercentage) ? course.price - (course.price * coupon.discountPercentage) / 100 : course.price;
       
           // Update the course object with the discounted price
-          const updatedCourse = { ...course, price: discountedPrice };
+          const updatedCourse = { ...course, price: coupon ? discountedPrice : course.price };
           console.log(561,updatedCourse,561);
           await this.buyCourseInternally(updatedCourse, this.req.currentUser._id);
         })
