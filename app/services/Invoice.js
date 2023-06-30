@@ -151,40 +151,42 @@ class Invoice {
          doc.pipe(writeStream);
          doc.end();
             //now just upload on s3 and return url
-         return new Promise((resolve, reject) => {
-            writeStream.on("finish", async () => {
-              // File has been written successfully
-          
-              // Create a new unique filename
-              const fileName = "Invoice_" + Date.now().toString() + ".pdf";
-          
-              // Set up the S3 upload parameters
-              const params = {
-                Bucket: config.s3Bucket, // Replace with your S3 bucket name
-                Key: fileName,
-                Body: fs.createReadStream(filePath),
-                ACL: "public-read",
-              };
-          
-              // Upload the file to S3
-              s3.upload(params, (err, data) => {
-                if (err) {
-                  console.error("Error uploading file to S3:", err);
-                  reject(err);
-                } else {
-                  // Get the public URL of the uploaded file
-                  const fileUrl = data.Location;
-                //   console.log("File uploaded successfully. URL:", fileUrl);
-                  resolve(fileUrl);
-                }
+            return new Promise((resolve, reject) => {
+              writeStream.on("finish", async () => {
+                  // File has been written successfully
+      
+                  // Create a new unique filename
+                  const fileName = "Invoice_" + Date.now().toString() + ".pdf";
+      
+                  // Set up the S3 upload parameters
+                  const params = {
+                      Bucket: config.s3Bucket, // Replace with your S3 bucket name
+                      Key: fileName,
+                      Body: fs.createReadStream(filePath),
+                      ACL: "public-read",
+                  };
+      
+                  // Upload the file to S3
+                  s3.upload(params, async (err, data) => {
+                      if (err) {
+                          console.error("Error uploading file to S3:", err);
+                          reject(err);
+                      } else {
+                          // Get the public URL of the uploaded file
+                          const fileUrl = data.Location;
+                          // Delete the file from the local storage
+                          fs.unlinkSync(filePath);
+                          // Return the file URL
+                          resolve(fileUrl);
+                      }
+                  });
               });
-            });
-          
-            writeStream.on("error", (err) => {
-              // Error occurred while writing the file
-              console.error("Error writing PDF file:", err);
-              reject(err);
-            });
+      
+              writeStream.on("error", (err) => {
+                  // Error occurred while writing the file
+                  console.error("Error writing PDF file:", err);
+                  reject(err);
+              });
           });
           
      };
