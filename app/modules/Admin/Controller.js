@@ -846,7 +846,7 @@ async  deleteDiscountGroupById(req, res) {
         const parsedPageNumber = parseInt(pageNumber) || 1;
         const parsedPageSize = parseInt(pageSize) || 10;
     
-        const count = await VoucherCode.count();
+        const count = await VoucherCode.count({isDeleted:false,status:true});
         const totalPages = Math.ceil(count / parsedPageSize);
     
         const skip = (parsedPageNumber - 1) * parsedPageSize;
