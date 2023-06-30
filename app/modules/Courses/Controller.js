@@ -461,6 +461,7 @@ class CourseController extends Controller {
   }
 
   async buyCourseInternally(course, currentUser) {
+    console.log("received this course",course,"464");
     let newObject = {
       courseId: course.courseId,
       studentId: this.req.currentUser._id,
@@ -479,12 +480,14 @@ class CourseController extends Controller {
     }
   
     // Entry does not exist, store the new object
-    let savedData = await CoursePurchases.create(newObject);
-    console.log(savedData,"savedData");
+    let savedData = await CoursePurchases.create({      courseId: course.courseId,
+      studentId: this.req.currentUser._id,
+      price: course.price,});
+    console.log("savedData 484" , savedData,"savedData 484");
     try{
           // course = await CourseSchema.findById().lean();
     course = await CourseSchema.findById(course.courseId).lean();
-    console.log(course,485);
+    console.log("Created this 488" ,course,"Created this 488");
     if(course.group=="writeAndImprove"){
       let voucherCode = await VoucherCode.findOne({isDeleted:false}).limit(1).lean();
       console.log(voucherCode.voucherCode,"voucherCode 751");
@@ -555,7 +558,7 @@ class CourseController extends Controller {
       await Promise.all(
         data.courseDetails.map(async (course) => {
           // Subtract the discount percentage from the course price
-          const discountedPrice = (coupon && coupon.discountPercentage) ? course.price - (course.price * coupon.discountPercentage) / 100 : 0;
+          const discountedPrice = (coupon && coupon.discountPercentage) ? course.price - (course.price * coupon.discountPercentage) / 100 : course.price;
       
           // Update the course object with the discounted price
           const updatedCourse = { ...course, price: discountedPrice };
