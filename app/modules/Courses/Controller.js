@@ -474,7 +474,7 @@ class CourseController extends Controller {
     let existingEntry = await CoursePurchases.findOne({
       courseId: course.courseId,
       studentId: this.req.currentUser,
-    });
+    }).lean();
   
     if (existingEntry) {
       // Entry already exists, do nothing and return
@@ -493,9 +493,10 @@ class CourseController extends Controller {
 
 
 
+    let isDeleting = false; // Flag to indicate if deletion is in progress
 
     if(course.group=="writeAndImprove"){
-      let voucherCode = await VoucherCode.findOne({isDeleted:false}).limit(1).lean();
+      let voucherCode = await VoucherCode.findOne({isDeleted:false , status : true}).lean();
       // console.log(voucherCode.voucherCode,"voucherCode 751");
       let emailData = {
         emailId: this.req.currentUser.email,
@@ -503,11 +504,22 @@ class CourseController extends Controller {
         replaceDataObj: { voucherCode  : voucherCode.voucherCode , pdfUrl : pdfUrl }
     };
 
-    if(voucherCode.voucherCode){
+    if(voucherCode && voucherCode.voucherCode && !isDeleting){
       const sendingMail = await new Email().sendMail(emailData);
     if (sendingMail) {
-      //delete the sent voucher from DB
-      await VoucherCode.findOneAndUpdate({_id:voucherCode._id},{isDeleted:true})
+      isDeleting = true; // Set the flag to indicate deletion is in progress
+
+      // ...
+  
+      // Delete the sent voucher from DB
+     let deleteVoucher = await VoucherCode.deleteOne({ _id: voucherCode._id });
+  
+      console.log("deleted ", voucherCode._id);
+  
+      // Reset the flag after deletion is complete
+      isDeleting = false;
+
+
         if (sendingMail.status == 0) {
             return _this.res.send(sendingMail);
         } else if (!sendingMail.response) {
@@ -567,7 +579,7 @@ class CourseController extends Controller {
     let result = [];
     let pdf;
     let finaliseInvoice = {};
-    let coupon = await DiscountCoupon.findOne({isDeleted:false,discountCode:data.coupon})  ;
+    let coupon = await DiscountCoupon.findOne({isDeleted:false,discountCode:data.coupon}).lean()  ;
     if(coupon && !coupon.stripeCouponCode){return this.res.send({status:0 , message:"Invalid discount code"}) }
     data.coupon =  coupon && coupon.stripeCouponCode ? coupon.stripeCouponCode : "";
     let detailsToStoreInPaymentHistory = {
@@ -796,7 +808,7 @@ class CourseController extends Controller {
       let course = await CourseSchema.findById(data.courseId);
       let checkIfExist = await CoursePurchases.findOne(newObject).populate(
         "courseId"
-      );
+      ).lean();
       if (checkIfExist) {
         return this.res.send({
           status: 0,
