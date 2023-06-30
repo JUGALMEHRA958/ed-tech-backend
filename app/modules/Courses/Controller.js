@@ -487,7 +487,7 @@ class CourseController extends Controller {
     try{
           // course = await CourseSchema.findById().lean();
     course = await CourseSchema.findById(course.courseId).lean();
-    console.log("Created this 488" ,course,"Created this 488");
+    // console.log("Created this 488" ,course,"Created this 488");
     if(course.group=="writeAndImprove"){
       let voucherCode = await VoucherCode.findOne({isDeleted:false}).limit(1).lean();
       console.log(voucherCode.voucherCode,"voucherCode 751");
