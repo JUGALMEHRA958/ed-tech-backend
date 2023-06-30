@@ -463,7 +463,7 @@ class CourseController extends Controller {
   async buyCourseInternally(course, currentUser) {
     let newObject = {
       courseId: course.courseId,
-      studentId: this.req.currentUser,
+      studentId: this.req.currentUser._id,
       price: course.price,
     };
   console.log(469,newObject,469);
@@ -479,7 +479,8 @@ class CourseController extends Controller {
     }
   
     // Entry does not exist, store the new object
-    let savedData = await new Model(CoursePurchases).store(newObject);
+    let savedData = await CoursePurchases.create(newObject);
+    console.log(savedData,"savedData");
     try{
           // course = await CourseSchema.findById().lean();
     course = await CourseSchema.findById(course.courseId).lean();
@@ -558,6 +559,7 @@ class CourseController extends Controller {
       
           // Update the course object with the discounted price
           const updatedCourse = { ...course, price: discountedPrice };
+          console.log(561,updatedCourse,561);
           await this.buyCourseInternally(updatedCourse, this.req.currentUser._id);
         })
       );
