@@ -110,7 +110,6 @@ class File {
         return word;
       } 
     uploadFileOnS3(file) {
-        console.log("a");
         let fileName = file.originalFilename.split(".");
         let newFileName = fileName[0] + Date.now().toString() + '.' + fileName[1];
         return new Promise((resolve, reject) => {

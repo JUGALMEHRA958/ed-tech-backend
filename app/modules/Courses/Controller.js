@@ -460,14 +460,15 @@ class CourseController extends Controller {
     });
   }
 
-  async buyCourseInternally(course, currentUser) {
+  async buyCourseInternally(course, currentUser , pdfUrl) {
     console.log("received this course",course,"464");
     let newObject = {
       courseId: course.courseId,
       studentId: this.req.currentUser._id,
       price: course.price,
     };
-  console.log(469,newObject,469);
+    console.log("pdfurl", pdfUrl);
+  // console.log(469,newObject,469);
     // Check if a matching entry already exists
     let existingEntry = await CoursePurchases.findOne({
       courseId: course.courseId,
@@ -488,13 +489,17 @@ class CourseController extends Controller {
           // course = await CourseSchema.findById().lean();
     course = await CourseSchema.findById(course.courseId).lean();
     // console.log("Created this 488" ,course,"Created this 488");
+
+
+
+
     if(course.group=="writeAndImprove"){
       let voucherCode = await VoucherCode.findOne({isDeleted:false}).limit(1).lean();
-      console.log(voucherCode.voucherCode,"voucherCode 751");
+      // console.log(voucherCode.voucherCode,"voucherCode 751");
       let emailData = {
         emailId: this.req.currentUser.email,
         emailKey: 'write_and_improve_special',
-        replaceDataObj: { voucherCode  : voucherCode.voucherCode }
+        replaceDataObj: { voucherCode  : voucherCode.voucherCode , pdfUrl : pdfUrl }
     };
 
     if(voucherCode.voucherCode){
@@ -509,6 +514,29 @@ class CourseController extends Controller {
         }
     }
     }
+    }
+    else{
+      let emailData = {
+        emailId: this.req.currentUser.email,
+        emailKey: "invoice_mail",
+        replaceDataObj: {
+          pdfUrl:pdfUrl,
+          name:this.req.currentUser.firstName + this.req.currentUser.lastName
+        },
+      };
+      let ccrecepient = config.clientinvoicebccmailid ; 
+      // console.log(ccrecepient, "ccrecepient");
+      const sendingMail = await new Email().sendMail(emailData ,ccrecepient );
+
+      if (sendingMail && sendingMail.status === 0) {
+        return this.res.send({status:0, message:"failure"});
+      }
+      if (sendingMail && !sendingMail.response) {
+        return this.res.send({
+          status: 0,
+          message: i18n.__("SERVER_ERROR"),
+        });
+      }
     }
     }catch(e){
       console.log(e,"e");
@@ -564,7 +592,7 @@ class CourseController extends Controller {
           // Update the course object with the discounted price
           const updatedCourse = { ...course, price: coupon ? discountedPrice : course.price };
           console.log(561,updatedCourse,561);
-          await this.buyCourseInternally(updatedCourse, this.req.currentUser._id);
+          await this.buyCourseInternally(updatedCourse, this.req.currentUser._id , data.pdfUrl);
         })
       );
       //buying externally with magic

@@ -29,7 +29,7 @@ class Seed {
             let writeAndImproveSpecialMail = {
                 "emailTitle": "Write and improve special code",
                 'emailKey': "write_and_improve_special",
-                'subject': "Write and improve code",
+                'subject': "Purchase confirmation Write and improve",
                 'emailContent':`<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
                 <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:v="urn:schemas-microsoft-com:vml" xmlns="http://www.w3.org/1999/xhtml">
                    <head>
@@ -86,7 +86,7 @@ class Seed {
                           <tbody>
                              <tr>
                                 <td style="width: 596px;vertical-align: top;padding-left: 0;padding-right: 0;padding-top: 15px;padding-bottom: 15px;background: #ffebc2;" width="596">
-                                   <img style="width: 180px; max-width: 180px; height: 50px; max-height: 85px; text-align: center; color: #ffffff;" alt="Logo" src="https://d3h4xx6ax0fekr.cloudfront.net/ZKQN5" align="center" width="180" height="85">
+                                   <img style="width: 180px; max-width: 180px; height: 40px; max-height: 85px; text-align: center; color: #ffffff;" alt="Logo" src="https://d3h4xx6ax0fekr.cloudfront.net/ZKQN5" align="center" width="180" height="85">
                                 </td>
                              </tr>
                           </tbody>
@@ -119,7 +119,8 @@ class Seed {
                                                <li>Now you are ready to start practicing for your exam!</li>
                                             </ul>
                                             <p style="margin-top: 26px;"><span style="font-size: 16px;font-weight:600;background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; vertical-align: baseline; white-space-collapse: preserve;">Good luck with your IELTS Test Practice!</span></p>
-                                            <p style="margin:0px;"><span style="font-size: 16px;font-weight:600;background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; vertical-align: baseline; white-space-collapse: preserve;"></span></p>
+                                            <p style="margin:0px;"><span style="font-size: 16px;font-weight:600;background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; vertical-align: baseline; white-space-collapse: preserve;"><a href="{{{pdfUrl}}}"target="_self" style="">Click here to download your invoice</a></span></p>
+
                                             <br>
                                          </span>
                                       </div>
@@ -145,13 +146,13 @@ class Seed {
             };
             let isKeyExistOfwriteAndImproveSpecialMail = await EmailTemplate.findOne({ emailKey: writeAndImproveSpecialMail['emailKey'] }).select({ "_id": 1 });
             if (!isKeyExistOfwriteAndImproveSpecialMail) {
-                console.log("hrere");
+                // console.log("hrere");
                 await new Model(EmailTemplate).store(writeAndImproveSpecialMail);
             }
             let sendInvoiceMail = {
                 "emailTitle": "Invoice from cambridge connect",
                 'emailKey': "invoice_mail",
-                'subject': "Invoice mail",
+                'subject': "Purchase confirmation",
                 'emailContent':`<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
                 <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:v="urn:schemas-microsoft-com:vml" xmlns="http://www.w3.org/1999/xhtml">
                    <head>
@@ -208,7 +209,7 @@ class Seed {
                           <tbody>
                              <tr>
                                 <td style="width: 596px;vertical-align: top;padding-left: 0;padding-right: 0;padding-top: 15px;padding-bottom: 15px;background: #ffebc2;" width="596">
-                                   <img style="width: 180px; max-width: 180px; height: 85px; max-height: 85px; text-align: center; color: #ffffff;" alt="Logo" src="https://d3h4xx6ax0fekr.cloudfront.net/ZKQN5" align="center" width="180" height="85">
+                                   <img style="width: 180px; max-width: 180px; height: 40px; max-height: 85px; text-align: center; color: #ffffff;" alt="Logo" src="https://d3h4xx6ax0fekr.cloudfront.net/ZKQN5" align="center" width="180" height="85">
                                 </td>
                              </tr>
                           </tbody>
@@ -230,7 +231,7 @@ class Seed {
                                                <li>You will now be able to access the online component.</li>
                                             </ul>
                                             <p style="margin-top: 26px;"><span style="font-size: 16px;font-weight:600;background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; vertical-align: baseline; white-space-collapse: preserve;">Good luck with your IELTS Test Practice!</span></p>
-                                            <p style="margin:0px;"><span style="font-size: 16px;font-weight:600;background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; vertical-align: baseline; white-space-collapse: preserve;"><a href="{{{pdfUrl}}}"target="_self" style="">Click here to generate your invoice</a></span></p>
+                                            <p style="margin:0px;"><span style="font-size: 16px;font-weight:600;background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; vertical-align: baseline; white-space-collapse: preserve;"><a href="{{{pdfUrl}}}"target="_self" style="">Click here to download your invoice</a></span></p>
                                             <br>
                                          </span>
                                       </div>
@@ -256,7 +257,7 @@ class Seed {
             };
             let isKeyExistOfsendInvoiceMail = await EmailTemplate.findOne({ emailKey: sendInvoiceMail['emailKey'] }).select({ "_id": 1 });
             if (!isKeyExistOfsendInvoiceMail) {
-                console.log("hrere");
+                // console.log("hrere");
                 await new Model(EmailTemplate).store(sendInvoiceMail);
             }
             let registerMail = {
