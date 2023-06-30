@@ -558,7 +558,7 @@ class CourseController extends Controller {
       await Promise.all(
         data.courseDetails.map(async (course) => {
           // Subtract the discount percentage from the course price
-          const discountedPrice = (coupon && coupon.discountPercentage) ? course.price - (course.price * coupon.discountPercentage) / 100 : 0;
+          const discountedPrice = (coupon && coupon.discountPercentage) ? course.price - (course.price * coupon.discountPercentage) / 100 : course.price;
       
           // Update the course object with the discounted price
           const updatedCourse = { ...course, price: discountedPrice };
