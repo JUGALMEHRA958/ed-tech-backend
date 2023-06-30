@@ -52,6 +52,7 @@ class Invoice {
      async generateInvoice(invoiceData) {
 
          const doc = new PDFDocument();
+         doc.fontSize(22).text("Invoice", { align: "center" });
 
          // Inside the generateInvoice function
          const logoFilePath = path.join(__dirname, 'logo.png'); // Provide the desired local file path
@@ -77,7 +78,6 @@ class Invoice {
          doc.text("GSTIN: " + invoiceData.sellerDetails.GST, 30, 255);
 
          // Adding invoice title
-         doc.fontSize(22).text("Invoice", { align: "center" });
 
          // Adding customer details - name, email, phone
          doc.fontSize(10).text("To:", 30, 290);
