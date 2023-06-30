@@ -461,7 +461,8 @@ class CourseController extends Controller {
   }
 
   async buyCourseInternally(course, currentUser , pdfUrl) {
-    console.log("received this course",course,"464");
+    let courseDetail  = await CourseSchema.findOne({_id:course.courseId}).lean();
+    // console.log("received this course",course,"464");
     let newObject = {
       courseId: course.courseId,
       studentId: this.req.currentUser._id,
@@ -521,7 +522,8 @@ class CourseController extends Controller {
         emailKey: "invoice_mail",
         replaceDataObj: {
           pdfUrl:pdfUrl,
-          name:this.req.currentUser.firstName + this.req.currentUser.lastName
+          name:this.req.currentUser.firstName + this.req.currentUser.lastName,
+          courseName : courseDetail.title
         },
       };
       let ccrecepient = config.clientinvoicebccmailid ; 

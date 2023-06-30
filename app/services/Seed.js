@@ -233,6 +233,7 @@ class Seed {
                                             <p style="margin-top: 26px;"><span style="font-size: 16px;font-weight:600;background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; vertical-align: baseline; white-space-collapse: preserve;">Good luck with your IELTS Test Practice!</span></p>
                                             <p style="margin:0px;"><span style="font-size: 16px;font-weight:600;background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; vertical-align: baseline; white-space-collapse: preserve;"><a href="{{{pdfUrl}}}"target="_self" style="">Click here to download your invoice</a></span></p>
                                             <br>
+                                            <p>Course name : {{{courseName}}}</p>
                                          </span>
                                       </div>
                                    </td>
