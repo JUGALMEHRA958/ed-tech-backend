@@ -493,7 +493,7 @@ class CourseController extends Controller {
 
 
 
-    let isDeleting = false; // Flag to indicate if deletion is in progress
+    // let isDeleting = false; // Flag to indicate if deletion is in progress
 
     if(course.group=="writeAndImprove"){
       let voucherCode = await VoucherCode.findOne({isDeleted:false , status : true}).lean();
@@ -513,12 +513,14 @@ class CourseController extends Controller {
       // ...
   
       // Delete the sent voucher from DB
-     let deleteVoucher = await VoucherCode.deleteOne({ _id: voucherCode._id });
+     let deleteVoucher = await VoucherCode.findOneAndUpdate({ _id: voucherCode._id },{
+      isDeleted:true
+     });
   
-      console.log("deleted ", voucherCode._id);
+      // console.log("deleted ", voucherCode._id);
   
-      // Reset the flag after deletion is complete
-      isDeleting = false;
+      // // Reset the flag after deletion is complete
+      // isDeleting = false;
 
 
         if (sendingMail.status == 0) {
