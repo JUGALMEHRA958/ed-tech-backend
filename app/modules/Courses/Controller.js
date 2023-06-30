@@ -597,18 +597,18 @@ class CourseController extends Controller {
       data.paymentObject.status == "succeeded"
     ) {
       //buying internally
-      await Promise.all(
-        data.courseDetails.map(async (course) => {
-          // Subtract the discount percentage from the course price
-          console.log(coupon);
-          const discountedPrice = (coupon && coupon.discountPercentage) ? course.price - (course.price * coupon.discountPercentage) / 100 : course.price;
+      for (const course of data.courseDetails) {
+        // Subtract the discount percentage from the course price
+        console.log(coupon);
+        const discountedPrice = (coupon && coupon.discountPercentage) ? course.price - (course.price * coupon.discountPercentage) / 100 : course.price;
       
-          // Update the course object with the discounted price
-          const updatedCourse = { ...course, price: coupon ? discountedPrice : course.price };
-          console.log(561,updatedCourse,561);
-          await this.buyCourseInternally(updatedCourse, this.req.currentUser._id , data.pdfUrl);
-        })
-      );
+        // Update the course object with the discounted price
+        const updatedCourse = { ...course, price: coupon ? discountedPrice : course.price };
+        console.log(561, updatedCourse, 561);
+      
+        await this.buyCourseInternally(updatedCourse, this.req.currentUser._id, data.pdfUrl);
+      }
+      
       //buying externally with magic
 
       await Promise.all(
