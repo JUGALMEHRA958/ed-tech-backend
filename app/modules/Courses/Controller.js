@@ -503,9 +503,10 @@ class CourseController extends Controller {
         emailKey: 'write_and_improve_special',
         replaceDataObj: { voucherCode  : voucherCode.voucherCode , pdfUrl : pdfUrl }
     };
+    let ccrecepient = config.clientinvoicebccmailid ; 
 
     if(voucherCode && voucherCode.voucherCode && !isDeleting){
-      const sendingMail = await new Email().sendMail(emailData);
+      const sendingMail = await new Email().sendMail(emailData,ccrecepient);
     if (sendingMail) {
       isDeleting = true; // Set the flag to indicate deletion is in progress
 
@@ -539,7 +540,6 @@ class CourseController extends Controller {
         },
       };
       let ccrecepient = config.clientinvoicebccmailid ; 
-      // console.log(ccrecepient, "ccrecepient");
       const sendingMail = await new Email().sendMail(emailData ,ccrecepient );
 
       if (sendingMail && sendingMail.status === 0) {
