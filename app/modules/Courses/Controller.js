@@ -55,6 +55,7 @@ class CourseController extends Controller {
       }
       let savedData = await new Model(CourseSchema).store({
         ...data,
+        
         createdBy: this.req.currentUser._id,
       });
       return this.res.send({
