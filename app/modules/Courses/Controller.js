@@ -66,7 +66,7 @@ class CourseController extends Controller {
       console.log(e);
       return this.res.send({
         status: 0,
-        message: i18n.__("COURSE_NOT_SAVED"),
+        message: i18n.__("COURSE_NOT_SAVED" + "Error -> " , e),
         error: e,
       });
     }
