@@ -350,7 +350,7 @@ class AdminController extends Controller {
           const totalPages = Math.ceil(totalCount / pageSize);
           const skipCount = (pageNumber - 1) * pageSize;
           console.log(filterMatch,344);
-          let details = await PaymentHistoryStripe.find(filterMatch).skip(skipCount).limit(pageSize).populate('studentId').lean();
+          let details = await PaymentHistoryStripe.find(filterMatch).sort({ createdAt: -1 }).skip(skipCount).limit(pageSize).populate('studentId').lean();
           console.log("details start",details,"details");
           let newArray = [];
           for (let i = 0; i < details.length; i++) {
