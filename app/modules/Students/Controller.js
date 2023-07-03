@@ -1510,7 +1510,7 @@ class StudentsController extends Controller {
           creationDate: new Date(),
           // invoiceNumber: "18R1",
           customerDetails: {
-            name: customer.firstName + customer.lastName,
+            name: customer.firstName + " " + customer.lastName,
             email: customer.email,
             phone: customer.phone,
           },

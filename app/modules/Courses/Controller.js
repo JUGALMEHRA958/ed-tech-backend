@@ -771,7 +771,7 @@ class CourseController extends Controller {
     //   });
   }
   else{
-    return this.res.send({status:1, message:"Saved"});
+    return this.res.send({status:1, message:"Payment failed"});
   }
 }
 

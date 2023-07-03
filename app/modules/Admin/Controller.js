@@ -345,7 +345,7 @@ class AdminController extends Controller {
             const endDate = new Date(filterCond.dateRange.endDate);
             filterMatch['createdAt'] = { $gte: startDate, $lte: endDate };
           }
-      
+          
           const totalCount = await PaymentHistoryStripe.count(filterMatch);
           const totalPages = Math.ceil(totalCount / pageSize);
           const skipCount = (pageNumber - 1) * pageSize;
