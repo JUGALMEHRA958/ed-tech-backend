@@ -362,6 +362,7 @@ class AdminController extends Controller {
             
             
             newArray.push({
+              paymentStatus:details[i].paymentStatus,
               id: details[i]._id,
               timeOfPurchase :details[i].createdAt ,
               studentId: details[i].studentId._id,
