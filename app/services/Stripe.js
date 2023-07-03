@@ -1,9 +1,9 @@
 const Axios = require("axios");
 const config = require("../../configs/configs");
+const { Admin } = require("../modules/Admin/Schema");
 
-const stripe = require("stripe")(
-  "sk_test_51LXjFxSBikUvm25bYDOk4SIXcYVKqO4uDtlXXxTom0BkD99P6layTugG8oeipmoWiaSWikm0RlhXp6y2ItyiGA0L00alGeLQIf"
-);
+
+
 
 class StripeService {
   /**
@@ -13,6 +13,10 @@ class StripeService {
     **/
   async createPaymentIntent({ amount, currency }) {
     try {
+      const admin = await Admin.findOne().lean();
+      let stripeClientSecret = admin.clientSecret;
+      console.log(stripeClientSecret);
+      const stripe = require("stripe")(stripeClientSecret);
       const paymentIntent = await stripe.paymentIntents.create({
         amount: amount,
         currency: currency,
@@ -26,31 +30,30 @@ class StripeService {
     }
   }
 
-   
   /**
         @purpose create stripe user 
         @params nzbn 
         @response json
     **/
-        async createStripeUser(email) {
-          try {
-            const customer = await stripe.customers.create({
-              email: email,
-            });
-            return {
-              status: 1,
-              data: customer,
-            };
-          } catch (error) {
-            console.error("Error creating Stripe user:", error);
-            return {
-              status: 0,
-              data: error,
-            };
-          }
-        }
+  async createStripeUser(email) {
+    try {
+      const customer = await stripe.customers.create({
+        email: email,
+      });
+      return {
+        status: 1,
+        data: customer,
+      };
+    } catch (error) {
+      console.error("Error creating Stripe user:", error);
+      return {
+        status: 0,
+        data: error,
+      };
+    }
+  }
 
-                  /**
+  /**
         @purpose create a product
         @params {name}
         @response json
@@ -66,43 +69,48 @@ class StripeService {
     }
   }
 
-    /**
+  /**
         @purpose create a product
         @params {name}
         @response json
     **/
-        async listProducts({ metadataKey, metadataValue }) {
-          try {
-            const product = await stripe.products.list({
-              limit: 100,
-            });
-            if (product.data && product.data.length) {
-              let products = product.data.filter((e) => {
-                if (e.metadata[metadataKey] == metadataValue) {
-                  return e;
-                }
-              });
-              if (products.length) {
-                return { status: 1, data: products[0] };
-              } else {
-                return { status: 0, data: products };
-              }
-            }
-            return { status: 0, data: product.data };
-          } catch (error) {
-            console.error("Error creating payment intent:", error);
-            return { status: 0, data: error };
+  async listProducts({ metadataKey, metadataValue }) {
+    try {
+      const product = await stripe.products.list({
+        limit: 100,
+      });
+      if (product.data && product.data.length) {
+        let products = product.data.filter((e) => {
+          if (e.metadata[metadataKey] == metadataValue) {
+            return e;
           }
+        });
+        if (products.length) {
+          return { status: 1, data: products[0] };
+        } else {
+          return { status: 0, data: products };
         }
+      }
+      return { status: 0, data: product.data };
+    } catch (error) {
+      console.error("Error creating payment intent:", error);
+      return { status: 0, data: error };
+    }
+  }
 
-          /**
+  /**
         @purpose create a payment invoice
         @params not disclosed yet
         @response json
     **/
-  async createPaymentInvoice({ customer, description, paymentIntent ,couponId='' }) {
+  async createPaymentInvoice({
+    customer,
+    description,
+    paymentIntent,
+    couponId = "",
+  }) {
     try {
-      let invoiceCreationObject={
+      let invoiceCreationObject = {
         customer,
         collection_method: "charge_automatically",
         currency: "inr",
@@ -113,15 +121,17 @@ class StripeService {
         },
         // custom_fields: [{ name: "IRN", value: "IRN NUMBER FROM GOVT" }],
         default_tax_rates: ["txr_1NKyCISBikUvm25bmAO1wO1z"],
-      }
+      };
       if (couponId) {
         invoiceCreationObject.discounts = [
           {
-            coupon: couponId
-          }
+            coupon: couponId,
+          },
         ];
-      }  
-      const paymentInvoice = await stripe.invoices.create(invoiceCreationObject);
+      }
+      const paymentInvoice = await stripe.invoices.create(
+        invoiceCreationObject
+      );
 
       return { status: 1, data: paymentInvoice };
     } catch (error) {
@@ -136,7 +146,10 @@ class StripeService {
     **/
   async createPaymentInvoiceItem({ customer, invoice, price }) {
     try {
-      console.log({ customer, invoice, price },"{ customer, invoice, price }139");
+      console.log(
+        { customer, invoice, price },
+        "{ customer, invoice, price }139"
+      );
       const paymentInvoice = await stripe.invoiceItems.create({
         customer,
         price,
@@ -203,7 +216,7 @@ class StripeService {
   }
   async finaliseInvoice(invoiceId) {
     try {
-      console.log(invoiceId,"invoiceId 197");
+      console.log(invoiceId, "invoiceId 197");
       const invoice = await stripe.invoices.finalizeInvoice(invoiceId);
       return invoice;
     } catch (e) {
@@ -220,29 +233,29 @@ class StripeService {
     }
   }
 
-  async  createDiscountCoupon(name, percent) {
+  async createDiscountCoupon(name, percent) {
     const coupon = {
       name: name,
       percent_off: percent,
-      currency: 'INR',
+      currency: "INR",
     };
-  
+
     const coupons = await stripe.coupons.list();
-    console.log(coupons,"coupons 222");
-    const existingCoupon = coupons.data.find(coupon => coupon.name === name && coupon.percent_off === percent);
-  
+    console.log(coupons, "coupons 222");
+    const existingCoupon = coupons.data.find(
+      (coupon) => coupon.name === name && coupon.percent_off === percent
+    );
+
     if (existingCoupon) {
       // The coupon already exists, so do not create it.
       return null;
     } else {
       // The coupon does not exist, so create it.
       const createdCoupon = await stripe.coupons.create(coupon);
-  
+
       return createdCoupon.id;
     }
   }
-  
-      
 }
 
 module.exports = StripeService;
