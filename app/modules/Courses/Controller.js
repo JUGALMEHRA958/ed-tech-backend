@@ -55,7 +55,7 @@ class CourseController extends Controller {
       }
       let savedData = await new Model(CourseSchema).store({
         ...data,
-        
+
         createdBy: this.req.currentUser._id,
       });
       return this.res.send({
@@ -769,7 +769,11 @@ class CourseController extends Controller {
     //     message:i18n.__('SAVED_DETAILS'),
     //     data: pdf,
     //   });
-  }}
+  }
+  else{
+    return this.res.send({status:1, message:"Saved"});
+  }
+}
 
   async updateCartAfterPurchase(student, courseIds) {
     try {
