@@ -45,7 +45,14 @@ class CourseController extends Controller {
         this.req.body,
         fieldsArray
       );
-
+      let checkIfIsbnExist = await CourseSchema.findOne({isDeleted:false, status:true , isbnNumber : data.isbnNumber});
+      let checkIfProductIdExist = await CourseSchema.findOne({isDeleted:false, status:true , productId : data.productId});
+      if(checkIfIsbnExist || checkIfProductIdExist ){
+        return this.res.send({
+          status: 0,
+          message: i18n.__("DUPLICATE_ISBN_OR_PRODUCTID")
+        });
+      }
       let savedData = await new Model(CourseSchema).store({
         ...data,
         createdBy: this.req.currentUser._id,
