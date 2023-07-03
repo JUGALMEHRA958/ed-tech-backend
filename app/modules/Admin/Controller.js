@@ -339,9 +339,7 @@ class AdminController extends Controller {
           let pageSize = this.req.body.pageSize ? this.req.body.pageSize : 10;
           let filter = this.req.body.filter ? this.req.body.filter : [];
           let filterCond = await this.constructFilter(filter);
-          let filterMatch = {
-            paymentStatus:"success"
-          };
+          let filterMatch = {};
           if (!_.isEmpty(filterCond.dateRange)) {
             const startDate = new Date(filterCond.dateRange.startDate);
             const endDate = new Date(filterCond.dateRange.endDate);
