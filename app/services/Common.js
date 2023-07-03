@@ -609,7 +609,7 @@ class Common {
                 // const records = await Students.find(filter).lean();
                 //  filter = await this.constructFilter({ filter });
 
-        let details = await PaymentHistoryStripe.find().populate('studentId').lean();
+        let details = await PaymentHistoryStripe.find({paymentStatus:"success"  }).populate('studentId').lean();
 
           let newArray = [];
           for (let i = 0; i < details.length; i++) {

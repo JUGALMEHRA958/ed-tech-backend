@@ -339,13 +339,15 @@ class AdminController extends Controller {
           let pageSize = this.req.body.pageSize ? this.req.body.pageSize : 10;
           let filter = this.req.body.filter ? this.req.body.filter : [];
           let filterCond = await this.constructFilter(filter);
-          let filterMatch = {};
+          let filterMatch = {
+            paymentStatus:"success"
+          };
           if (!_.isEmpty(filterCond.dateRange)) {
             const startDate = new Date(filterCond.dateRange.startDate);
             const endDate = new Date(filterCond.dateRange.endDate);
             filterMatch['createdAt'] = { $gte: startDate, $lte: endDate };
           }
-      
+          
           const totalCount = await PaymentHistoryStripe.count(filterMatch);
           const totalPages = Math.ceil(totalCount / pageSize);
           const skipCount = (pageNumber - 1) * pageSize;
