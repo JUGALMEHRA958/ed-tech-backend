@@ -17,7 +17,7 @@ const Form = require("../../services/Form");
 const File = require("../../services/File");
 var FormData = require("form-data");
 const DiscountCoupon = require("../DiscountModule/Schema").DiscountCoupon;
-const { config } = require("custom-env");
+// const { Config } = require("custom-env");
 const { PaymentHistoryStripe } = require("../CoursePurchase/Schema");
 const { Admin } = require("../Admin/Schema");
 const Invoice = require("../../services/Invoice");
@@ -1515,21 +1515,21 @@ class StudentsController extends Controller {
             phone: customer.phone,
           },
           sellerDetails: {
-            name: config.COMPANY_NAME ? config.COMPANY_NAME : "Cambridge University Press & Assessment India Pvt Ltd.",
-            address: config.COMPANY_ADDRESS ? config.COMPANY_ADDRESS :"Splendor Forum Jasola",
-            CIN: config.COMPANY_CIN ? config.COMPANY_CIN :"U22122DL2004PTC124758",
-            logo: config.COMPANY_LOGO_URL ? config.COMPANY_LOGO_URL :"https://d3h4xx6ax0fekr.cloudfront.net/ZKQN5",
-            city: config.COMPANY_CITY ? config.COMPANY_CITY :"New Delhi",
-            state: config.COMPANY_STATE ? config.COMPANY_STATE :"Delhi",
-            country:config.COMPANY_COUNTRY ? config.COMPANY_COUNTRY : "India",
-            contactNumber:config.COMPANY_CONTACT_NUMBER ? config.COMPANY_CONTACT_NUMBER : "9156254896",
-            email:config.COMPANY_EMAIL ? config.COMPANY_EMAIL : "support@cambridgeconnect.org",
-            GST: config.COMPANY_GST ? config.COMPANY_GST :"07AAGFF2194N1Z1",
+            name: Config.COMPANY_NAME ? Config.COMPANY_NAME : "Cambridge University Press & Assessment India Pvt Ltd.",
+            address: Config.COMPANY_ADDRESS ? Config.COMPANY_ADDRESS :"Splendor Forum Jasola",
+            CIN: Config.COMPANY_CIN ? Config.COMPANY_CIN :"U22122DL2004PTC124758",
+            logo: Config.COMPANY_LOGO_URL ? Config.COMPANY_LOGO_URL :"https://d3h4xx6ax0fekr.cloudfront.net/ZKQN5",
+            city: Config.COMPANY_CITY ? Config.COMPANY_CITY :"New Delhi",
+            state: Config.COMPANY_STATE ? Config.COMPANY_STATE :"Delhi",
+            country:Config.COMPANY_COUNTRY ? Config.COMPANY_COUNTRY : "India",
+            contactNumber:Config.COMPANY_CONTACT_NUMBER ? Config.COMPANY_CONTACT_NUMBER : "9156254896",
+            email:Config.COMPANY_EMAIL ? Config.COMPANY_EMAIL : "support@cambridgeconnect.org",
+            GST: Config.COMPANY_GST ? Config.COMPANY_GST :"07AAGFF2194N1Z1",
           },
           products: products,
           discount: (discountCoupon && discountCoupon.discountPercentage) ? discountCoupon.discountPercentage : 0,
-          sgst: config.sgstrate ? config.sgstrate : 9 ,
-          cgst: config.cgst ? config.cgst : 9 ,
+          sgst: Config.sgstrate ? Config.sgstrate : 9 ,
+          cgst: Config.cgst ? Config.cgst : 9 ,
         };
         const invoiceLink = await this.invoice.generateInvoice(invoiceData);
 
@@ -1569,21 +1569,21 @@ class StudentsController extends Controller {
         phone: customer.phone,
       },
       sellerDetails: {
-        name: config.COMPANY_NAME ? config.COMPANY_NAME : "Cambridge University Press & Assessment India Pvt Ltd.",
-        address: config.COMPANY_ADDRESS ? config.COMPANY_ADDRESS :"Splendor Forum Jasola",
-        CIN: config.COMPANY_CIN ? config.COMPANY_CIN :"U22122DL2004PTC124758",
-        logo: config.COMPANY_LOGO_URL ? config.COMPANY_LOGO_URL :"https://d3h4xx6ax0fekr.cloudfront.net/ZKQN5",
-        city: config.COMPANY_CITY ? config.COMPANY_CITY :"New Delhi",
-        state: config.COMPANY_STATE ? config.COMPANY_STATE :"Delhi",
-        country:config.COMPANY_COUNTRY ? config.COMPANY_COUNTRY : "India",
-        contactNumber:config.COMPANY_CONTACT_NUMBER ? config.COMPANY_CONTACT_NUMBER : "9156254896",
-        email:config.COMPANY_EMAIL ? config.COMPANY_EMAIL : "support@cambridgeconnect.org",
-        GST: config.COMPANY_GST ? config.COMPANY_GST :"07AAGFF2194N1Z1",
+        name: Config.COMPANY_NAME ? Config.COMPANY_NAME : "Cambridge University Press & Assessment India Pvt Ltd.",
+        address: Config.COMPANY_ADDRESS ? Config.COMPANY_ADDRESS :"Splendor Forum Jasola",
+        CIN: Config.COMPANY_CIN ? Config.COMPANY_CIN :"U22122DL2004PTC124758",
+        logo: Config.COMPANY_LOGO_URL ? Config.COMPANY_LOGO_URL :"https://d3h4xx6ax0fekr.cloudfront.net/ZKQN5",
+        city: Config.COMPANY_CITY ? Config.COMPANY_CITY :"New Delhi",
+        state: Config.COMPANY_STATE ? Config.COMPANY_STATE :"Delhi",
+        country:Config.COMPANY_COUNTRY ? Config.COMPANY_COUNTRY : "India",
+        contactNumber:Config.COMPANY_CONTACT_NUMBER ? Config.COMPANY_CONTACT_NUMBER : "9156254896",
+        email:Config.COMPANY_EMAIL ? Config.COMPANY_EMAIL : "support@cambridgeconnect.org",
+        GST: Config.COMPANY_GST ? Config.COMPANY_GST :"07AAGFF2194N1Z1",
       },
       products: products,
       discount: (discountCoupon && discountCoupon.discountPercentage) ? discountCoupon.discountPercentage : 0,
-      sgst: config.sgstrate ? config.sgstrate : 9 ,
-      cgst: config.cgst ? config.cgst : 9 ,
+      sgst: Config.sgstrate ? Config.sgstrate : 9 ,
+      cgst: Config.cgst ? Config.cgst : 9 ,
     }
   }
 
