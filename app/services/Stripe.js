@@ -37,6 +37,10 @@ class StripeService {
     **/
   async createStripeUser(email) {
     try {
+      const admin = await Admin.findOne().lean();
+      let stripeClientSecret = admin.clientSecret;
+      console.log(stripeClientSecret);
+      const stripe = require("stripe")(stripeClientSecret);
       const customer = await stripe.customers.create({
         email: email,
       });
