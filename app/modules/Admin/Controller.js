@@ -526,9 +526,9 @@ async createDiscountGroup() {
     console.log("Data",data);  
     let checkIfDiscountCodeExist = await DiscountCoupon.findOne({discountCode:data.discountCode});
     if(checkIfDiscountCodeExist){return this.res.send({ status: 0, message: "Duplicate discount code" });}
-    let couponCodeFromStripe = await new StripeService().createDiscountCoupon(data.discountCode , data.discountPercentage);
-    console.log(couponCodeFromStripe);
-    let saveDataInDb  = await DiscountCoupon.create({...data , createdBy: this.req.currentUser, stripeCouponCode:couponCodeFromStripe})  ; 
+    // let couponCodeFromStripe = await new StripeService().createDiscountCoupon(data.discountCode , data.discountPercentage);
+    // console.log(couponCodeFromStripe);
+    let saveDataInDb  = await DiscountCoupon.create({...data , createdBy: this.req.currentUser})  ; 
 
     return this.res.send({ status: 1, message: i18n.__('SAVED_YOUR_DISCOUNT_GROUP') , data:saveDataInDb  });
 
