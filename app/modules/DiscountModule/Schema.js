@@ -7,7 +7,7 @@ var discountCouponSchema = new Schema({
     discountCode: {
         type: String,
         required: true,
-        unique: true
+        // unique: true
     },
     startAt: {
         type: Date,
