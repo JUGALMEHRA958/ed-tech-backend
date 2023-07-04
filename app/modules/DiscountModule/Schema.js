@@ -7,7 +7,7 @@ var discountCouponSchema = new Schema({
     discountCode: {
         type: String,
         required: true,
-        unique: true
+        // unique: true
     },
     startAt: {
         type: Date,
@@ -27,7 +27,7 @@ var discountCouponSchema = new Schema({
     // },
     stripeCouponCode: {
         type: String,
-        // required: true
+        required: true
     },
     createdBy:{type: Schema.Types.ObjectId, ref: "admins" , default:null},
     updatedBy:{type: Schema.Types.ObjectId, ref: "admins",default:null},
