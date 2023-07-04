@@ -524,7 +524,7 @@ async createDiscountGroup() {
     fieldsArray = [...fieldsArray];
     let data = await (new RequestBody()).processRequestBody(this.req.body, fieldsArray);
     console.log("Data",data);  
-    let checkIfDiscountCodeExist = await DiscountCoupon.findOne({discountCode:data.discountCode});
+    let checkIfDiscountCodeExist = await DiscountCoupon.findOne({discountCode:data.discountCode , isDeleted:false});
     if(checkIfDiscountCodeExist){return this.res.send({ status: 0, message: "Duplicate discount code" });}
     // let couponCodeFromStripe = await new StripeService().createDiscountCoupon(data.discountCode , data.discountPercentage);
     // console.log(couponCodeFromStripe);
@@ -602,6 +602,9 @@ async  updateDiscountGroupById(req, res) {
     fieldsArray = [...fieldsArray , "startAt" , "endsAt" ];
     let data = await (new RequestBody()).processRequestBody(this.req.body, fieldsArray);
     const groupId = data.id;
+    let checkIfDiscountCodeExist = await DiscountCoupon.findOne({discountCode:data.groupId , isDeleted:false});
+    if(checkIfDiscountCodeExist){return this.res.send({ status: 0, message: "Duplicate discount code" });}
+ 
     let checkIfDeleted = await DiscountCoupon.findOne({_id:groupId , isDeleted:false}) ;
     if(!checkIfDeleted){return this.res.send({ status: 0, message: i18n.__("CAN_NOT_UPDATE_DELETED_GROUP" )});}
     let dataToUpdate  = {...data  , updatedBy : this.req.currentUser}
