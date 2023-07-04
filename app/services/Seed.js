@@ -26,14 +26,239 @@ class Seed {
     }
     async addEmailTemplate() {
         try {
+            let writeAndImproveSpecialMail = {
+                "emailTitle": "Write and improve special code",
+                'emailKey': "write_and_improve_special",
+                'subject': "Purchase confirmation Write and improve",
+                'emailContent':`<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+                <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:v="urn:schemas-microsoft-com:vml" xmlns="http://www.w3.org/1999/xhtml">
+                   <head>
+                     
+                      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+                      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                      <meta name="x-apple-disable-message-reformatting">
+                
+                      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                   
+                      <title>Email Template</title>
+                      <!-- End title -->
+                      <!-- Start stylesheet -->
+                      <style type="text/css">
+                         a,a[href] {
+                         color: #1b1b1b;
+                         
+                         }
+                         a:hover{
+                         text-decoration: none!important;
+                         color: #7b7b7b;
+                         }
+                         .link {
+                         text-decoration: underline!important;
+                         }
+                         p, p:visited {
+                         font-size:15px;
+                         line-height:24px;
+                         font-family:'Helvetica', Arial, sans-serif;
+                         text-decoration:none;
+                         color: #2d2d2d;
+                         }
+                         h1 {
+                         font-size:22px;
+                         line-height:24px;
+                         font-family:'Helvetica', Arial, sans-serif;
+                         font-weight:normal;
+                         text-decoration:none;
+                         color: #5f5f5f;
+                         }
+                         ul{
+                          list-style: auto;
+                         }
+                         li{
+                          margin-bottom: 10px;
+                          color: #272727;
+                         }
+                        
+                      </style>
+                   </head>
+                   <body align="center" style="text-align: center; margin: 0; padding-top: 10px; padding-bottom: 10px; padding-left: 0; padding-right: 0; -webkit-text-size-adjust: 100%;background-color: #f2f4f6; color: #000000">
+                    <div style="text-align: center; ;margin: 0 auto; max-width: 600px;width: 100%;">
+                       <table align="center" style="text-align: center;vertical-align: top;width: 600px;max-width: 600px;background: #ffebc2;" width="100%">
+                          <tbody>
+                             <tr>
+                                <td style="width: 596px;vertical-align: top;padding-left: 0;padding-right: 0;padding-top: 15px;padding-bottom: 15px;background: #ffebc2;" width="596">
+                                   <img style="width: 180px; max-width: 180px; height: 40px; max-height: 85px; text-align: center; color: #ffffff;" alt="Logo" src="https://d3h4xx6ax0fekr.cloudfront.net/ZKQN5" align="center" width="180" height="85">
+                                </td>
+                             </tr>
+                          </tbody>
+                       </table>
+                       <div style="background-color: #ffffff;">
+                          <table align="center" style="text-align: center; vertical-align: top;  " width="100%">
+                             <tbody>
+                                <tr>
+                                   <td style="width: 596px; vertical-align: top; padding-left: 20px; padding-right: 20px; padding-top: 20px; padding-bottom: 30px;" width="596">
+                                      <div style="color: #303030; font-size: 15px;">
+                                         <span id="" style="font-family: 'Roboto', sans-serif;text-align: left;">
+                                            <h1 style="color:#000000;"><span style="font-size: 16px;font-weight:600;background-color: transparent;  vertical-align: baseline; white-space-collapse: preserve;">Hello,</span></h1>
+                                            <br>
+                                            <p style="margin:0px;">Thank you for buying the Write & Improve pack! Here is your voucher code:<b>"{{{voucherCode}}}"</b></p>
+                                            <p style="margin:0px;">Please follow these simple steps to access the product:</p>
+                                            <ul>
+                                               <li>Go to Write & Improve.com</li>
+                                               <li>Click on ‘Create profile’ on the top right-hand corner of the page</li>
+                                               <li>Fill in the form with the required details including your email ID</li>
+                                               <li>Click ‘Continue’</li>
+                                               <li>You will receive an email to confirm your subscription</li>
+                                               <li>Click on ‘Click here’ within the email and you will be taken to the workbook page</li>
+                                               <li>After you have signed in, click on ‘+Test Zone’ in the menu on the left</li>
+                                               <li>Click on the exam you want to practice for</li>
+                                               <li>Then click on the blue ‘Subscribe’ button on the top of the screen</li>
+                                               <li>Read all the information and click on ‘Subscribe to +Test Zone’</li>
+                                               <li>Click on ‘Do you have a voucher code’</li>
+                                               <li>Enter the voucher code in the box provided and click ‘Confirm’</li>
+                                               <li>You will receive an email from Write &amp;amp; Improve which tells you when your subscriptio</li>
+                                               <li>Now you are ready to start practicing for your exam!</li>
+                                            </ul>
+                                            <p style="margin-top: 26px;"><span style="font-size: 16px;font-weight:600;background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; vertical-align: baseline; white-space-collapse: preserve;">Good luck with your IELTS Test Practice!</span></p>
+                                            <p style="margin:0px;"><span style="font-size: 16px;font-weight:600;background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; vertical-align: baseline; white-space-collapse: preserve;"><a href="{{{pdfUrl}}}"target="_self" style="">Click here to download your invoice</a></span></p>
+
+                                            <br>
+                                         </span>
+                                      </div>
+                                   </td>
+                                </tr>
+                             </tbody>
+                          </table>
+                       </div>
+                       <table style="text-align: center;vertical-align: top;background: #ffebc2;" width="600">
+                          <tbody>
+                             <tr>
+                                <td style="width: 596px; vertical-align: top; padding-left: 30px; padding-right: 30px; padding-top: 30px; padding-bottom: 30px;" width="596">
+                                   <p style="font-size: 15px;line-height: 15px;font-family: 'Helvetica', Arial, sans-serif;text-decoration: none;color: #5c5c5c;margin: 0px;font-weight: 600;">
+                                      Cambridge University Press &amp; Assessment India Private Limited
+                                   </p>
+                                </td>
+                             </tr>
+                          </tbody>
+                       </table>
+                    </div>
+                 </body>
+                </html>`
+            };
+            let isKeyExistOfwriteAndImproveSpecialMail = await EmailTemplate.findOne({ emailKey: writeAndImproveSpecialMail['emailKey'] }).select({ "_id": 1 });
+            if (!isKeyExistOfwriteAndImproveSpecialMail) {
+                // console.log("hrere");
+                await new Model(EmailTemplate).store(writeAndImproveSpecialMail);
+            }
             let sendInvoiceMail = {
                 "emailTitle": "Invoice from cambridge connect",
                 'emailKey': "invoice_mail",
-                'subject': "Invoice mail",
-                'emailContent':`<p><span style="color: rgb(0,0,0);font-size: 13px;font-family: Arial;">Hi , {{{name}}},<br>Thanks for shopping with cambridge. <br> <a href="{{{pdfUrl}}}" target="_self"><span style="color: rgb(0,0,0);font-size: 13px;font-family: Arial;">Click link to download your invoice</span></a> </p>`
+                'subject': "Purchase confirmation",
+                'emailContent':`<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+                <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:v="urn:schemas-microsoft-com:vml" xmlns="http://www.w3.org/1999/xhtml">
+                   <head>
+                     
+                      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+                      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                      <meta name="x-apple-disable-message-reformatting">
+                
+                      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                   
+                      <title>Email Template</title>
+                      <!-- End title -->
+                      <!-- Start stylesheet -->
+                      <style type="text/css">
+                         a,a[href] {
+                         color: #1b1b1b;
+                         
+                         }
+                         a:hover{
+                         text-decoration: none!important;
+                         color: #7b7b7b;
+                         }
+                         .link {
+                         text-decoration: underline!important;
+                         }
+                         p, p:visited {
+                         font-size:15px;
+                         line-height:24px;
+                         font-family:'Helvetica', Arial, sans-serif;
+                         text-decoration:none;
+                         color: #2d2d2d;
+                         }
+                         h1 {
+                         font-size:22px;
+                         line-height:24px;
+                         font-family:'Helvetica', Arial, sans-serif;
+                         font-weight:normal;
+                         text-decoration:none;
+                         color: #5f5f5f;
+                         }
+                         ul{
+                          list-style: auto;
+                         }
+                         li{
+                          margin-bottom: 10px;
+                          color: #272727;
+                         }
+                        
+                      </style>
+                   </head>
+                   <body align="center" style="text-align: center; margin: 0; padding-top: 10px; padding-bottom: 10px; padding-left: 0; padding-right: 0; -webkit-text-size-adjust: 100%;background-color: #f2f4f6; color: #000000">
+                    <div style="text-align: center; ;margin: 0 auto; max-width: 600px;width: 100%;">
+                       <table align="center" style="text-align: center;vertical-align: top;background: #ffebc2;" width="100%">
+                          <tbody>
+                             <tr>
+                                <td style="width: 596px;vertical-align: top;padding-left: 0;padding-right: 0;padding-top: 15px;padding-bottom: 15px;background: #ffebc2;" width="596">
+                                   <img style="width: 180px; max-width: 180px; height: 40px; max-height: 85px; text-align: center; color: #ffffff;" alt="Logo" src="https://d3h4xx6ax0fekr.cloudfront.net/ZKQN5" align="center" width="180" height="85">
+                                </td>
+                             </tr>
+                          </tbody>
+                       </table>
+                       <div style=" background-color: #ffffff;">
+                          <table align="center" style="text-align: center; vertical-align: top; " width="100%">
+                             <tbody>
+                                <tr>
+                                   <td style="width: 596px; vertical-align: top; padding-left: 20px; padding-right: 20px; padding-top: 20px; padding-bottom: 30px;" width="596">
+                                      <div style="color: #303030; font-size: 15px;">
+                                         <span id="" style="font-family: 'Roboto', sans-serif;text-align: left;">
+                                            <h1 style="color:#000000;"><span style="font-size: 16px;font-weight:600;background-color: transparent;  vertical-align: baseline; white-space-collapse: preserve;">Hello,</span></h1>
+                                            <br>
+                                            <p style="margin:0px;">Thank you for buying this Cambridge resource for your IELTS preparation! Please follow these steps to access the same:</p>
+                                            <ul>
+                                               <li>Please login to ielts.cambridgeconnect.org with your registered credentials</li>
+                                               <li>Go to the ‘Buy it’ section</li>
+                                               <li>Click on the ‘START’ button against the product</li>
+                                               <li>You will now be able to access the online component.</li>
+                                            </ul>
+                                            <p style="margin-top: 26px;"><span style="font-size: 16px;font-weight:600;background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; vertical-align: baseline; white-space-collapse: preserve;">Good luck with your IELTS Test Practice!</span></p>
+                                            <p style="margin:0px;"><span style="font-size: 16px;font-weight:600;background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; vertical-align: baseline; white-space-collapse: preserve;"><a href="{{{pdfUrl}}}"target="_self" style="">Click here to download your invoice</a></span></p>
+                                            <br>
+                                            <p>Course name : {{{courseName}}}</p>
+                                         </span>
+                                      </div>
+                                   </td>
+                                </tr>
+                             </tbody>
+                          </table>
+                       </div>
+                       <table style="text-align: center;vertical-align: top;background: #ffebc2;" width="600">
+                          <tbody>
+                             <tr>
+                                <td style="width: 596px; vertical-align: top; padding-left: 30px; padding-right: 30px; padding-top: 30px; padding-bottom: 30px;" width="596">
+                                   <p style="font-size: 15px;line-height: 15px;font-family: 'Helvetica', Arial, sans-serif;text-decoration: none;color: #5c5c5c;margin: 0px;font-weight: 600;">
+                                      Cambridge University Press &amp; Assessment India Private Limited
+                                   </p>
+                                </td>
+                             </tr>
+                          </tbody>
+                       </table>
+                    </div>
+                 </body>
+                </html>`
             };
             let isKeyExistOfsendInvoiceMail = await EmailTemplate.findOne({ emailKey: sendInvoiceMail['emailKey'] }).select({ "_id": 1 });
             if (!isKeyExistOfsendInvoiceMail) {
+                // console.log("hrere");
                 await new Model(EmailTemplate).store(sendInvoiceMail);
             }
             let registerMail = {

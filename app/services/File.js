@@ -109,29 +109,34 @@ class File {
       
         return word;
       } 
-    uploadFileOnS3(file) {
-        console.log("a");
-        let fileName = file.originalFilename.split(".");
-        let newFileName = fileName[0] + Date.now().toString() + '.' + fileName[1];
-        return new Promise((resolve, reject) => {
-            s3.createBucket(() => {
-                let params = {
-                    Bucket: config.s3Bucket,
-                    Key: this.generateRandomWord(5),
-                    Body: fs.createReadStream(file.path),
-                    ACL: "public-read",
-                }
-                s3.upload(params, function (err, data) {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve(data);
-                    }
-
-                });
-            });
-        });
-    }
+      async uploadFileOnS3(file) {
+        try {
+          console.log("file 114", file);
+          const fileName = `${file.originalFilename.split('.')[0]}_${Date.now().toString()}.${file.originalFilename.split('.')[1]}`;
+      
+          // Set up the S3 upload parameters
+          const params = {
+            Bucket: config.s3Bucket, // Replace with your S3 bucket name
+            Key: fileName,
+            Body: fs.createReadStream(file.path),
+            ACL: "public-read",
+          };
+      
+          // Upload the file to S3
+          const data = await s3.upload(params).promise();
+      
+          // Get the public URL of the uploaded file
+          const fileUrl = data.Location;
+      
+          console.log("File uploaded successfully. URL:", fileUrl);
+          return fileUrl;
+        } catch (error) {
+          console.error("Error uploading file to S3:", error);
+          throw error;
+        }
+      }
+      
+      
 
     deleteFile() {
         //TODO

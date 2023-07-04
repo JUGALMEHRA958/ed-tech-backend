@@ -1,6 +1,9 @@
 const i18n = require("i18n");
 const _ = require('lodash');
-
+const multer = require('multer');
+const xlsx = require("xlsx");
+const csv = require('csv-parser');
+const Model = require("../Base/Model");
 const Controller = require('../Base/Controller');
 const Globals = require('../../../configs/Globals');
 const Admin = require('./Schema').Admin;
@@ -16,9 +19,12 @@ const config = require('../../../configs/configs');
 const { Students } = require("../Students/Schema");
 const { GroupSchema } = require("../Courses/Schema");
 const { PaymentHistoryStripe } = require("../CoursePurchase/Schema");
-const DiscountCoupon = require("../DiscountModule/Schema");
+const DiscountCoupon = require("../DiscountModule/Schema").DiscountCoupon;
+const VoucherCode = require("../DiscountModule/Schema").VoucherCode;
 const StripeService = require("../../services/Stripe");
 const CoursePurchases = require("../CoursePurchase/Schema").CoursePurchases;
+const fs = require('fs');
+const { log } = require("console");
 class AdminController extends Controller {
 
     constructor() {
@@ -297,20 +303,20 @@ class AdminController extends Controller {
               $limit: pageSize,
             },
           ]);
-      
+          console.log(details,306);
           let newArray = [];
           for (let i = 0; i < details.length; i++) {
             // let { amountBeforeTax, tax } = this.calculateGST(details[i].courseId.price);
-            let tax = (18/100)*details[i].courseId.price  ; 
+            let tax = (18/100)*details[i].price  ; 
             newArray.push({
               studentId: details[i].studentId,
               courseIsbn: details[i].courseId.isbnNumber,
               courseName: details[i].courseId.title,
               category: details[i].courseId.category,
               purchaseDate: details[i].createdAt,
-              amountBeforeTax: details[i].courseId.price,
+              amountBeforeTax: details[i].price,
               tax: tax,
-              total: details[i].courseId.price + tax
+              total: details[i].price + tax
             });
           }
       
@@ -339,12 +345,12 @@ class AdminController extends Controller {
             const endDate = new Date(filterCond.dateRange.endDate);
             filterMatch['createdAt'] = { $gte: startDate, $lte: endDate };
           }
-      
+          
           const totalCount = await PaymentHistoryStripe.count(filterMatch);
           const totalPages = Math.ceil(totalCount / pageSize);
           const skipCount = (pageNumber - 1) * pageSize;
           console.log(filterMatch,344);
-          let details = await PaymentHistoryStripe.find(filterMatch).skip(skipCount).limit(pageSize).populate('studentId').lean();
+          let details = await PaymentHistoryStripe.find(filterMatch).sort({ createdAt: -1 }).skip(skipCount).limit(pageSize).populate('studentId').lean();
           console.log("details start",details,"details");
           let newArray = [];
           for (let i = 0; i < details.length; i++) {
@@ -356,6 +362,7 @@ class AdminController extends Controller {
             
             
             newArray.push({
+              paymentStatus:details[i].paymentStatus,
               id: details[i]._id,
               timeOfPurchase :details[i].createdAt ,
               studentId: details[i].studentId._id,
@@ -754,30 +761,119 @@ async  deleteDiscountGroupById(req, res) {
             if (_.isEmpty(formObject.files)) {
                 return this.res.send({ status: 0, message: i18n.__("%s REQUIRED", 'File') });
             }
-            const file = new File(formObject.files);
+            const file = new File();
             let filePath = "";
             let imagePath = config.s3ImagePath;
             if (config.s3upload && config.s3upload == 'true') {
                 console.log(formObject.files);
                 filePath = await file.uploadFileOnS3(formObject.files.file[0]);
+                console.log(filePath,"filePath 769");
             } else {
                 let fileObject = await file.store();
                 /***** uncommit this line to do manipulations in image like compression and resizing ****/
                 // let fileObject = await file.saveImage();
                 filePath = fileObject.filePath;
+                console.log(filePath,"filePath 775");
+
             }
-            console.log(filePath,"filePath");
-            let extension = this.getFileExtension(formObject.files.file[0].originalFilename);
-            console.log(extension);
-            let path = config.s3ImagePath + "/" + filePath.key ;
-            return this.res.send({ status: 1, data: path});
+            // console.log(filePath,"filePath");
+            // let extension = this.getFileExtension(formObject.files.file[0].originalFilename);
+            // console.log(extension);
+            // let path = config.s3ImagePath + "/" + filePath.key ;
+            return this.res.send({ status: 1, data: filePath});
         } catch (error) {
             console.log("error- ", error);
             this.res.send({ status: 0, message: error });
         }
     }
 
-   async readVoucherData(){}
+
+    async readVoucherData() {
+      try {
+        if (!this.req.file) {
+          return this.res.send({ status: 0, message: "File not found" });
+        }
+    
+        const allowedMimeTypes = ["text/csv", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"];
+        const { mimetype, buffer } = this.req.file;
+    
+        if (!allowedMimeTypes.includes(mimetype)) {
+          return this.res.send({ status: 0, message: "Invalid file type" });
+        }
+    
+        let fileData = buffer.toString(); // Convert buffer to string
+    
+        if (mimetype !== "text/csv") {
+          const workbook = xlsx.read(buffer, { type: "buffer" });
+          const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+          fileData = xlsx.utils.sheet_to_csv(worksheet);
+        }
+    
+        const results = [];
+        const voucherCodes = fileData.split("\n"); // Split by newline characters
+    
+        for (const voucherCode of voucherCodes) {
+          const trimmedCode = voucherCode.trim().replace(/"/g, ''); 
+          if (trimmedCode && !/[a-z]/.test(trimmedCode)) {
+            const existingVoucher = await VoucherCode.findOne({
+              voucherCode: trimmedCode,
+              isDeleted: false,
+              status: true
+            });
+    
+            if (!existingVoucher) {
+              const voucher = await new Model(VoucherCode).store({ voucherCode: trimmedCode });
+              await voucher.save();
+              results.push(voucher);
+            }
+          }
+        }
+    
+        return this.res.send({ status: 1, message: "Saved" });
+      } catch (e) {
+        console.log(e);
+        return this.res.send({ status: 0, message: "Internal server error" });
+      }
+    }
+    
+    
+    
+    
+    
+     
+    async fetchVoucherData() {
+      try {
+        const { pageNumber, pageSize } = this.req.body;
+        const parsedPageNumber = parseInt(pageNumber) || 1;
+        const parsedPageSize = parseInt(pageSize) || 10;
+    
+        const count = await VoucherCode.count({isDeleted:false,status:true});
+        const totalPages = Math.ceil(count / parsedPageSize);
+    
+        const skip = (parsedPageNumber - 1) * parsedPageSize;
+    
+        let data = await VoucherCode.find({isDeleted:false , status:true})
+          .skip(skip)
+          .limit(parsedPageSize)
+          .lean();
+    
+        return this.res.send({
+          status: 1,
+          totalEntries: count,
+          totalPages: totalPages,
+          currentPage: parsedPageNumber,
+          pageSize: parsedPageSize,
+          data: data
+        });
+      } catch (e) {
+        console.log(e, "error");
+        return this.res.send({ status: 0, error: e });
+      }
+    }
+    
+    
+    
+
     
     async getMetaText() {
         let data = [

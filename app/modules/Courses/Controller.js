@@ -6,7 +6,7 @@ const Model = require("../Base/Model");
 const CommonService = require("../../services/Common");
 const RequestBody = require("../../services/RequestBody");
 const { CourseSchema, CartSchema } = require("./Schema");
-const DiscountCoupon = require("../DiscountModule/Schema");
+const DiscountCoupon = require("../DiscountModule/Schema").DiscountCoupon;
 
 const {
   CoursePurchases,
@@ -20,6 +20,7 @@ const mongoose = require("mongoose");
 const Email = require("../../services/Email");
 const fs = require("fs");
 const path = require("path");
+const { VoucherCode } = require("../DiscountModule/Schema");
 
 class CourseController extends Controller {
   constructor() {
@@ -44,9 +45,17 @@ class CourseController extends Controller {
         this.req.body,
         fieldsArray
       );
-
+      let checkIfIsbnExist = await CourseSchema.findOne({isDeleted:false, status:true , isbnNumber : data.isbnNumber});
+      let checkIfProductIdExist = await CourseSchema.findOne({isDeleted:false, status:true , productId : data.productId});
+      if(checkIfIsbnExist || checkIfProductIdExist ){
+        return this.res.send({
+          status: 0,
+          message: i18n.__("DUPLICATE_ISBN_OR_PRODUCTID")
+        });
+      }
       let savedData = await new Model(CourseSchema).store({
         ...data,
+
         createdBy: this.req.currentUser._id,
       });
       return this.res.send({
@@ -57,7 +66,7 @@ class CourseController extends Controller {
       console.log(e);
       return this.res.send({
         status: 0,
-        message: i18n.__("COURSE_NOT_SAVED"),
+        message: i18n.__("COURSE_NOT_SAVED" + "Error -> " , e),
         error: e,
       });
     }
@@ -459,18 +468,21 @@ class CourseController extends Controller {
     });
   }
 
-  async buyCourseInternally(course, currentUser) {
+  async buyCourseInternally(course, currentUser , pdfUrl) {
+    let courseDetail  = await CourseSchema.findOne({_id:course.courseId}).lean();
+    // console.log("received this course",course,"464");
     let newObject = {
       courseId: course.courseId,
-      studentId: this.req.currentUser,
+      studentId: this.req.currentUser._id,
       price: course.price,
     };
-  
+    console.log("pdfurl", pdfUrl);
+  // console.log(469,newObject,469);
     // Check if a matching entry already exists
     let existingEntry = await CoursePurchases.findOne({
       courseId: course.courseId,
       studentId: this.req.currentUser,
-    });
+    }).lean();
   
     if (existingEntry) {
       // Entry already exists, do nothing and return
@@ -478,7 +490,84 @@ class CourseController extends Controller {
     }
   
     // Entry does not exist, store the new object
-    let savedData = await new Model(CoursePurchases).store(newObject);
+    let savedData = await CoursePurchases.create({      courseId: course.courseId,
+      studentId: this.req.currentUser._id,
+      price: course.price,});
+    // console.log("savedData 484" , savedData,"savedData 484");
+    try{
+          // course = await CourseSchema.findById().lean();
+    course = await CourseSchema.findById(course.courseId).lean();
+    // console.log("Created this 488" ,course,"Created this 488");
+
+
+
+    // let isDeleting = false; // Flag to indicate if deletion is in progress
+
+    if(course.group=="writeAndImprove"){
+      let voucherCode = await VoucherCode.findOne({isDeleted:false , status : true}).lean();
+      // console.log(voucherCode.voucherCode,"voucherCode 751");
+      let emailData = {
+        emailId: this.req.currentUser.email,
+        emailKey: 'write_and_improve_special',
+        replaceDataObj: { voucherCode  : voucherCode.voucherCode , pdfUrl : pdfUrl }
+    };
+    let ccrecepient = config.clientinvoicebccmailid ; 
+
+    if(voucherCode && voucherCode.voucherCode ){
+      const sendingMail = await new Email().sendMail(emailData,ccrecepient);
+    if (sendingMail) {
+      // isDeleting = true; // Set the flag to indicate deletion is in progress
+
+      // ...
+  
+      // Delete the sent voucher from DB
+     let deleteVoucher = await VoucherCode.findOneAndUpdate({ _id: voucherCode._id },{
+      isDeleted:true
+     });
+  
+      // console.log("deleted ", voucherCode._id);
+  
+      // // Reset the flag after deletion is complete
+      // isDeleting = false;
+
+
+        if (sendingMail.status == 0) {
+            return _this.res.send(sendingMail);
+        } else if (!sendingMail.response) {
+            return this.res.send({ status: 0, message: i18n.__("SERVER_ERROR") });
+        }
+    }
+    }
+    }
+    else{
+      let emailData = {
+        emailId: this.req.currentUser.email,
+        emailKey: "invoice_mail",
+        replaceDataObj: {
+          pdfUrl:pdfUrl,
+          name:this.req.currentUser.firstName + this.req.currentUser.lastName,
+          courseName : courseDetail.title
+        },
+      };
+      let ccrecepient = config.clientinvoicebccmailid ; 
+      const sendingMail = await new Email().sendMail(emailData ,ccrecepient );
+
+      if (sendingMail && sendingMail.status === 0) {
+        return this.res.send({status:0, message:"failure"});
+      }
+      if (sendingMail && !sendingMail.response) {
+        return this.res.send({
+          status: 0,
+          message: i18n.__("SERVER_ERROR"),
+        });
+      }
+    }
+    }catch(e){
+      console.log(e,"e");
+      return e;
+    }
+
+
     return;
   }
   
@@ -500,7 +589,7 @@ class CourseController extends Controller {
     let result = [];
     let pdf;
     let finaliseInvoice = {};
-    let coupon = await DiscountCoupon.findOne({isDeleted:false,discountCode:data.coupon})  ;
+    let coupon = await DiscountCoupon.findOne({isDeleted:false,discountCode:data.coupon}).lean()  ;
     if(coupon && !coupon.stripeCouponCode){return this.res.send({status:0 , message:"Invalid discount code"}) }
     data.coupon =  coupon && coupon.stripeCouponCode ? coupon.stripeCouponCode : "";
     let detailsToStoreInPaymentHistory = {
@@ -518,16 +607,18 @@ class CourseController extends Controller {
       data.paymentObject.status == "succeeded"
     ) {
       //buying internally
-      await Promise.all(
-        data.courseDetails.map(async (course) => {
-          // Subtract the discount percentage from the course price
-          const discountedPrice = (coupon && coupon.discountPercentage) ? course.price - (course.price * coupon.discountPercentage) / 100 : 0;
+      for (const course of data.courseDetails) {
+        // Subtract the discount percentage from the course price
+        console.log(coupon);
+        const discountedPrice = (coupon && coupon.discountPercentage) ? course.price - (course.price * coupon.discountPercentage) / 100 : course.price;
       
-          // Update the course object with the discounted price
-          const updatedCourse = { ...course, price: discountedPrice };
-          await this.buyCourseInternally(updatedCourse, this.req.currentUser._id);
-        })
-      );
+        // Update the course object with the discounted price
+        const updatedCourse = { ...course, price: coupon ? discountedPrice : course.price };
+        console.log(561, updatedCourse, 561);
+      
+        await this.buyCourseInternally(updatedCourse, this.req.currentUser._id, data.pdfUrl);
+      }
+      
       //buying externally with magic
 
       await Promise.all(
@@ -678,7 +769,11 @@ class CourseController extends Controller {
     //     message:i18n.__('SAVED_DETAILS'),
     //     data: pdf,
     //   });
-  }}
+  }
+  else{
+    return this.res.send({status:1, message:"Payment failed"});
+  }
+}
 
   async updateCartAfterPurchase(student, courseIds) {
     try {
@@ -727,7 +822,7 @@ class CourseController extends Controller {
       let course = await CourseSchema.findById(data.courseId);
       let checkIfExist = await CoursePurchases.findOne(newObject).populate(
         "courseId"
-      );
+      ).lean();
       if (checkIfExist) {
         return this.res.send({
           status: 0,
@@ -746,6 +841,30 @@ class CourseController extends Controller {
         isbn: course.isbnNumber,
       };
       await this.assignCourse(dataToSendToRegister);
+      if(course.group=="writeAndImprove"){
+      let voucherCode = await VoucherCode.findOne({isDeleted:false}).limit(1).lean();
+      console.log(voucherCode.voucherCode,"voucherCode 751");
+      let emailData = {
+        emailId: this.req.currentUser.email,
+        emailKey: 'write_and_improve_special',
+        replaceDataObj: { voucherCode  : voucherCode.voucherCode }
+    };
+
+    if(voucherCode.voucherCode){
+      const sendingMail = await new Email().sendMail(emailData);
+    if (sendingMail) {
+      //delete the sent voucher from DB
+      await VoucherCode.findOneAndUpdate({_id:voucherCode._id},{isDeleted:true})
+        if (sendingMail.status == 0) {
+            return _this.res.send(sendingMail);
+        } else if (!sendingMail.response) {
+            return this.res.send({ status: 0, message: i18n.__("SERVER_ERROR") });
+        }
+    }
+    }
+      }
+
+
       return this.res.send({
         status: 1,
         message: i18n.__("COURSE_PURCHASE_SAVED"),
