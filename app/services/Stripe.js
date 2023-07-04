@@ -14,6 +14,7 @@ class StripeService {
   async createPaymentIntent({ amount, currency }) {
     try {
       const admin = await Admin.findOne().lean();
+      console.log(admin);
       let stripeClientSecret = admin.clientSecret;
       console.log(stripeClientSecret);
       const stripe = require("stripe")(stripeClientSecret);
