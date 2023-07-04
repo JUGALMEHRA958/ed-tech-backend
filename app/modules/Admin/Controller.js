@@ -524,7 +524,7 @@ async createDiscountGroup() {
     fieldsArray = [...fieldsArray];
     let data = await (new RequestBody()).processRequestBody(this.req.body, fieldsArray);
     console.log("Data",data);  
-    let checkIfDiscountCodeExist = await DiscountCoupon.findOne({discountCode:data.discountCode});
+    let checkIfDiscountCodeExist = await DiscountCoupon.findOne({discountCode:data.discountCode , isDeleted:false});
     if(checkIfDiscountCodeExist){return this.res.send({ status: 0, message: "Duplicate discount code" });}
     // let couponCodeFromStripe = await new StripeService().createDiscountCoupon(data.discountCode , data.discountPercentage);
     // console.log(couponCodeFromStripe);
