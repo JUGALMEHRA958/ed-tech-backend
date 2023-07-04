@@ -355,7 +355,7 @@ class AdminController extends Controller {
           let newArray = [];
           for (let i = 0; i < details.length; i++) {
             const taxRate = 0.18; // 18% tax rate
-            const total = (details[i].paymentObject.amount/100); // Total amount including tax
+            const total = (details[i].totalPrice); // Total amount including tax
 
             const amountBeforeTax = total / (1 + taxRate); // Calculate amount before tax
             const taxAmount = total - amountBeforeTax; // Calculate tax amount
