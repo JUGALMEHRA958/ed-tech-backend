@@ -858,7 +858,7 @@ class StudentsController extends Controller {
         "deviceToken",
         "device",
       ]);
-      const user = await Students.findOne({
+      let user = await Students.findOne({
         email: this.req.body.email.toString().toLowerCase(),
         isDeleted: false,
       });
