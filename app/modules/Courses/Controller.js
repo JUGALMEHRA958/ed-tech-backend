@@ -590,7 +590,7 @@ class CourseController extends Controller {
     let pdf;
     let finaliseInvoice = {};
     let coupon = await DiscountCoupon.findOne({isDeleted:false,discountCode:data.coupon}).lean()  ;
-    if(coupon && !coupon.stripeCouponCode){return this.res.send({status:0 , message:"Invalid discount code"}) }
+    // if(coupon && !coupon.stripeCouponCode){return this.res.send({status:0 , message:"Invalid discount code"}) }
     data.coupon =  coupon && coupon.stripeCouponCode ? coupon.stripeCouponCode : "";
     let detailsToStoreInPaymentHistory = {
       studentId: this.req.currentUser._id,
