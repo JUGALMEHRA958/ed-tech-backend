@@ -357,9 +357,10 @@ class AdminController extends Controller {
             const taxRate = 0.18; // 18% tax rate
             const total = (details[i].totalPrice); // Total amount including tax
 
-            const amountBeforeTax = total / (1 + taxRate); // Calculate amount before tax
-            const taxAmount = total - amountBeforeTax; // Calculate tax amount
-            
+            let amountBeforeTax = total / (1 + taxRate); // Calculate amount before tax
+            let taxAmount = total - amountBeforeTax; // Calculate tax amount
+            amountBeforeTax = amountBeforeTax.toFixed(2);
+            taxAmount = taxAmount.toFixed(2);  
             
             newArray.push({
               paymentStatus:details[i].paymentStatus,
