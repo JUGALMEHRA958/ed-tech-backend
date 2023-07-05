@@ -21,6 +21,7 @@ const DiscountCoupon = require("../DiscountModule/Schema").DiscountCoupon;
 const { PaymentHistoryStripe } = require("../CoursePurchase/Schema");
 const { Admin } = require("../Admin/Schema");
 const Invoice = require("../../services/Invoice");
+const mongoose = require("mongoose");
 const axios = require("axios").default;
 const CourseSchema = require("../Courses/Schema").CourseSchema;
 class StudentsController extends Controller {
@@ -1621,7 +1622,10 @@ class StudentsController extends Controller {
 
   async getEnrolledCoursesOfStudent() {
     try {
-      const enrollmentHistory = await CoursePurchases.find({ studentId: this.req.currentUser._id })
+      if(!this.req.body.studentId){
+        return this.res.status(500).json({ status: 0, message: 'studentId missing' });
+      }
+      const enrollmentHistory = await CoursePurchases.find({ studentId: this.req.body.studentId })
         .populate("courseId")
         .lean();
   
