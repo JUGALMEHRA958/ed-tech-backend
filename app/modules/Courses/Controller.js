@@ -86,13 +86,46 @@ class CourseController extends Controller {
 
       let totalPages = Math.ceil(totalCount / data.pageSize);
 
-      let courseData = await CourseSchema.find({
-        isDeleted: false,
-        status: true,
-      })
-        .sort({ createdAt: -1 }) // Sort by timestamp in descending order
-        .limit(data.pageSize)
-        .skip((data.pageNumber - 1) * data.pageSize);
+      const courseData = await CourseSchema.aggregate([
+        {
+          $match: {
+            isDeleted: false,
+            status: true
+          }
+        },
+        {
+          $sort: {
+            createdAt: -1
+          }
+        },
+        {
+          $skip: (data.pageNumber - 1) * data.pageSize
+        },
+        {
+          $limit: data.pageSize
+        },
+        {
+          $lookup: {
+            from: "purchases",
+            localField: "_id",
+            foreignField: "courseId",
+            as: "purchases"
+          }
+        },
+        {
+          $addFields: {
+            purchaseCount: { $size: "$purchases" }
+          }
+        },
+        {
+          $project: {
+            purchases: 0
+          }
+        }
+      ]);
+      
+      
+      
 
       return this.res.send({
         status: 1,

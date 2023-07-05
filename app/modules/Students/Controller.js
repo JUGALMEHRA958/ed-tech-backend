@@ -1618,6 +1618,30 @@ class StudentsController extends Controller {
     }
   }
 
+
+  async getEnrolledCoursesOfStudent() {
+    try {
+      const enrollmentHistory = await CoursePurchases.find({ studentId: this.req.currentUser._id })
+        .populate("courseId")
+        .lean();
+  
+      const data = enrollmentHistory
+        .filter(enrollment => enrollment.courseId) // Filter out any entries without courseId
+        .map(enrollment => ({
+          ...enrollment.courseId,
+          purchasedAt: enrollment.createdAt
+        }));
+  
+      return this.res.send({ status: 1, data });
+    } catch (error) {
+      console.error(error);
+      return this.res.status(500).json({ status: 0, error: 'Internal server error' });
+    }
+  }
+  
+  
+
+
   static async asyncForEach(array, callback) {
     for (let index = 0; index < array.length; index++) {
       await callback(array[index], index, array);
