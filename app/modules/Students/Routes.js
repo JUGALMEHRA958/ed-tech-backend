@@ -156,9 +156,10 @@ module.exports = (app, express) => {
     }
   );
 
-  router.get(
+  router.post(
     "/students/getEnrolledCoursesOfStudent",
-    Globals.isAuthorised,
+    Validators.getEnrolledCoursesOfStudentValidator(),
+    Globals.isAdminAuthorised(),
     (req, res, next) => {
       const userObj = new StudentsController().boot(req, res);
       return userObj.getEnrolledCoursesOfStudent();

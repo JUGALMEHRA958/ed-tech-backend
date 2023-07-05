@@ -394,7 +394,7 @@
             }
         },
         "/students/getEnrolledCoursesOfStudent": {
-            "get": {
+            "post": {
                 "tags": [
                     "students"
                 ],
@@ -406,6 +406,14 @@
                         "in": "header",
                         "description": "Authorization token",
                         "type": "string"
+                    },{
+                        "name": "body",
+                        "required": true,
+                        "in": "body",
+                        "description": "StudentId",
+                        "schema": {
+                            "$ref": "#/definitions/socialAccess"
+                        }
                     }
                 ],
                 "produces": [
@@ -728,6 +736,54 @@
             ],
             "properties": {
                 "socialId": {
+                    "type": "string",
+                    "example": "123456789",
+                    "uniqueItems": true
+                },
+                "socialKey": {
+                    "type": "string",
+                    "example": "fbId or googleId or twitterId or InstagramId",
+                    "uniqueItems": true
+                },
+                "emailId": {
+                    "type": "string",
+                    "example": "lakshmi@grr.la",
+                    "uniqueItems": true
+                },
+                "mobile": {
+                    "type": "string",
+                    "example": "000000000",
+                    "uniqueItems": true
+                },
+                "lastname": {
+                    "example": "lakshmi",
+                    "type": "string"
+                },
+                "firstname": {
+                    "example": "matta",
+                    "type": "string"
+                },
+                "username": {
+                    "example": "lakshmi_matta",
+                    "type": "string",
+                    "uniqueItems": true
+                },
+                "deviceToken": {
+                    "type": "string",
+                    "example": "Nadia"
+                },
+                "device": {
+                    "type": "string",
+                    "example": "android"
+                }
+            }
+        },
+        "GetEnrolledCoursesOfStudentHistory": {
+            "required": [
+                "studentId"
+            ],
+            "properties": {
+                "studentId": {
                     "type": "string",
                     "example": "123456789",
                     "uniqueItems": true
