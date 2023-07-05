@@ -412,7 +412,7 @@
                         "in": "body",
                         "description": "StudentId",
                         "schema": {
-                            "$ref": "#/definitions/socialAccess"
+                            "$ref": "#/definitions/GetEnrolledCoursesOfStudentHistory"
                         }
                     }
                 ],
