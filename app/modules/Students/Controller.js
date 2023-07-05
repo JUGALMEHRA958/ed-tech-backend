@@ -1633,7 +1633,9 @@ class StudentsController extends Controller {
         .filter(enrollment => enrollment.courseId) // Filter out any entries without courseId
         .map(enrollment => ({
           ...enrollment.courseId,
-          purchasedAt: enrollment.createdAt
+          purchasedAt: enrollment.createdAt,
+          soldPrice: enrollment.price
+
         }));
   
       return this.res.send({ status: 1, data });
