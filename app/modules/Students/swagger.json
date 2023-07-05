@@ -393,6 +393,31 @@
                 }
             }
         },
+        "/students/getEnrolledCoursesOfStudent": {
+            "get": {
+                "tags": [
+                    "students"
+                ],
+                "description": "Get student's enrollment history",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "required": true,
+                        "in": "header",
+                        "description": "Authorization token",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
         "/students/refreshAccessToken": {
             "get": {
                 "tags": [
