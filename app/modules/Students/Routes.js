@@ -156,5 +156,14 @@ module.exports = (app, express) => {
     }
   );
 
+  router.get(
+    "/students/getEnrolledCoursesOfStudent",
+    Globals.isAuthorised,
+    (req, res, next) => {
+      const userObj = new StudentsController().boot(req, res);
+      return userObj.getEnrolledCoursesOfStudent();
+    }
+  );
+
   app.use(config.baseApiUrl, router);
 };
