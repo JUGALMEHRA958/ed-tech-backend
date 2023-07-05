@@ -219,6 +219,16 @@ class Validators {
       return error;
     }
   }
+
+  static getEnrolledCoursesOfStudentValidator() {
+    try {
+      return [
+          check('studentId').exists().withMessage(i18n.__("%s REQUIRED", 'studentId'))
+      ];
+  } catch (error) {
+        return error;
+    }
+}
   /********************************************************
      Purpose:Function for update user validator
      Parameter:
@@ -250,6 +260,7 @@ class Validators {
       return error;
     }
   }
+  
   static validate(req, res, next) {
     try {
       const errors = validationResult(req);
