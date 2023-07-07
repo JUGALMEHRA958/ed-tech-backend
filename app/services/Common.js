@@ -538,6 +538,9 @@ class Common {
                     },
                     {
                         $match: filter // Add the filter as a $match stage in the pipeline
+                    },
+                    {
+                        $sort: { createdAt: -1 } // 1 for ascending order, -1 for descending order
                     }
                 ]);
 
