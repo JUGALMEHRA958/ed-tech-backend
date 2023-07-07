@@ -565,7 +565,7 @@ class Common {
             try {
                 let bodyData = data.bodyData;
                 let model = data.bodyData.model;
-                let columns = bodyData && bodyData.columns ? bodyData.columns : ['studentId', 'courseIsbn', 'courseName', 'category', 'purchaseDate','amountBeforeTax','tax','total'];
+                let columns = bodyData && bodyData.columns ? bodyData.columns : ['studentEmail','studentName' ,'studentId', 'courseIsbn', 'courseName', 'category','couponCode','discountPercentage', 'purchaseDate','amountBeforeTax','tax','total'];
                 let filter = bodyData && bodyData.filter ? bodyData.filter : { isDeleted: false , status:true };
                 // filter = await this.constructFilter({ filter });
                 // const records = await Students.find(filter).lean();
@@ -578,7 +578,7 @@ class Common {
                 let studentDetail = await Students.findById( details[i].studentId);
                 //  let {amountBeforeTax , tax} = this.calculateGST(details[i].courseId.price) ;
                  // console.log(amountBeforeTax,"amountBeforeTax");
-                 let tax = (18/100)*details[i].courseId.price;
+                 let tax = (details[i] && details[i].courseId) ? (18/100)*details[i].courseId.price :0;
                  newArray.push({
                      studentId:details[i].studentId,
                      studentName: studentDetail ? studentDetail.firstName + " " + studentDetail.lastName : "",
