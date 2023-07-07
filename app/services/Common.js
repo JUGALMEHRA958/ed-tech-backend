@@ -523,6 +523,10 @@ class Common {
                  filter = await this.constructFilter({ filter });
 
                 let students = await Students.aggregate([
+                    
+                    {
+                        $sort: { createdAt: -1 } // 1 for ascending order, -1 for descending order
+                    },
                     {
                         $lookup: {
                             from: 'purchases',
@@ -538,9 +542,6 @@ class Common {
                     },
                     {
                         $match: filter // Add the filter as a $match stage in the pipeline
-                    },
-                    {
-                        $sort: { createdAt: -1 } // 1 for ascending order, -1 for descending order
                     }
                 ]);
                 students = students.map((student) => {
