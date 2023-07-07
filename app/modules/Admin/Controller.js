@@ -306,11 +306,16 @@ class AdminController extends Controller {
           console.log(details,306);
           let newArray = [];
           for (let i = 0; i < details.length; i++) {
+            let studentDetail = await Students.findById( details[i].studentId);
             // let { amountBeforeTax, tax } = this.calculateGST(details[i].courseId.price);
             let tax = (18/100)*details[i].price  ; 
             newArray.push({
               studentId: details[i].studentId,
               courseIsbn: details[i].courseId.isbnNumber,
+              studentName: studentDetail ? studentDetail.firstName + " " + studentDetail.lastName : "",
+              studentEmail: studentDetail ?  studentDetail.email :"",
+              couponCode: details[i].couponCode ? details[i].couponCode :"",
+              discountPercentage: details[i].discountPercentage ? details[i].discountPercentage : "",
               courseName: details[i].courseId.title,
               category: details[i].courseId.category,
               purchaseDate: details[i].createdAt,
