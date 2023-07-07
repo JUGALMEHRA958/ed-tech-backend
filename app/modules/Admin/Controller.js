@@ -67,13 +67,14 @@ class AdminController extends Controller {
         const skip = (pageNumber - 1) * pageSize;
     
         // Determine the sort order based on the sortBy value
-        const sortDirection = sortBy && sortBy.toLowerCase() === "descending" ? -1 : 1;
+        // const sortDirection = sortBy && sortBy.toLowerCase() === "descending" ? -1 : 1;
     
         // Query the database with pagination and sorting
         let students = await Students.aggregate([
+          { $sort: { createdAt: sortBy==='descending' ? -1 : 1 } },
           { $skip: skip },
           { $limit: pageSize },
-          { $sort: { createdAt: sortDirection } },
+          // { $sort: { createdAt: sortBy==='descending' ? -1 : 1 } },
           {
             $lookup: {
               from: 'purchases',
