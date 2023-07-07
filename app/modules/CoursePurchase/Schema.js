@@ -3,20 +3,22 @@ var Schema = require("mongoose").Schema;
 
 const purchaseSchema = new Schema(
   {
-    courseId:{type: Schema.Types.ObjectId, ref: "courses" , default:null},
-    studentId:{type: Schema.Types.ObjectId, ref: "Student" , default:null},
-    createdBy:{type: Schema.Types.ObjectId, ref: "admins" , default:null},
-    updatedBy:{type: Schema.Types.ObjectId, ref: "admins",default:null},
-    status:{type: Boolean, default: true },
-    isDeleted:{type: Boolean, default: false },
-    price:{type: Number, default: 0 },
-    stripePaymentObj:{type: Object, default: {} }
-
+    courseId: { type: Schema.Types.ObjectId, ref: "courses", default: null },
+    studentId: { type: Schema.Types.ObjectId, ref: "Student", default: null },
+    createdBy: { type: Schema.Types.ObjectId, ref: "admins", default: null },
+    updatedBy: { type: Schema.Types.ObjectId, ref: "admins", default: null },
+    status: { type: Boolean, default: true },
+    isDeleted: { type: Boolean, default: false },
+    price: { type: Number, default: 0 },
+    stripePaymentObj: { type: Object, default: {} },
+    couponCode: { type: String, default: null }, // Coupon code field
+    discountPercentage: { type: Number}, // Discount field
   },
   {
     timestamps: true,
   }
 );
+
 
 const paymentHistoryStripeSchema = new Schema(
   { 
