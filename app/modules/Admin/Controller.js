@@ -67,7 +67,7 @@ class AdminController extends Controller {
         const skip = (pageNumber - 1) * pageSize;
     
         // Determine the sort order based on the sortBy value
-        const sortDirection = sortBy === "descending" ? -1 : 1;
+        const sortDirection = sortBy === "descending" ? 1 : -1;
     
         // Query the database with pagination and sorting
         let students = await Students.aggregate([
