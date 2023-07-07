@@ -548,7 +548,7 @@ class CourseController extends Controller {
       return;
     }
     let discountPercent = coupon ? Number(coupon.discountPercentage) : 0;
-    let couponCode = coupon.discountCode ? coupon.discountCode : ""
+    let couponCode = coupon ? coupon.discountCode : ""
     // console.log(discountPercent ,550);
     // Entry does not exist, store the new object
     let savedData = await CoursePurchases.create({
