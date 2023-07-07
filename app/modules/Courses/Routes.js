@@ -66,5 +66,7 @@ module.exports = (app, express) => {
         return courseObj.buyCourseBulk();
     }); 
 
+    
+
     app.use(config.baseApiUrl, router);
 }
