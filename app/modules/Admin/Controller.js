@@ -71,9 +71,10 @@ class AdminController extends Controller {
     
         // Query the database with pagination and sorting
         let students = await Students.aggregate([
+          { $sort: { createdAt: sortBy==='descending' ? -1 : 1 } },
           { $skip: skip },
           { $limit: pageSize },
-          { $sort: { createdAt: sortBy==='descending' ? -1 :1 } },
+          // { $sort: { createdAt: sortBy==='descending' ? -1 : 1 } },
           {
             $lookup: {
               from: 'purchases',
