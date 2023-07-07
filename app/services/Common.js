@@ -593,6 +593,8 @@ class Common {
                      tax:tax,
                      total: details[i].price+tax
      
+
+                     
                  })
                } 
 
