@@ -611,7 +611,7 @@ class Common {
             try {
                 let bodyData = data.bodyData;
                 let model = data.bodyData.model;
-                let columns = bodyData && bodyData.columns ? bodyData.columns : ['title','isbnNumber','productId','category','purchaseCount'];
+                let columns = bodyData && bodyData.columns ? bodyData.columns : ['title','isbnNumber','productId','category','Students enrolled'];
                 let filter = bodyData && bodyData.filter ? bodyData.filter : { isDeleted: false , status:true };
                 // filter = await this.constructFilter({ filter });
                 // const records = await Students.find(filter).lean();
@@ -656,7 +656,7 @@ class Common {
                     'isbnNumber': details[i].isbnNumber,
                     'productId': details[i].productId,
                     'category': details[i].category,
-                    'purchaseCount': details[i].purchaseCount
+                    'Students enrolled': details[i].purchaseCount
                 })
 
                }
