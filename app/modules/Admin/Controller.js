@@ -48,56 +48,62 @@ class AdminController extends Controller {
     }
 
     async getAllUsers() {
-        
-        try {
-            let fieldsArray = ['pageNumber', 'pageSize'];
-            let userData = await (new RequestBody()).processRequestBody(this.req.body, fieldsArray);
-            if(!userData.pageNumber || !userData.pageNumber ){
-                return this.res.send({ status: 0, message: i18n.__("PAGENUMBER_PAGESIZE_MISSING") });
-            }
-            // Extract pageNumber and pageSize from the userData object
-            const { pageNumber, pageSize } = userData;
-            
-            // Query the database to get the total count of documents
-            const totalCount = await Students.count({});
-            // Calculate the skip value based on the pageNumber and pageSize
-            const skip = (pageNumber - 1) * pageSize;
-            
-            // Query the database with pagination
-            let students = await Students.aggregate([
-                { $skip: skip },
-                { $limit: pageSize },
-                {
-                  $lookup: {
-                    from: 'purchases',
-                    localField: '_id',
-                    foreignField: 'studentId',
-                    as: 'courseCount'
-                  }
-                },
-                {
-                  $addFields: {
-                    courseCount: { $size: '$courseCount' }
-                  }
-                },
-                {
-                    $sort: { createdAt: -1 } // 1 for ascending order, -1 for descending order
-                }
-              ]);
-            const totalPages = Math.ceil(totalCount / pageSize);
-
-            return this.res.send({
-              status: 1,
-              students: students,
-              totalEntries: totalCount,
-              totalPages: totalPages,
-            });
-            
-        } catch (error) {
-            console.log('error', error);
-            this.res.send({ status: 0, message: error });
+      try {
+        let fieldsArray = ['pageNumber', 'pageSize', 'sortBy'];
+        let userData = await (new RequestBody()).processRequestBody(this.req.body, fieldsArray);
+    
+        // Check if pageNumber and pageSize are present in userData
+        if (!userData.pageNumber || !userData.pageSize) {
+          return this.res.send({ status: 0, message: i18n.__("PAGENUMBER_PAGESIZE_MISSING") });
         }
+    
+        // Extract pageNumber and pageSize from the userData object
+        const { pageNumber, pageSize, sortBy } = userData;
+    
+        // Query the database to get the total count of documents
+        const totalCount = await Students.count({});
+    
+        // Calculate the skip value based on the pageNumber and pageSize
+        const skip = (pageNumber - 1) * pageSize;
+    
+        // Determine the sort order based on the sortBy value
+        const sortDirection = sortBy === "descending" ? -1 : 1;
+    
+        // Query the database with pagination and sorting
+        let students = await Students.aggregate([
+          { $skip: skip },
+          { $limit: pageSize },
+          { $sort: { createdAt: sortDirection } },
+          {
+            $lookup: {
+              from: 'purchases',
+              localField: '_id',
+              foreignField: 'studentId',
+              as: 'courseCount'
+            }
+          },
+          {
+            $addFields: {
+              courseCount: { $size: '$courseCount' }
+            }
+          }
+        ]);
+    
+        const totalPages = Math.ceil(totalCount / pageSize);
+    
+        return this.res.send({
+          status: 1,
+          students: students,
+          totalEntries: totalCount,
+          totalPages: totalPages,
+        });
+    
+      } catch (error) {
+        console.log('error', error);
+        this.res.send({ status: 0, message: error });
+      }
     }
+    
 
     async getstudentById() {
         if(!this.req.body.id){
