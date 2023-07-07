@@ -591,7 +591,7 @@ class Common {
                      purchaseDate:details[i].createdAt,
                      amountBeforeTax : details[i].price,
                      tax:tax,
-                     total: details[i].courseId.price+tax
+                     total: details[i].price+tax
      
                  })
                } 
