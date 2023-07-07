@@ -661,7 +661,7 @@ class Common {
 
                }
 
-                const file = await (new File()).convertJsonToCsv({ jsonData: newArray, columns, fileName: 'userList', ext: data.ext });
+                const file = await (new File()).convertJsonToCsv({ jsonData: newArray, columns, fileName: 'product_list', ext: data.ext });
                 resolve({ status: 1, data: file });
             } catch (error) {
                 reject(error);
