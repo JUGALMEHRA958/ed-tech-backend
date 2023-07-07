@@ -578,7 +578,7 @@ class Common {
                 let studentDetail = await Students.findById( details[i].studentId);
                 //  let {amountBeforeTax , tax} = this.calculateGST(details[i].courseId.price) ;
                  // console.log(amountBeforeTax,"amountBeforeTax");
-                 let tax = (details[i] && details[i].courseId) ? (18/100)*details[i].courseId.price :0;
+                 let tax = (details[i] && details[i].courseId) ? (18/100)*details[i].price :0;
                  newArray.push({
                      studentId:details[i].studentId,
                      studentName: studentDetail ? studentDetail.firstName + " " + studentDetail.lastName : "",
@@ -589,7 +589,7 @@ class Common {
                      courseName:details[i].courseId.title,
                      category:details[i].courseId.category,
                      purchaseDate:details[i].createdAt,
-                     amountBeforeTax : details[i].courseId.price,
+                     amountBeforeTax : details[i].price,
                      tax:tax,
                      total: details[i].courseId.price+tax
      
