@@ -547,7 +547,7 @@ class CourseController extends Controller {
       // Entry already exists, do nothing and return
       return;
     }
-    let discountPercent = coupon.discountPercentage ? Number(coupon.discountPercentage) : 0;
+    let discountPercent = coupon ? Number(coupon.discountPercentage) : 0;
     let couponCode = coupon.discountCode ? coupon.discountCode : ""
     // console.log(discountPercent ,550);
     // Entry does not exist, store the new object
