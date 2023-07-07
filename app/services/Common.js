@@ -543,7 +543,9 @@ class Common {
                         $sort: { createdAt: -1 } // 1 for ascending order, -1 for descending order
                     }
                 ]);
-
+                students = students.map((student)=>{
+                    student.createdAt = new Date(student.createdAt).toLocaleString();
+                })
                 const file = await (new File()).convertJsonToCsv({ jsonData: students, columns, fileName: 'userList', ext: data.ext });
                 resolve({ status: 1, data: file });
             } catch (error) {
