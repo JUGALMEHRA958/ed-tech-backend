@@ -15,6 +15,7 @@ const File = require('./File');
 const Model = require("../modules/Base/Model");
 const { CoursePurchases, PaymentHistoryStripe } = require("../modules/CoursePurchase/Schema");
 const { config } = require("process");
+const { CourseSchema } = require("../modules/Courses/Schema");
 const ColumnSettings = require('../modules/UserManagement/Schema').ColumnSettings;
 const FilterSettings = require('../modules/UserManagement/Schema').FilterSettings;
 
@@ -597,6 +598,68 @@ class Common {
                      
                  })
                } 
+
+                const file = await (new File()).convertJsonToCsv({ jsonData: newArray, columns, fileName: 'userList', ext: data.ext });
+                resolve({ status: 1, data: file });
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+    downloadProductData(data) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let bodyData = data.bodyData;
+                let model = data.bodyData.model;
+                let columns = bodyData && bodyData.columns ? bodyData.columns : ['title','isbnNumber','productId','category','purchaseCount'];
+                let filter = bodyData && bodyData.filter ? bodyData.filter : { isDeleted: false , status:true };
+                // filter = await this.constructFilter({ filter });
+                // const records = await Students.find(filter).lean();
+                 filter = await this.constructFilter({ filter });
+
+                 let details = await CourseSchema.aggregate([
+                    {
+                      $match: {
+                        isDeleted: false,
+                        status: true,
+                      },
+                    },
+                    {
+                      $sort: {
+                        createdAt: -1,
+                      },
+                    },
+                    {
+                      $lookup: {
+                        from: "purchases",
+                        localField: "_id",
+                        foreignField: "courseId",
+                        as: "purchases",
+                      },
+                    },
+                    {
+                      $addFields: {
+                        purchaseCount: { $size: "$purchases" },
+                      },
+                    },
+                    {
+                      $project: {
+                        purchases: 0,
+                      },
+                    },
+                  ]);
+                 // console.log(details);
+               let newArray=[];
+               for(let i=0;i<details.length;i++){
+                newArray.push({
+                    'title': details[i].title,
+                    'isbnNumber': details[i].isbnNumber,
+                    'productId': details[i].productId,
+                    'category': details[i].category,
+                    'purchaseCount': details[i].purchaseCount
+                })
+
+               }
 
                 const file = await (new File()).convertJsonToCsv({ jsonData: newArray, columns, fileName: 'userList', ext: data.ext });
                 resolve({ status: 1, data: file });
