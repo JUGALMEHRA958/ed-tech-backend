@@ -14,6 +14,7 @@ const RequestBody = require("./RequestBody");
 const File = require('./File');
 const Model = require("../modules/Base/Model");
 const { CoursePurchases, PaymentHistoryStripe } = require("../modules/CoursePurchase/Schema");
+const { config } = require("process");
 const ColumnSettings = require('../modules/UserManagement/Schema').ColumnSettings;
 const FilterSettings = require('../modules/UserManagement/Schema').FilterSettings;
 
@@ -574,11 +575,16 @@ class Common {
                  // console.log(details);
                let newArray=[];
                for(let i=0;i<details.length;i++){
+                let studentDetail = await Students.findById( details[i].studentId);
                 //  let {amountBeforeTax , tax} = this.calculateGST(details[i].courseId.price) ;
                  // console.log(amountBeforeTax,"amountBeforeTax");
                  let tax = (18/100)*details[i].courseId.price;
                  newArray.push({
                      studentId:details[i].studentId,
+                     studentName: studentDetail ? studentDetail.firstName + " " + studentDetail.lastName : "",
+                     studentEmail: studentDetail ?  studentDetail.email :"",
+                     couponCode: details[i].couponCode ? details[i].couponCode :"",
+                     discountPercentage: details[i].discountPercentage ? details[i].discountPercentage : "",
                      courseIsbn:details[i].courseId.isbnNumber,
                      courseName:details[i].courseId.title,
                      category:details[i].courseId.category,
@@ -613,7 +619,7 @@ class Common {
 
           let newArray = [];
           for (let i = 0; i < details.length; i++) {
-            const taxRate = 0.18; // 18% tax rate
+            const taxRate = (config.sgstrate && config.cgst) ? ( (config.sgstrate + config.cgst) /100) : 0.18; // 18% tax rate
             const total = (details[i].paymentObject.amount/100); // Total amount including tax
 
             const amountBeforeTax = total / (1 + taxRate); // Calculate amount before tax
