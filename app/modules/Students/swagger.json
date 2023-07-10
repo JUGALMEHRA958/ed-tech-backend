@@ -106,6 +106,32 @@
                 }
             }
         },
+        "/students/resendOtp": {
+            "post": {
+                "tags": [
+                    "students"
+                ],
+                "description": "Login",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Login",
+                        "schema": {
+                            "$ref": "#/definitions/VerifyOtp"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Logged in successfully"
+                    }
+                }
+            }
+        },
         "/students/forgotPassword": {
             "post": {
                 "tags": [
@@ -627,6 +653,18 @@
                 "otp": {
                     "type": "number",
                     "example": 169857,
+                    "uniqueItems": true
+                }
+            }
+        },
+        "VerifyOtp": {
+            "required": [
+                "email"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "neha.bhavsar@indianic.com",
                     "uniqueItems": true
                 }
             }

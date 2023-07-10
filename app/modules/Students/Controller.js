@@ -232,12 +232,54 @@ class StudentsController extends Controller {
                 let lastSeen = new Date();
                 let updateLastSeen  = await Students.findOneAndUpdate({_id:newUserId._id},{lastSeen:lastSeen,isOtpVerfied:true}).lean()
                 console.log(updateLastSeen);
+                let deleteOtpFromDb = await EmailOTP.deleteOne({ email , otp });
                 return this.res.send({status:1, token, refreshToken})
     }catch(e){
       console.log(e);
       return this.res.send({status:0, message:e})
     }
   }
+  async resendOtp() {
+    try {
+      const { email } = this.req.body;
+  
+      // Delete any existing OTP entry for the same email
+      await EmailOTP.deleteMany({ email });
+  
+      // Generate a new OTP
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  
+      // Set the OTP expiry date (e.g., 10 minutes from now)
+      const expiryDate = new Date(Date.now() + 10 * 60 * 1000);
+  
+      // Save the OTP entry to the database
+      const otpEntry = await new Model(EmailOTP).store({ email: email, otp, expiryDate });
+  
+      // Send the OTP to the user via email
+      let emailData = {
+        emailId: email,
+        emailKey: 'otp_mail',
+        replaceDataObj: { otp: otp }
+      };
+  
+      const sendingMail = await new Email().sendMail(emailData);
+  
+      if (sendingMail) {
+        if (sendingMail.status == 0) {
+          return _this.res.send(sendingMail);
+        } else if (!sendingMail.response) {
+          return this.res.send({ status: 0, message: i18n.__("SERVER_ERROR") });
+        }
+      }
+  
+      return this.res.status(200).json({ status: 1, message: "OTP resent successfully" });
+    } catch (e) {
+      console.log(e);
+      return this.res.status(500).json({ status: 0, message: "Internal server error" });
+    }
+  }
+  
+  
   /***********************************
         Purpose: students export
         Return: file path
@@ -945,6 +987,40 @@ class StudentsController extends Controller {
       }).select(userProjection.user).lean();
       console.log(updatedUser,"updatedUser 893");
       
+      if (updatedUser && updatedUser.isOtpVerfied!==true) {
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+        // Set the OTP expiry date (e.g., 10 minutes from now)
+        const expiryDate = new Date(Date.now() + 10 * 60 * 1000);
+        //delete if older one exist so latest one deliver
+        await EmailOTP.deleteMany({ email : this.req.body.email });
+
+        // Save the OTP entry to the database
+        const otpEntry = await new Model(EmailOTP).store({ email: this.req.body.email, otp, expiryDate });
+        let emailData = {
+          emailId: updatedUser.email,
+          emailKey: 'otp_mail',
+          replaceDataObj: { otp: otp }
+        };
+
+        const sendingMail = await new Email().sendMail(emailData);
+        if (sendingMail) {
+          if (sendingMail.status == 0) {
+            return _this.res.send(sendingMail);
+          } else if (!sendingMail.response) {
+            return this.res.send({ status: 0, message: i18n.__("SERVER_ERROR") });
+          }
+        }
+        return this.res.send({
+          status: 1,
+          message: i18n.__("OTP_SENT_TO_YOUR_MAIL"),
+          // token: token,
+          // refreshToken: refreshToken,
+          data: updatedUser,
+          isEmailVerified:false,
+          stripeDetail
+        });
+      }
 
       if (Config.useRefreshToken && Config.useRefreshToken == "true") {
         let { token, refreshToken } =
