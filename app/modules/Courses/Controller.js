@@ -588,12 +588,18 @@ class CourseController extends Controller {
         );
         if (sendingMail) {
           // Delete the sent voucher from DB
-          let deleteVoucher = await VoucherCode.findOneAndUpdate(
-            { _id: voucherCode._id },
-            {
-              isDeleted: true,
-            }
-          );
+          if(voucherCode){
+            await VoucherCode.findOneAndUpdate(
+              { _id: voucherCode._id },
+              { isDeleted: true }
+            );
+          }
+          // let deleteVoucher = await VoucherCode.findOneAndUpdate(
+          //   { _id: voucherCode._id },
+          //   {
+          //     isDeleted: true,
+          //   }
+          // );
 
           // console.log("deleted ", voucherCode._id);
 
@@ -943,10 +949,12 @@ class CourseController extends Controller {
         const sendingMail = await new Email().sendMail(emailData);
         if (sendingMail) {
           //delete the sent voucher from DB
-          await VoucherCode.findOneAndUpdate(
-            { _id: voucherCode._id },
-            { isDeleted: true }
-          );
+          if(voucherCode){
+            await VoucherCode.findOneAndUpdate(
+              { _id: voucherCode._id },
+              { isDeleted: true }
+            );
+          }
           if (sendingMail.status == 0) {
             return _this.res.send(sendingMail);
           } else if (!sendingMail.response) {
