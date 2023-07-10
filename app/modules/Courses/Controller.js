@@ -937,7 +937,7 @@ class CourseController extends Controller {
         let emailData = {
           emailId: this.req.currentUser.email,
           emailKey: "write_and_improve_special",
-          replaceDataObj: { voucherCode: voucherCode.voucherCode },
+          replaceDataObj: { voucherCode:voucherCode ?  voucherCode.voucherCode :"" },
         };
         
         const sendingMail = await new Email().sendMail(emailData);
