@@ -939,7 +939,7 @@ class CourseController extends Controller {
         let voucherCode = await VoucherCode.findOne({ isDeleted: false })
           .limit(1)
           .lean();
-        console.log(voucherCode.voucherCode, "voucherCode 751");
+        
         let emailData = {
           emailId: this.req.currentUser.email,
           emailKey: "write_and_improve_special",
