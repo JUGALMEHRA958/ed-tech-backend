@@ -103,5 +103,6 @@
 	"CAN_NOT_UPDATE_DELETED_GROUP": "Sorry, Can not update because group is deleted",
 	"CAN_NOT_DELETE_GROUP_NOT_FOUND": "Group not found",
 	"SAVED_YOUR_DISCOUNT_GROUP": "Saved your discount group successfully",
-	"DUPLICATE_ISBN_OR_PRODUCTID": "Product id or isbn duplicate"
+	"DUPLICATE_ISBN_OR_PRODUCTID": "Product id or isbn duplicate",
+	"OTP_SENT_TO_YOUR_MAIL":"OTP sent to your mail. Please verify"
 }

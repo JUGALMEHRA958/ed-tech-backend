@@ -992,11 +992,13 @@ class StudentsController extends Controller {
 
         // Set the OTP expiry date (e.g., 10 minutes from now)
         const expiryDate = new Date(Date.now() + 10 * 60 * 1000);
+        //delete if older one exist so latest one deliver
+        await EmailOTP.deleteMany({ email : this.req.body.email });
 
         // Save the OTP entry to the database
         const otpEntry = await new Model(EmailOTP).store({ email: this.req.body.email, otp, expiryDate });
         let emailData = {
-          emailId: newUserId.email,
+          emailId: updatedUser.email,
           emailKey: 'otp_mail',
           replaceDataObj: { otp: otp }
         };
@@ -1011,7 +1013,7 @@ class StudentsController extends Controller {
         }
         return this.res.send({
           status: 1,
-          message: i18n.__("LOGIN_SUCCESS"),
+          message: i18n.__("OTP_SENT_TO_YOUR_MAIL"),
           // token: token,
           // refreshToken: refreshToken,
           data: updatedUser,
