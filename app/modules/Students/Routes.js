@@ -17,6 +17,16 @@ module.exports = (app, express) => {
   );
 
   router.post(
+    "/students/verifyOtp",
+    Validators.verifyotp(),
+    Validators.validate,
+    (req, res, next) => {
+      const userObj = new StudentsController().boot(req, res);
+      return userObj.verifyOtp();
+    }
+  );
+
+  router.post(
     "/students/login",
     Validators.loginValidator(),
     Validators.validate,
