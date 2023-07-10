@@ -193,17 +193,17 @@ class StudentsController extends Controller {
         const otpEntry = await EmailOTP.findOne({ email }).lean();
         // Check if an OTP entry exists for the email
         if (!otpEntry) {
-          return this.res.status(404).json({ error: "OTP not found for the provided email" });
+          return this.res.status(404).json({ status:0 , message: "OTP not found for the provided email" });
         }
     
         // Check if the OTP matches
         if (otpEntry.otp !== otp) {
-          return this.res.status(400).json({ error: "Invalid OTP" });
+          return this.res.status(400).json({ status:0 , message: "Invalid OTP" });
         }
     
         // Check if the OTP has expired
         if (otpEntry.expiryDate < new Date()) {
-          return this.res.status(400).json({ error: "OTP has expired" });
+          return this.res.status(400).json({ status:0 , message: "OTP has expired" });
         }
         let newUserId = await Students.findOneAndUpdate({email:otpEntry.email , isOtpVerfied:true})
         //now normal flow continue ignore code from here
