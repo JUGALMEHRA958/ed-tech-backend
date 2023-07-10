@@ -22,6 +22,7 @@ const { PaymentHistoryStripe } = require("../CoursePurchase/Schema");
 const { Admin } = require("../Admin/Schema");
 const Invoice = require("../../services/Invoice");
 const mongoose = require("mongoose");
+const { EmailOTP } = require("./Schema");
 const axios = require("axios").default;
 const CourseSchema = require("../Courses/Schema").CourseSchema;
 class StudentsController extends Controller {
@@ -147,37 +148,33 @@ class StudentsController extends Controller {
             );
           }
           //magic registration ended
-          //STRIPE CUSTOMER REGISTERATION
-          let stripeObj = await new StripeService().createStripeUser(newUserId.email);
-          // console.log(stripeObj,"stripeObj");
-          if(stripeObj && stripeObj.status==1 && stripeObj.data.id){
-            newUserId = await Students.findOneAndUpdate({_id:newUserId._id} , {stripeCustomerId:stripeObj.data.id },{new:true})
-          }
-          let { token, refreshToken } =
-            await new Globals().getTokenWithRefreshToken({ id: newUserId._id });
-            let emailData = {
-              emailId: newUserId.email,
-              emailKey: 'signup_mail',
-              replaceDataObj: { fullName: newUserId.firstName + " " + newUserId.lastName}
-          };
+          const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-          const sendingMail = await new Email().sendMail(emailData);
-          if (sendingMail) {
-              if (sendingMail.status == 0) {
-                  return _this.res.send(sendingMail);
-              } else if (!sendingMail.response) {
-                  return this.res.send({ status: 0, message: i18n.__("SERVER_ERROR") });
-              }
-          }
-          let lastSeen = new Date();
-          let updateLastSeen  = await Students.findOneAndUpdate({_id:newUserId._id},{lastSeen:lastSeen})
-          console.log(updateLastSeen);
+          // Set the OTP expiry date (e.g., 10 minutes from now)
+          const expiryDate = new Date(Date.now() + 10 * 60 * 1000);
+      
+          // Save the OTP entry to the database
+          const otpEntry = await new Model(EmailOTP).store({ email : this.req.body.email, otp, expiryDate });
+          let emailData = {
+            emailId: newUserId.email,
+            emailKey: 'otp_mail',
+            replaceDataObj: { otp:otp}
+        };
+
+        const sendingMail = await new Email().sendMail(emailData);
+        if (sendingMail) {
+            if (sendingMail.status == 0) {
+                return _this.res.send(sendingMail);
+            } else if (!sendingMail.response) {
+                return this.res.send({ status: 0, message: i18n.__("SERVER_ERROR") });
+            }
+        }
           return this.res.send({
             status: 1,
             message: i18n.__("REGISTRATION_SCUCCESS"),
             data: newUserId,
-            token: token,
-            refreshToken: refreshToken,
+            // token: token,
+            // refreshToken: refreshToken,
             stripeDetail
           });
         }
@@ -186,6 +183,59 @@ class StudentsController extends Controller {
       console.log("error = ", error);
       // transaction.rollback();
       this.res.send({ status: 0, message: error });
+    }
+  }
+  async verifyOtp(){
+    try{
+      const { email, otp } = this.req.body;
+
+        // Find the OTP entry based on the provided email
+        const otpEntry = await EmailOTP.findOne({ email }).lean();
+        // Check if an OTP entry exists for the email
+        if (!otpEntry) {
+          return this.res.status(404).json({ error: "OTP not found for the provided email" });
+        }
+    
+        // Check if the OTP matches
+        if (otpEntry.otp !== otp) {
+          return this.res.status(400).json({ error: "Invalid OTP" });
+        }
+    
+        // Check if the OTP has expired
+        if (otpEntry.expiryDate < new Date()) {
+          return this.res.status(400).json({ error: "OTP has expired" });
+        }
+        let newUserId = await Students.findOneAndUpdate({email:otpEntry.email , isOtpVerfied:true})
+        //now normal flow continue ignore code from here
+                //STRIPE CUSTOMER REGISTERATION
+                let stripeObj = await new StripeService().createStripeUser(newUserId.email);
+                // console.log(stripeObj,"stripeObj");
+                if(stripeObj && stripeObj.status==1 && stripeObj.data.id){
+                  newUserId = await Students.findOneAndUpdate({_id:newUserId._id} , {stripeCustomerId:stripeObj.data.id },{new:true})
+                }
+                let { token, refreshToken } =
+                  await new Globals().getTokenWithRefreshToken({ id: newUserId._id });
+                  let emailData = {
+                    emailId: newUserId.email,
+                    emailKey: 'signup_mail',
+                    replaceDataObj: { fullName: newUserId.firstName + " " + newUserId.lastName}
+                };
+      
+                const sendingMail = await new Email().sendMail(emailData);
+                if (sendingMail) {
+                    if (sendingMail.status == 0) {
+                        return _this.res.send(sendingMail);
+                    } else if (!sendingMail.response) {
+                        return this.res.send({ status: 0, message: i18n.__("SERVER_ERROR") });
+                    }
+                }
+                let lastSeen = new Date();
+                let updateLastSeen  = await Students.findOneAndUpdate({_id:newUserId._id},{lastSeen:lastSeen,isOtpVerfied:true}).lean()
+                console.log(updateLastSeen);
+                return this.res.send({status:1, token, refreshToken})
+    }catch(e){
+      console.log(e);
+      return this.res.send({status:0, message:e})
     }
   }
   /***********************************
