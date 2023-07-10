@@ -27,6 +27,16 @@ module.exports = (app, express) => {
   );
 
   router.post(
+    "/students/resendOtp",
+    Validators.resendOtp(),
+    Validators.validate,
+    (req, res, next) => {
+      const userObj = new StudentsController().boot(req, res);
+      return userObj.resendOtp();
+    }
+  );
+
+  router.post(
     "/students/login",
     Validators.loginValidator(),
     Validators.validate,
