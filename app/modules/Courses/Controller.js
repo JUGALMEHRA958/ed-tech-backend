@@ -576,45 +576,41 @@ class CourseController extends Controller {
           emailId: this.req.currentUser.email,
           emailKey: "write_and_improve_special",
           replaceDataObj: {
-            voucherCode: voucherCode.voucherCode,
+            voucherCode: voucherCode ? voucherCode.voucherCode : "",
             pdfUrl: pdfUrl,
           },
         };
         let ccrecepient = config.clientinvoicebccmailid;
-
-        if (voucherCode && voucherCode.voucherCode) {
-          const sendingMail = await new Email().sendMail(
-            emailData,
-            ccrecepient
-          );
-          if (sendingMail) {
-            // isDeleting = true; // Set the flag to indicate deletion is in progress
-
-            // ...
-
-            // Delete the sent voucher from DB
-            let deleteVoucher = await VoucherCode.findOneAndUpdate(
-              { _id: voucherCode._id },
-              {
-                isDeleted: true,
-              }
-            );
-
-            // console.log("deleted ", voucherCode._id);
-
-            // // Reset the flag after deletion is complete
-            // isDeleting = false;
-
-            if (sendingMail.status == 0) {
-              return _this.res.send(sendingMail);
-            } else if (!sendingMail.response) {
-              return this.res.send({
-                status: 0,
-                message: i18n.__("SERVER_ERROR"),
-              });
+        
+        const sendingMail = await new Email().sendMail(
+          emailData,
+          ccrecepient
+        );
+        if (sendingMail) {
+          // Delete the sent voucher from DB
+          let deleteVoucher = await VoucherCode.findOneAndUpdate(
+            { _id: voucherCode._id },
+            {
+              isDeleted: true,
             }
+          );
+
+          // console.log("deleted ", voucherCode._id);
+
+          // // Reset the flag after deletion is complete
+          // isDeleting = false;
+
+          if (sendingMail.status == 0) {
+            return _this.res.send(sendingMail);
+          } else if (!sendingMail.response) {
+            return this.res.send({
+              status: 0,
+              message: i18n.__("SERVER_ERROR"),
+            });
           }
         }
+        // if (voucherCode && voucherCode.voucherCode) {
+        // }
       } else {
         let emailData = {
           emailId: this.req.currentUser.email,
