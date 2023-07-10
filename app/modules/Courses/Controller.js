@@ -939,25 +939,42 @@ class CourseController extends Controller {
           emailKey: "write_and_improve_special",
           replaceDataObj: { voucherCode: voucherCode.voucherCode },
         };
-
-        if (voucherCode.voucherCode) {
-          const sendingMail = await new Email().sendMail(emailData);
-          if (sendingMail) {
-            //delete the sent voucher from DB
-            await VoucherCode.findOneAndUpdate(
-              { _id: voucherCode._id },
-              { isDeleted: true }
-            );
-            if (sendingMail.status == 0) {
-              return _this.res.send(sendingMail);
-            } else if (!sendingMail.response) {
-              return this.res.send({
-                status: 0,
-                message: i18n.__("SERVER_ERROR"),
-              });
-            }
+        
+        const sendingMail = await new Email().sendMail(emailData);
+        if (sendingMail) {
+          //delete the sent voucher from DB
+          await VoucherCode.findOneAndUpdate(
+            { _id: voucherCode._id },
+            { isDeleted: true }
+          );
+          if (sendingMail.status == 0) {
+            return _this.res.send(sendingMail);
+          } else if (!sendingMail.response) {
+            return this.res.send({
+              status: 0,
+              message: i18n.__("SERVER_ERROR"),
+            });
           }
         }
+      
+        // if (voucherCode.voucherCode) {
+        //   const sendingMail = await new Email().sendMail(emailData);
+        //   if (sendingMail) {
+        //     //delete the sent voucher from DB
+        //     await VoucherCode.findOneAndUpdate(
+        //       { _id: voucherCode._id },
+        //       { isDeleted: true }
+        //     );
+        //     if (sendingMail.status == 0) {
+        //       return _this.res.send(sendingMail);
+        //     } else if (!sendingMail.response) {
+        //       return this.res.send({
+        //         status: 0,
+        //         message: i18n.__("SERVER_ERROR"),
+        //       });
+        //     }
+        //   }
+        // }
       }
 
       return this.res.send({
