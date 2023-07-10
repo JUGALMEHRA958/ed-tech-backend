@@ -986,8 +986,8 @@ class StudentsController extends Controller {
         new: true,
       }).select(userProjection.user).lean();
       console.log(updatedUser,"updatedUser 893");
-      
-      if (updatedUser && updatedUser.isOtpVerfied && updatedUser.isOtpVerfied!==true) {
+      console.log(updatedUser.isOtpVerfied,"updatedUser.isOtpVerfied");
+      if (updatedUser  && updatedUser.isOtpVerfied!==true) {
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
         // Set the OTP expiry date (e.g., 10 minutes from now)
