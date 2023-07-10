@@ -626,7 +626,7 @@
                 },
                 "otp": {
                     "type": "number",
-                    "example": 1698578,
+                    "example": 169857,
                     "uniqueItems": true
                 }
             }
