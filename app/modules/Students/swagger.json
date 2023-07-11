@@ -80,6 +80,58 @@
                 }
             }
         },
+        "/students/verifyOtp": {
+            "post": {
+                "tags": [
+                    "students"
+                ],
+                "description": "Login",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Login",
+                        "schema": {
+                            "$ref": "#/definitions/Login"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Logged in successfully"
+                    }
+                }
+            }
+        },
+        "/students/resendOtp": {
+            "post": {
+                "tags": [
+                    "students"
+                ],
+                "description": "Login",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Login",
+                        "schema": {
+                            "$ref": "#/definitions/VerifyOtp"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Logged in successfully"
+                    }
+                }
+            }
+        },
         "/students/forgotPassword": {
             "post": {
                 "tags": [
@@ -590,7 +642,7 @@
         "Login": {
             "required": [
                 "email",
-                "password"
+                "otp"
             ],
             "properties": {
                 "email": {
@@ -598,9 +650,21 @@
                     "example": "neha.bhavsar@indianic.com",
                     "uniqueItems": true
                 },
-                "password": {
+                "otp": {
+                    "type": "number",
+                    "example": 169857,
+                    "uniqueItems": true
+                }
+            }
+        },
+        "VerifyOtp": {
+            "required": [
+                "email"
+            ],
+            "properties": {
+                "email": {
                     "type": "string",
-                    "example": "Test1234",
+                    "example": "neha.bhavsar@indianic.com",
                     "uniqueItems": true
                 }
             }
