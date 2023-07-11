@@ -103,7 +103,7 @@ class Seed {
                                             <p style="margin:0px;">Thank you for buying the Write & Improve pack! Here is your voucher code:<b>"{{{voucherCode}}}"</b></p>
                                             <p style="margin:0px;">Please follow these simple steps to access the product:</p>
                                             <ul>
-                                               <li>Go to Write & Improve.com</li>
+                                               <li>Go to <a href="https://writeandimprove.com/" target="_self">https://writeandimprove.com </a></li>
                                                <li>Click on ‘Create profile’ on the top right-hand corner of the page</li>
                                                <li>Fill in the form with the required details including your email ID</li>
                                                <li>Click ‘Continue’</li>
@@ -115,7 +115,7 @@ class Seed {
                                                <li>Read all the information and click on ‘Subscribe to +Test Zone’</li>
                                                <li>Click on ‘Do you have a voucher code’</li>
                                                <li>Enter the voucher code in the box provided and click ‘Confirm’</li>
-                                               <li>You will receive an email from Write &amp;amp; Improve which tells you when your subscriptio</li>
+                                               <li>You will receive an email from Write &  Improve which tells you when your subscription</li>
                                                <li>Now you are ready to start practicing for your exam!</li>
                                             </ul>
                                             <p style="margin-top: 26px;"><span style="font-size: 16px;font-weight:600;background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; vertical-align: baseline; white-space-collapse: preserve;">Good luck with your IELTS Test Practice!</span></p>
