@@ -205,7 +205,7 @@ class StudentsController extends Controller {
         if (otpEntry.expiryDate < new Date()) {
           return this.res.status(400).json({ status:0 , message: "OTP has expired" });
         }
-        let newUserId = await Students.findOneAndUpdate({email:otpEntry.email , isOtpVerfied:true})
+        let newUserId = await Students.findOneAndUpdate({email:otpEntry.email},{isOtpVerfied:true})
         //now normal flow continue ignore code from here
                 //STRIPE CUSTOMER REGISTERATION
                 let stripeObj = await new StripeService().createStripeUser(newUserId.email);
