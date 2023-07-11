@@ -336,7 +336,7 @@ class Seed {
                              </tr>
                           </tbody>
                        </table>
-                       <h5>Hi User ! <br>Your otp is {{{otp}}}</h5>
+                       <h5>Hi ! <br>Your otp is {{{otp}}}</h5>
                        <table style="text-align: center;vertical-align: top;background: #ffebc2;" width="600">
                           <tbody>
                              <tr>
