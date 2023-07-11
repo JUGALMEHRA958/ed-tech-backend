@@ -272,9 +272,9 @@ class Seed {
                 await new Model(EmailTemplate).store(registerMail);
             }
             let otpMail = {
-                "emailTitle": "Signup mail",
+                "emailTitle": "OTP mail",
                 'emailKey': "otp_mail",
-                'subject': "Welcome to IELTS Prep Programme",
+                'subject': "OTP from Cambridge",
                 'emailContent': `<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
                 <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:v="urn:schemas-microsoft-com:vml" xmlns="http://www.w3.org/1999/xhtml">
                    <head>
