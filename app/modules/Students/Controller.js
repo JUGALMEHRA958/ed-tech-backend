@@ -171,7 +171,7 @@ class StudentsController extends Controller {
           }
           let lastSeen = new Date();
           let updateLastSeen  = await Students.findOneAndUpdate({_id:newUserId._id},{lastSeen:lastSeen})
-          console.log(updateLastSeen);
+          // console.log(updateLastSeen);
           return this.res.send({
             status: 1,
             message: i18n.__("REGISTRATION_SCUCCESS"),
