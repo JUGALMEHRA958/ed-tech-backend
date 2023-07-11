@@ -31,8 +31,8 @@ const courseSchema = new Schema(
   {
     title: { type: String, require: true },
     description: { type: String, require: true },
-    productId: { type: String, require: true , unique:true },
-    isbnNumber: { type: String, require: true ,unique:true},
+    productId: { type: String, require: true  },
+    isbnNumber: { type: String, require: true },
     picture: { type: String, require: true },
     mrp:{type: Number,},
     group: {

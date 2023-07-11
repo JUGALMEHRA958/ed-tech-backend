@@ -146,6 +146,31 @@ class Validators {
       return error;
     }
   }
+  static verifyotp() {
+    try {
+      return [
+        check("otp")
+          .exists()
+          .withMessage(i18n.__("%s REQUIRED", "otp")),
+        check("email")
+          .exists()
+          .withMessage(i18n.__("%s REQUIRED", "email"))
+      ];
+    } catch (error) {
+      return error;
+    }
+  }
+  static resendOtp() {
+    try {
+      return [
+        check("email")
+          .exists()
+          .withMessage(i18n.__("%s REQUIRED", "email"))
+      ];
+    } catch (error) {
+      return error;
+    }
+  }
   /********************************************************
      Purpose:Function for basic info validator
      Parameter:
