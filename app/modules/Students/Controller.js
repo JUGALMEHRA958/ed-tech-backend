@@ -1780,7 +1780,7 @@ class StudentsController extends Controller {
 
   async validateDiscountCoupon(){
     try {
-      const { discountCode } = this.req.body;
+      const { discountCode , courseIds } = this.req.body;
       if(!discountCode){
         return this.res.send({status:0, error:"Please send discount code"})
       }
