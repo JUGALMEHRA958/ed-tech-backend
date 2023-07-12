@@ -92,7 +92,7 @@ class CourseController extends Controller {
         status: true,
       });
 
-      let totalPages = Math.ceil(totalCount / totalCount);
+      let totalPages = Math.ceil(totalCount / data.pageSize || totalCount);
 
       let pageNumber = data.pageNumber || 1;
       let pageSize = data.pageSize || totalCount;
