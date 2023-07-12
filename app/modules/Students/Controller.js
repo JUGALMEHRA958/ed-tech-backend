@@ -1739,7 +1739,13 @@ class StudentsController extends Controller {
       }
   
       // Return the discount percentage
-      return this.res.json({ status:1,valid: true, discountPercentage: coupon.discountPercentage });
+      return this.res.json({
+        status: 1,
+        valid: true,
+        discountPercentage: coupon.discountPercentage,
+        isValidForAll:coupon.isValidForAll,
+        courseId : coupon.courseId ? coupon.courseId : null
+      });
     } catch (error) {
       console.error(error);
       return this.res.status(500).json({ status:0,error: 'Internal server error' });
