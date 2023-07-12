@@ -706,7 +706,8 @@ class CourseController extends Controller {
               : course.price;
           }else{
             console.log(708);
-            discountedPrice  = course.price
+            discountedPrice  = course.price;
+            coupon = {}
           }
         }
         else if(!coupon){
