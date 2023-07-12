@@ -1800,7 +1800,9 @@ class StudentsController extends Controller {
       if (currentDate < coupon.startAt || currentDate > coupon.endsAt) {
         return this.res.json({ status:0,valid: false, message: 'Coupon is not valid at this time' });
       }
-  
+      if(courseIds.length==1 && coupon.courseId && String(courseIds) !== String(coupon.courseId)){
+        return this.res.send({status:0 , message:"Coupon invalid for this course"})
+      }
       // Return the discount percentage
       return this.res.json({
         status: 1,
