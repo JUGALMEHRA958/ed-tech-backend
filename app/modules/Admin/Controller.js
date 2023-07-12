@@ -584,10 +584,10 @@ async getAllDiscountGroups(req, res) {
     const totalGroups = await DiscountCoupon.count({ isDeleted: false });
     const totalPages = Math.ceil(totalGroups / pageSize);
 
-    const groups = await DiscountCoupon.find({ isDeleted: false })
+    let groups = await DiscountCoupon.find({ isDeleted: false })
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize)
-      .lean();
+      .lean().populate('courseId');  
     const totalEnteries = await DiscountCoupon.count();
     return this.res.send({
       status: 1,
