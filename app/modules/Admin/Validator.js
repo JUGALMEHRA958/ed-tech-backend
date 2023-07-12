@@ -80,7 +80,7 @@ class Validators {
                 check('endsAt').exists().isString().withMessage(i18n.__("%s REQUIRED", 'endsAt')),
                 check('discountPercentage').exists().isNumeric().withMessage(i18n.__("%s REQUIRED", 'discountPercentage')),
                 check('isValidForAll').exists().isBoolean().withMessage(i18n.__("%s REQUIRED", 'isValidForAll')),
-                check('courseId').exists().isString().withMessage(i18n.__("%s REQUIRED", 'courseId')),
+                // check('courseId').exists().isString().withMessage(i18n.__("%s REQUIRED", 'courseId')),
 
                 // check('maximumDiscount').exists().isNumeric().withMessage(i18n.__("%s REQUIRED", 'maximumDiscount')),
 
