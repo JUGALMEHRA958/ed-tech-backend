@@ -693,13 +693,31 @@ class CourseController extends Controller {
     ) {
       //buying internally
       for (const course of data.courseDetails) {
+        let discountedPrice  = course.price ; 
         // Subtract the discount percentage from the course price
         console.log(coupon);
-        const discountedPrice =
+        if(  coupon.courseId && coupon.isValidForAll==false ){
+          console.log(700);
+          if(String(course.courseId) == String(coupon.courseId)){
+            console.log(702);
+            discountedPrice =
+            coupon && coupon.discountPercentage
+              ? course.price - (course.price * coupon.discountPercentage) / 100
+              : course.price;
+          }else{
+            console.log(708);
+            discountedPrice  = course.price
+          }
+        }
+        else if(!coupon){
+          discountedPrice  = course.price;
+        }
+        else{
+          discountedPrice =
           coupon && coupon.discountPercentage
             ? course.price - (course.price * coupon.discountPercentage) / 100
             : course.price;
-
+        }
         // Update the course object with the discounted price
         const updatedCourse = {
           ...course,
@@ -713,6 +731,8 @@ class CourseController extends Controller {
           data.pdfUrl,
           coupon
         );
+        // }
+        
       }
 
       //buying externally with magic
