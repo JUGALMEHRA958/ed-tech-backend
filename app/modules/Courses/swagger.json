@@ -566,8 +566,6 @@
         },
         "GetCourse": {
             "required": [
-                "pageNumber",
-                "pageSize"
             ],
             "properties": {
                 "pageNumber": {

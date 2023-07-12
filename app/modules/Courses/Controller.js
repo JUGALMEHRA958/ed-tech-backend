@@ -92,7 +92,10 @@ class CourseController extends Controller {
         status: true,
       });
 
-      let totalPages = Math.ceil(totalCount / data.pageSize);
+      let totalPages = Math.ceil(totalCount / totalCount);
+
+      let pageNumber = data.pageNumber || 1;
+      let pageSize = data.pageSize || totalCount;
 
       const courseData = await CourseSchema.aggregate([
         {
@@ -107,10 +110,10 @@ class CourseController extends Controller {
           },
         },
         {
-          $skip: (data.pageNumber - 1) * data.pageSize,
+          $skip: (pageNumber - 1) * pageSize,
         },
         {
-          $limit: data.pageSize,
+          $limit: pageSize,
         },
         {
           $lookup: {
@@ -148,6 +151,7 @@ class CourseController extends Controller {
       });
     }
   }
+
   async getCourseStatus(course, user) {
     // console.log("Now going with course",course._id , "student", user._id);
     const isCourseBuyed = await CoursePurchases.findOne({

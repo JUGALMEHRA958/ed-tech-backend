@@ -528,7 +528,7 @@ async  deleteGroupById(req, res) {
 
 async createDiscountGroup() {
   try {
-    let fieldsArray = ["discountCode" , "startAt" , "endsAt" , "discountPercentage"];
+    let fieldsArray = ["discountCode" , "startAt" , "endsAt" , "discountPercentage" , "isValidForAll" , "courseId"];
     let emptyFields = await (new RequestBody()).checkEmptyWithFields(this.req.body, fieldsArray);
     if (emptyFields && Array.isArray(emptyFields) && emptyFields.length) {
         return this.res.send({ status: 0, message: i18n.__('SEND_PROPER_DATA') + " " + emptyFields.toString() + " fields required." });
