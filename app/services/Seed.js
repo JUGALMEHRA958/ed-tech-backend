@@ -274,83 +274,85 @@ class Seed {
             let otpMail = {
                 "emailTitle": "OTP mail",
                 'emailKey': "otp_mail",
-                'subject': "OTP from Cambridge",
+                'subject': "Cambridge Prep | OTP verification",
                 'emailContent': `<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
                 <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:v="urn:schemas-microsoft-com:vml" xmlns="http://www.w3.org/1999/xhtml">
-                   <head>
-                     
-                      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-                      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                      <meta name="x-apple-disable-message-reformatting">
-                
-                      <meta http-equiv="X-UA-Compatible" content="IE=edge">
-                   
-                      <title>Email Template</title>
-                      <!-- End title -->
-                      <!-- Start stylesheet -->
-                      <style type="text/css">
-                         a,a[href] {
-                         color: #1b1b1b;
-                         
-                         }
-                         a:hover{
-                         text-decoration: none!important;
-                         color: #7b7b7b;
-                         }
-                         .link {
-                         text-decoration: underline!important;
-                         }
-                         p, p:visited {
-                         font-size:15px;
-                         line-height:24px;
-                         font-family:'Helvetica', Arial, sans-serif;
-                         text-decoration:none;
-                         color: #2d2d2d;
-                         }
-                         h1 {
-                         font-size:22px;
-                         line-height:24px;
-                         font-family:'Helvetica', Arial, sans-serif;
-                         font-weight:normal;
-                         text-decoration:none;
-                         color: #5f5f5f;
-                         }
-                         ul{
-                          list-style: auto;
-                         }
-                         li{
-                          margin-bottom: 10px;
-                          color: #272727;
-                         }
-                        
-                      </style>
-                   </head>
-                   <body align="center" style="text-align: center; margin: 0; padding-top: 10px; padding-bottom: 10px; padding-left: 0; padding-right: 0; -webkit-text-size-adjust: 100%;background-color: #f2f4f6; color: #000000">
-                    <div style="text-align: center; ;margin: 0 auto; max-width: 600px;width: 100%;">
-                       <table align="center" style="text-align: center;vertical-align: top;width: 600px;max-width: 600px;background: #ffebc2;" width="100%">
-                          <tbody>
-                             <tr>
-                                <td style="width: 596px;vertical-align: top;padding-left: 0;padding-right: 0;padding-top: 15px;padding-bottom: 15px;background: #ffebc2;" width="596">
-                                   <img style="width: 180px; max-width: 180px; height: 40px; max-height: 85px; text-align: center; color: #ffffff;" alt="Logo" src="https://d3h4xx6ax0fekr.cloudfront.net/ZKQN5" align="center" width="180" height="85">
-                                </td>
-                             </tr>
-                          </tbody>
-                       </table>
-                       <h5>Hi ! <br>Your otp is {{{otp}}}</h5>
-                       <table style="text-align: center;vertical-align: top;background: #ffebc2;" width="600">
-                          <tbody>
-                             <tr>
-                                <td style="width: 596px; vertical-align: top; padding-left: 30px; padding-right: 30px; padding-top: 30px; padding-bottom: 30px;" width="596">
-                                   <p style="font-size: 15px;line-height: 15px;font-family: 'Helvetica', Arial, sans-serif;text-decoration: none;color: #5c5c5c;margin: 0px;font-weight: 600;">
-                                      Cambridge University Press &amp; Assessment India Private Limited
-                                   </p>
-                                </td>
-                             </tr>
-                          </tbody>
-                       </table>
+                  <head>
+                    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <meta name="x-apple-disable-message-reformatting">
+                    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                    <title>Email Template</title>
+                    <!-- End title -->
+                    <!-- Start stylesheet -->
+                    <style type="text/css">
+                      a,a[href] {
+                        color: #1b1b1b;
+                      }
+                      a:hover{
+                        text-decoration: none!important;
+                        color: #7b7b7b;
+                      }
+                      .link {
+                        text-decoration: underline!important;
+                      }
+                      p, p:visited {
+                        font-size:15px;
+                        line-height:24px;
+                        font-family:'Helvetica', Arial, sans-serif;
+                        text-decoration:none;
+                        color: #2d2d2d;
+                      }
+                      h1 {
+                        font-size:22px;
+                        line-height:24px;
+                        font-family:'Helvetica', Arial, sans-serif;
+                        font-weight:normal;
+                        text-decoration:none;
+                        color: #5f5f5f;
+                      }
+                      ul{
+                        list-style: auto;
+                      }
+                      li{
+                        margin-bottom: 10px;
+                        color: #272727;
+                      }
+                    </style>
+                  </head>
+                  <body style="text-align: left; margin: 0; padding-top: 10px; padding-bottom: 10px; padding-left: 0; padding-right: 0; -webkit-text-size-adjust: 100%;background-color: #f2f4f6; color: #000000">
+                    <div style="text-align: left; ;margin: 0 auto; max-width: 600px;width: 100%;">
+                      <table align="center" style="text-align: center;vertical-align: top;width: 600px;max-width: 600px;background: #ffebc2;" width="100%">
+                        <tbody>
+                          <tr>
+                            <td style="width: 596px;vertical-align: top;padding-left: 0;padding-right: 0;padding-top: 15px;padding-bottom: 15px;background: #ffebc2;" width="596">
+                              <img style="width: 180px; max-width: 180px; height: 40px; max-height: 85px; text-align: center; color: #ffffff;" alt="Logo" src="https://d3h4xx6ax0fekr.cloudfront.net/ZKQN5" align="center" width="180" height="85">
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      <h5>Dear {{{name}}},</h5>
+                      <p>Please verify your Cambridge Prep account using OTP {{{otp}}}</p>
+                      <p>Thanks</p>
+                      <p style="font-size: 15px;line-height: 15px;font-family: 'Helvetica', Arial, sans-serif;text-decoration: none;color: #5c5c5c;margin: 0px;font-weight: 600;">
+                        Cambridge University Press & Assessment India Private Limited
+                      </p><br><br><br><br>
                     </div>
-                 </body>
-                </html>`
+                                         <table align="center" style="text-align: center;vertical-align: top;width: 600px;max-width: 600px;background: #ffebc2;" width="100%">
+                                          <tbody>
+                                             <tr>
+                                                <td style="width: 596px; vertical-align: top; padding-left: 30px; padding-right: 30px; padding-top: 30px; padding-bottom: 30px;" width="596">
+                                                   <p style="font-size: 15px;line-height: 15px;font-family: 'Helvetica', Arial, sans-serif;text-decoration: none;color: #5c5c5c;margin: 0px;font-weight: 600;">
+                                                      Cambridge University Press &amp; Assessment India Private Limited
+                                                   </p>
+                                                </td>
+                                             </tr>
+                                          </tbody>
+                                       </table>
+                                    </div>
+                                 </body>
+                                </html>
+                `
             };
             let isKeyExistOfotpMail = await EmailTemplate.findOne({ emailKey: otpMail['emailKey'] }).select({ "_id": 1 });
             if (!isKeyExistOfotpMail) {

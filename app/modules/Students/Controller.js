@@ -158,7 +158,7 @@ class StudentsController extends Controller {
           let emailData = {
             emailId: newUserId.email,
             emailKey: 'otp_mail',
-            replaceDataObj: { otp:otp}
+            replaceDataObj: { otp:otp ,  name:newUserId.firstName + " " + newUserId.lastName }
         };
 
         const sendingMail = await new Email().sendMail(emailData);
@@ -254,12 +254,12 @@ class StudentsController extends Controller {
   
       // Save the OTP entry to the database
       const otpEntry = await new Model(EmailOTP).store({ email: email, otp, expiryDate });
-  
+     let updatedUser = await Students.findOne({email:email})
       // Send the OTP to the user via email
       let emailData = {
         emailId: email,
         emailKey: 'otp_mail',
-        replaceDataObj: { otp: otp }
+        replaceDataObj: { otp: otp, name:updatedUser.firstName + " " + updatedUser.lastName }
       };
   
       const sendingMail = await new Email().sendMail(emailData);
@@ -1001,7 +1001,7 @@ class StudentsController extends Controller {
         let emailData = {
           emailId: updatedUser.email,
           emailKey: 'otp_mail',
-          replaceDataObj: { otp: otp }
+          replaceDataObj: { otp: otp  , name:updatedUser.firstName + " " + updatedUser.lastName}
         };
 
         const sendingMail = await new Email().sendMail(emailData);
