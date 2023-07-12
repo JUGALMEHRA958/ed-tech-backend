@@ -954,6 +954,7 @@ class StudentsController extends Controller {
       let user = await Students.findOne({
         email: this.req.body.email.toString().toLowerCase(),
         isDeleted: false,
+        status:true
       });
 
       if (_.isEmpty(user)) {

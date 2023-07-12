@@ -935,55 +935,55 @@ class CourseController extends Controller {
         isbn: course.isbnNumber,
       };
       await this.assignCourse(dataToSendToRegister);
-      if (course.group == "writeAndImprove") {
-        let voucherCode = await VoucherCode.findOne({ isDeleted: false })
-          .limit(1)
-          .lean();
+      // if (course.group == "writeAndImprove") {
+      //   let voucherCode = await VoucherCode.findOne({ isDeleted: false })
+      //     .limit(1)
+      //     .lean();
         
-        let emailData = {
-          emailId: this.req.currentUser.email,
-          emailKey: "write_and_improve_special",
-          replaceDataObj: { voucherCode:voucherCode ?  voucherCode.voucherCode :"" },
-        };
+      //   let emailData = {
+      //     emailId: this.req.currentUser.email,
+      //     emailKey: "write_and_improve_special",
+      //     replaceDataObj: { voucherCode:voucherCode ?  voucherCode.voucherCode :"" },
+      //   };
         
-        const sendingMail = await new Email().sendMail(emailData);
-        if (sendingMail) {
-          //delete the sent voucher from DB
-          if(voucherCode){
-            await VoucherCode.findOneAndUpdate(
-              { _id: voucherCode._id },
-              { isDeleted: true }
-            );
-          }
-          if (sendingMail.status == 0) {
-            return _this.res.send(sendingMail);
-          } else if (!sendingMail.response) {
-            return this.res.send({
-              status: 0,
-              message: i18n.__("SERVER_ERROR"),
-            });
-          }
-        }
+      //   const sendingMail = await new Email().sendMail(emailData);
+      //   if (sendingMail) {
+      //     //delete the sent voucher from DB
+      //     if(voucherCode){
+      //       await VoucherCode.findOneAndUpdate(
+      //         { _id: voucherCode._id },
+      //         { isDeleted: true }
+      //       );
+      //     }
+      //     if (sendingMail.status == 0) {
+      //       return _this.res.send(sendingMail);
+      //     } else if (!sendingMail.response) {
+      //       return this.res.send({
+      //         status: 0,
+      //         message: i18n.__("SERVER_ERROR"),
+      //       });
+      //     }
+      //   }
       
-        // if (voucherCode.voucherCode) {
-        //   const sendingMail = await new Email().sendMail(emailData);
-        //   if (sendingMail) {
-        //     //delete the sent voucher from DB
-        //     await VoucherCode.findOneAndUpdate(
-        //       { _id: voucherCode._id },
-        //       { isDeleted: true }
-        //     );
-        //     if (sendingMail.status == 0) {
-        //       return _this.res.send(sendingMail);
-        //     } else if (!sendingMail.response) {
-        //       return this.res.send({
-        //         status: 0,
-        //         message: i18n.__("SERVER_ERROR"),
-        //       });
-        //     }
-        //   }
-        // }
-      }
+      //   // if (voucherCode.voucherCode) {
+      //   //   const sendingMail = await new Email().sendMail(emailData);
+      //   //   if (sendingMail) {
+      //   //     //delete the sent voucher from DB
+      //   //     await VoucherCode.findOneAndUpdate(
+      //   //       { _id: voucherCode._id },
+      //   //       { isDeleted: true }
+      //   //     );
+      //   //     if (sendingMail.status == 0) {
+      //   //       return _this.res.send(sendingMail);
+      //   //     } else if (!sendingMail.response) {
+      //   //       return this.res.send({
+      //   //         status: 0,
+      //   //         message: i18n.__("SERVER_ERROR"),
+      //   //       });
+      //   //     }
+      //   //   }
+      //   // }
+      // }
 
       return this.res.send({
         status: 1,
