@@ -41,7 +41,7 @@ var vourcher = new Schema({
     voucherCode: {
         type: String,
         required: true,
-        unique: true
+        // unique: true
     },
     isDeleted:{type: Boolean , default:false},
     status:{type: Boolean , default:true}
