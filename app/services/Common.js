@@ -577,7 +577,7 @@ class Common {
             try {
                 let bodyData = data.bodyData;
                 let model = data.bodyData.model;
-                let columns = bodyData && bodyData.columns ? bodyData.columns : ['studentEmail','studentName' ,'studentId', 'courseIsbn', 'courseName', 'category','couponCode','discountPercentage', 'purchaseDate','amountBeforeTax','tax','total'];
+                let columns = bodyData && bodyData.columns ? bodyData.columns : ['studentPhone','studentEmail','studentName' ,'studentId', 'courseIsbn','productId', 'courseName', 'category','couponCode','discountPercentage', 'purchaseDate','amountBeforeTax','tax','total'];
                 let filter = bodyData && bodyData.filter ? bodyData.filter : { isDeleted: false , status:true };
                 // filter = await this.constructFilter({ filter });
                 // const records = await Students.find(filter).lean();
