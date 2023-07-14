@@ -319,8 +319,10 @@ class AdminController extends Controller {
             newArray.push({
               studentId: details[i].studentId,
               courseIsbn: details[i].courseId.isbnNumber,
+              productId:details[i].courseId.productId,
               studentName: studentDetail ? studentDetail.firstName + " " + studentDetail.lastName : "",
               studentEmail: studentDetail ?  studentDetail.email :"",
+              studentPhone: studentDetail ?  studentDetail.phone :"",
               couponCode: details[i].couponCode ? details[i].couponCode :"",
               discountPercentage: details[i].discountPercentage ? details[i].discountPercentage : "",
               courseName: details[i].courseId.title,
