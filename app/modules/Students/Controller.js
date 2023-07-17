@@ -1631,6 +1631,7 @@ class StudentsController extends Controller {
         for(let i=0 ; i<courses.length;i++){
           let discountOnThisCourse = discountCoupon ?  ((discountCoupon.discountPercentage / 100 ) * courses[i].price) :0; 
           totalDiscount+=discountOnThisCourse;
+          
           //discount flow left
           products.push({
             name: courses[i].title,
