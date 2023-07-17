@@ -92,10 +92,7 @@ class CourseController extends Controller {
         status: true,
       });
 
-      let totalPages = Math.ceil(totalCount / data.pageSize || totalCount);
-
-      let pageNumber = data.pageNumber || 1;
-      let pageSize = data.pageSize || totalCount;
+      let totalPages = Math.ceil(totalCount / data.pageSize);
 
       const courseData = await CourseSchema.aggregate([
         {
@@ -110,10 +107,10 @@ class CourseController extends Controller {
           },
         },
         {
-          $skip: (pageNumber - 1) * pageSize,
+          $skip: (data.pageNumber - 1) * data.pageSize,
         },
         {
-          $limit: pageSize,
+          $limit: data.pageSize,
         },
         {
           $lookup: {
@@ -151,7 +148,6 @@ class CourseController extends Controller {
       });
     }
   }
-
   async getCourseStatus(course, user) {
     // console.log("Now going with course",course._id , "student", user._id);
     const isCourseBuyed = await CoursePurchases.findOne({
@@ -693,40 +689,17 @@ class CourseController extends Controller {
     ) {
       //buying internally
       for (const course of data.courseDetails) {
-        let productDiscountCoupon = coupon;
-        let discountedPrice  = course.price ; 
         // Subtract the discount percentage from the course price
-        console.log(productDiscountCoupon);
-        if(  productDiscountCoupon.courseId && productDiscountCoupon.isValidForAll==false ){
-          console.log(700);
-          if(String(course.courseId) == String(productDiscountCoupon.courseId)){
-            console.log(702);
-            discountedPrice =
-            productDiscountCoupon && productDiscountCoupon.discountPercentage
-              ? course.price - (course.price * productDiscountCoupon.discountPercentage) / 100
-              : course.price;
-          }else{
-            console.log(708);
-            discountedPrice  = course.price;
-            productDiscountCoupon = {
-              discountCode:"",
-              discountPercentage:0
-            }
-          }
-        }
-        else if(!productDiscountCoupon){
-          discountedPrice  = course.price;
-        }
-        else{
-          discountedPrice =
-          productDiscountCoupon && productDiscountCoupon.discountPercentage
-            ? course.price - (course.price * productDiscountCoupon.discountPercentage) / 100
+        console.log(coupon);
+        const discountedPrice =
+          coupon && coupon.discountPercentage
+            ? course.price - (course.price * coupon.discountPercentage) / 100
             : course.price;
-        }
+
         // Update the course object with the discounted price
         const updatedCourse = {
           ...course,
-          price: productDiscountCoupon ? discountedPrice : course.price,
+          price: coupon ? discountedPrice : course.price,
         };
         console.log(561, updatedCourse, 561);
 
@@ -734,10 +707,8 @@ class CourseController extends Controller {
           updatedCourse,
           this.req.currentUser._id,
           data.pdfUrl,
-          productDiscountCoupon
+          coupon
         );
-        // }
-        
       }
 
       //buying externally with magic

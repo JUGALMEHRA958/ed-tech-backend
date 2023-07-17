@@ -34,8 +34,8 @@
     static getCourseValidatior() {
         try {
             return [
-                // check('pageNumber').exists().withMessage(i18n.__("%s REQUIRED", 'pageNumber')),
-                // check('pageSize').exists().withMessage(i18n.__("%s REQUIRED", 'pageSize'))
+                check('pageNumber').exists().withMessage(i18n.__("%s REQUIRED", 'pageNumber')),
+                check('pageSize').exists().withMessage(i18n.__("%s REQUIRED", 'pageSize'))
 
 
             ];

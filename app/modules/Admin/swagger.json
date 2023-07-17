@@ -898,22 +898,9 @@
                 "discountCode",
                 "startAt",
                 "endsAt",
-                "discountPercentage",
-                "courseId",
-                "isValidForAll"
+                "discountPercentage"
             ],
             "properties": {
-                "courseId": {
-                    "type": "string",
-                    "example": "64a39d54c717930009f74d92",
-                    "required": true
-                },
-                "isValidForAll": {
-                    "type": "boolean",
-                    "example": true,
-                    "uniqueItems": true,
-                    "required": true
-                },
                 "discountCode": {
                     "type": "string",
                     "example": "DISCOUNTCOUPON5454",
