@@ -697,7 +697,7 @@ class CourseController extends Controller {
         let discountedPrice  = course.price ; 
         // Subtract the discount percentage from the course price
         console.log(productDiscountCoupon);
-        if(  productDiscountCoupon.courseId && productDiscountCoupon.isValidForAll==false ){
+        if(  productDiscountCoupon && productDiscountCoupon.isValidForAll==false ){
           console.log(700);
           if(String(course.courseId) == String(productDiscountCoupon.courseId)){
             console.log(702);
