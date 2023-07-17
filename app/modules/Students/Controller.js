@@ -158,7 +158,7 @@ class StudentsController extends Controller {
           let emailData = {
             emailId: newUserId.email,
             emailKey: 'otp_mail',
-            replaceDataObj: { otp:otp}
+            replaceDataObj: { otp:otp ,  name:newUserId.firstName + " " + newUserId.lastName }
         };
 
         const sendingMail = await new Email().sendMail(emailData);
@@ -254,12 +254,12 @@ class StudentsController extends Controller {
   
       // Save the OTP entry to the database
       const otpEntry = await new Model(EmailOTP).store({ email: email, otp, expiryDate });
-  
+     let updatedUser = await Students.findOne({email:email})
       // Send the OTP to the user via email
       let emailData = {
         emailId: email,
         emailKey: 'otp_mail',
-        replaceDataObj: { otp: otp }
+        replaceDataObj: { otp: otp, name:updatedUser.firstName + " " + updatedUser.lastName }
       };
   
       const sendingMail = await new Email().sendMail(emailData);
@@ -1001,7 +1001,7 @@ class StudentsController extends Controller {
         let emailData = {
           emailId: updatedUser.email,
           emailKey: 'otp_mail',
-          replaceDataObj: { otp: otp }
+          replaceDataObj: { otp: otp  , name:updatedUser.firstName + " " + updatedUser.lastName}
         };
 
         const sendingMail = await new Email().sendMail(emailData);
@@ -1624,8 +1624,70 @@ class StudentsController extends Controller {
         }).lean();
 
         // console.log(discountCoupon,1498);
-        let courses = await CourseSchema.find({ _id: { $in: courseIds } }).lean();
+          
+        if(!discountCoupon || discountCoupon.isValidForAll == true ){
+          let courses = await CourseSchema.find({ _id: { $in: courseIds } }).lean();
+        let totalDiscount = 0;
         for(let i=0 ; i<courses.length;i++){
+          let discountOnThisCourse = discountCoupon ?  ((discountCoupon.discountPercentage / 100 ) * courses[i].price) :0; 
+          totalDiscount+=discountOnThisCourse;
+          //discount flow left
+          products.push({
+            name: courses[i].title,
+            qty: 1,//buying only once allowed because its course
+            price: courses[i].price,
+          })
+        }      //invoice creation flow
+        const invoiceData = {
+          creationDate: new Date(),
+          // invoiceNumber: "18R1",
+          customerDetails: {
+            name: customer.firstName + " " + customer.lastName,
+            email: customer.email,
+            phone: customer.phone,
+          },
+          sellerDetails: {
+            name: Config.COMPANY_NAME ? Config.COMPANY_NAME : "Cambridge University Press & Assessment India Pvt Ltd.",
+            address: Config.COMPANY_ADDRESS ? Config.COMPANY_ADDRESS :"Splendor Forum Jasola",
+            CIN: Config.COMPANY_CIN ? Config.COMPANY_CIN :"U22122DL2004PTC124758",
+            logo: Config.COMPANY_LOGO_URL ? Config.COMPANY_LOGO_URL :"https://d3h4xx6ax0fekr.cloudfront.net/ZKQN5",
+            city: Config.COMPANY_CITY ? Config.COMPANY_CITY :"New Delhi",
+            state: Config.COMPANY_STATE ? Config.COMPANY_STATE :"Delhi",
+            country:Config.COMPANY_COUNTRY ? Config.COMPANY_COUNTRY : "India",
+            contactNumber:Config.COMPANY_CONTACT_NUMBER ? Config.COMPANY_CONTACT_NUMBER : "9156254896",
+            email:Config.COMPANY_EMAIL ? Config.COMPANY_EMAIL : "support@cambridgeconnect.org",
+            GST: Config.COMPANY_GST ? Config.COMPANY_GST :"07AAGFF2194N1Z1",
+          },
+          products: products,
+          discount: totalDiscount,
+          sgst: Config.sgstrate ? Config.sgstrate : 9 ,
+          cgst: Config.cgst ? Config.cgst : 9 ,
+        };
+        const invoiceLink = await this.invoice.generateInvoice(invoiceData);
+
+        // console.log(1545,invoiceLink);
+        const response = {
+          status: 1,
+          message: "SUCCESS",
+          data: {
+            clientSecret: paymentIntent.data.client_secret, // Add the value of paymentIntent.data.client_secret here
+            client:client,
+            pdfUrl: invoiceLink
+          }
+        };
+        return this.res.send(response)
+        }
+        else{
+          console.log("in else");
+          let courses = await CourseSchema.find({ _id: { $in: courseIds } }).lean();
+        let totalDiscount = 0;
+        for(let i=0 ; i<courses.length;i++){
+          console.log(courses[i]._id,"courses[i]._id " , discountCoupon.courseId ," discountCoupon.courseId" );
+          if(String(courses[i]._id) == String(discountCoupon.courseId)  ){
+            console.log("matcg ((discountCoupon.discountPercentage / 100 ) * courses[i].price)" , ((discountCoupon.discountPercentage / 100 ) * courses[i].price));
+            let discountOnThisCourse =   ((discountCoupon.discountPercentage / 100 ) * courses[i].price) ; 
+            totalDiscount+=discountOnThisCourse;
+          }
 
           //discount flow left
           products.push({
@@ -1655,7 +1717,7 @@ class StudentsController extends Controller {
             GST: Config.COMPANY_GST ? Config.COMPANY_GST :"07AAGFF2194N1Z1",
           },
           products: products,
-          discount: (discountCoupon && discountCoupon.discountPercentage) ? discountCoupon.discountPercentage : 0,
+          discount: totalDiscount,
           sgst: Config.sgstrate ? Config.sgstrate : 9 ,
           cgst: Config.cgst ? Config.cgst : 9 ,
         };
@@ -1672,6 +1734,7 @@ class StudentsController extends Controller {
           }
         };
         return this.res.send(response)
+        }
        }
       else{
         return this.res.send({status:0 , message:"Intent creation failed"})
@@ -1717,7 +1780,7 @@ class StudentsController extends Controller {
 
   async validateDiscountCoupon(){
     try {
-      const { discountCode } = this.req.body;
+      const { discountCode , courseIds } = this.req.body;
       if(!discountCode){
         return this.res.send({status:0, error:"Please send discount code"})
       }
@@ -1737,9 +1800,19 @@ class StudentsController extends Controller {
       if (currentDate < coupon.startAt || currentDate > coupon.endsAt) {
         return this.res.json({ status:0,valid: false, message: 'Coupon is not valid at this time' });
       }
-  
+      console.log(courseIds," courseIds");;
+      console.log( coupon.courseId , "  coupon.courseI");
+      if( coupon.courseId && !courseIds.includes( String(coupon.courseId))){
+        return this.res.send({status:0 , message:"Coupon invalid for any of the courses"})
+      }
       // Return the discount percentage
-      return this.res.json({ status:1,valid: true, discountPercentage: coupon.discountPercentage });
+      return this.res.json({
+        status: 1,
+        valid: true,
+        discountPercentage: coupon.discountPercentage,
+        isValidForAll:coupon.isValidForAll,
+        courseId : coupon.courseId ? coupon.courseId : null
+      });
     } catch (error) {
       console.error(error);
       return this.res.status(500).json({ status:0,error: 'Internal server error' });
