@@ -166,14 +166,14 @@ class Invoice {
         (acc, product) => acc + product.qty * product.price,
         0
       );
-      const discountAmount = (discount / 100) * total;
+      const discountAmount = invoiceData.discount;
       const sgstAmount = (sgst / 100) * (total - discountAmount);
       const cgstAmount = (cgst / 100) * (total - discountAmount);
       const grandTotal = total - discountAmount + sgstAmount + cgstAmount;
     
       doc.font("Helvetica-Bold").fontSize(12);
       doc.text("Total Bill:", 30, summaryTop, { width: 100, align: "left" });
-      doc.text("Discount (" + discount + "%):", 30, summaryTop + 20, { width: 100, align: "left" });
+      doc.text("Discount");
       doc.text("SGST (" + sgst + "%):", 30, summaryTop + 40, { width: 100, align: "left" });
       doc.text("CGST (" + cgst + "%):", 30, summaryTop + 60, { width: 100, align: "left" });
       doc.text("Grand Total:", 30, summaryTop + 80, { width: 100, align: "left" });
