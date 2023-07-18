@@ -1785,7 +1785,7 @@ class StudentsController extends Controller {
         return this.res.send({status:0, error:"Please send discount code"})
       }
       // Check if the discount code exists
-      const coupon = await DiscountCoupon.findOne({ discountCode });
+      const coupon = await DiscountCoupon.findOne({ discountCode , isDeleted:false});
       if (!coupon) {
         return this.res.json({ status:0,valid: false, message: 'Invalid discount code' });
       }
