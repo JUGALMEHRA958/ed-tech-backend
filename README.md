@@ -1,4 +1,3 @@
-# IndiaNIC Node Project
 
 ## Prerequisite (Development)
 
